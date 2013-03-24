@@ -1,8 +1,10 @@
+DROP TABLE BorrowerType;
 CREATE TABLE BorrowerType(
 	type CHAR(3) PRIMARY KEY,
 	bookTimeLimit INT NOT NULL
 );
 
+DROP TABLE Borrower;
 CREATE TABLE Borrower(
 	bid INT PRIMARY KEY,
 	password VARCHAR(255) NOT NULL,
@@ -18,6 +20,7 @@ CREATE TABLE Borrower(
 		ON DELETE CASCADE
 );
 
+DROP TABLE Book;
 CREATE TABLE Book(
 	callNumber VARCHAR(255) PRIMARY KEY,
 	isbn VARCHAR(13) UNIQUE NOT NULL,
@@ -27,6 +30,7 @@ CREATE TABLE Book(
 	year CHAR(4) NOT NULL
 );
 
+DROP TABLE HasAuthor;
 CREATE TABLE HasAuthor(
 	callNumber VARCHAR(255) NOT NULL,
 	name VARCHAR(255) NOT NULL,
@@ -36,6 +40,7 @@ CREATE TABLE HasAuthor(
 		ON DELETE CASCADE
 );
 
+DROP TABLE HasSubject;
 CREATE TABLE HasSubject(
 	callNumber VARCHAR(255) NOT NULL,
 	subject VARCHAR(255) NOT NULL,
@@ -45,6 +50,7 @@ CREATE TABLE HasSubject(
 		ON DELETE CASCADE
 );
 
+DROP TABLE BookCopy;
 CREATE TABLE BookCopy(
 	callNumber VARCHAR(255) NOT NULL,
 	copyNo INT NOT NULL,
@@ -55,6 +61,7 @@ CREATE TABLE BookCopy(
 		ON DELETE CASCADE
 );
 
+DROP TABLE HoldRequest;
 CREATE TABLE HoldRequest(
 	hid INT PRIMARY KEY,
 	bid INT NOT NULL,
@@ -68,6 +75,7 @@ CREATE TABLE HoldRequest(
 		ON DELETE CASCADE
 );
 
+DROP TABLE Borrowing;
 CREATE TABLE Borrowing(
 	borid INT PRIMARY KEY,
 	bid INT NOT NULL,
@@ -83,6 +91,7 @@ CREATE TABLE Borrowing(
 		ON DELETE CASCADE
 );
 
+DROP TABLE Fine;
 CREATE TABLE Fine(
 	fid INT PRIMARY KEY,
 	amount FLOAT NOT NULL,
