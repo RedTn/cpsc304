@@ -7,7 +7,7 @@ public class Gui extends JFrame {
 	public static void main (String args[]) {
 		Gui mygui = new Gui();
 		mygui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mygui.setSize(200, 200);
+		mygui.setSize(500, 300);
 		mygui.setVisible(true);
 		mygui.setTitle("Test");
 	}
