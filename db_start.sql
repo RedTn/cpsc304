@@ -1,16 +1,18 @@
-DROP SEQUENCE bid_counter;
 CREATE SEQUENCE bid_counter
 START WITH 1
 INCREMENT BY 2
 NOCYCLE;
 
-DROP TABLE BorrowerType;
 CREATE TABLE BorrowerType(
 	type CHAR(3) PRIMARY KEY,
 	bookTimeLimit INT NOT NULL
 );
 
-DROP TABLE Borrower;
+
+INSERT INTO BorrowerType VALUES('stu', 14);
+INSERT INTO BorrowerType VALUES('fal', 84);
+INSERT INTO BorrowerType VALUES('sta', 42);
+
 CREATE TABLE Borrower(
 	bid INT PRIMARY KEY,
 	password VARCHAR(255) NOT NULL,
@@ -26,7 +28,6 @@ CREATE TABLE Borrower(
 		ON DELETE CASCADE
 );
 
-DROP TABLE Book;
 CREATE TABLE Book(
 	callNumber VARCHAR(255) PRIMARY KEY,
 	isbn VARCHAR(13) UNIQUE NOT NULL,
@@ -36,7 +37,6 @@ CREATE TABLE Book(
 	year CHAR(4) NOT NULL
 );
 
-DROP TABLE HasAuthor;
 CREATE TABLE HasAuthor(
 	callNumber VARCHAR(255) NOT NULL,
 	name VARCHAR(255) NOT NULL,
@@ -46,7 +46,6 @@ CREATE TABLE HasAuthor(
 		ON DELETE CASCADE
 );
 
-DROP TABLE HasSubject;
 CREATE TABLE HasSubject(
 	callNumber VARCHAR(255) NOT NULL,
 	subject VARCHAR(255) NOT NULL,
@@ -56,7 +55,6 @@ CREATE TABLE HasSubject(
 		ON DELETE CASCADE
 );
 
-DROP TABLE BookCopy;
 CREATE TABLE BookCopy(
 	callNumber VARCHAR(255) NOT NULL,
 	copyNo INT NOT NULL,
@@ -67,7 +65,6 @@ CREATE TABLE BookCopy(
 		ON DELETE CASCADE
 );
 
-DROP TABLE HoldRequest;
 CREATE TABLE HoldRequest(
 	hid INT PRIMARY KEY,
 	bid INT NOT NULL,
@@ -77,11 +74,10 @@ CREATE TABLE HoldRequest(
 		REFERENCES Borrower(bid)
 		ON DELETE CASCADE,
 	CONSTRAINT fk_HoldRequest_Book FOREIGN KEY(callNumber)
-		REFERENCES Book(callNumber),
+		REFERENCES Book(callNumber)
 		ON DELETE CASCADE
 );
 
-DROP TABLE Borrowing;
 CREATE TABLE Borrowing(
 	borid INT PRIMARY KEY,
 	bid INT NOT NULL,
@@ -97,7 +93,6 @@ CREATE TABLE Borrowing(
 		ON DELETE CASCADE
 );
 
-DROP TABLE Fine;
 CREATE TABLE Fine(
 	fid INT PRIMARY KEY,
 	amount FLOAT NOT NULL,
@@ -108,3 +103,4 @@ CREATE TABLE Fine(
 		REFERENCES Borrowing(borid)
 		ON DELETE CASCADE
 );
+

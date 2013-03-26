@@ -1,5 +1,5 @@
 //src --> pacakge "com" --> folder "proj3"
-package com.proj3;
+package com.proj3.gui;
 
 //Gui package
 import javax.swing.*;
@@ -14,6 +14,9 @@ import java.io.*;
 
 //for the login window
 import javax.swing.*;
+
+import com.proj3.branch;
+
 import java.awt.*;
 import java.awt.event.*;
 
