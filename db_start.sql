@@ -1,3 +1,9 @@
+DROP SEQUENCE bid_counter;
+CREATE SEQUENCE bid_counter
+START WITH 1
+INCREMENT BY 2
+NOCYCLE;
+
 DROP TABLE BorrowerType;
 CREATE TABLE BorrowerType(
 	type CHAR(3) PRIMARY KEY,
