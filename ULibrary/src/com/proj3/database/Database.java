@@ -16,6 +16,7 @@ import com.proj3.model.CopyStatus;
 public class Database {
 	private String address, username, password;
 	private Connection con;
+	private PreparedStatement ps;
 	
 	public Database(String address, String username, String password) {
 		this.address = address;
@@ -48,7 +49,53 @@ public class Database {
 	public boolean insertBorrower(String password, String name, String address,
 								String phone, String email, String sinOrStNo, 
 								Date expiryDate, BorrowerType type) {
-		return false;
+		try
+		{
+		  ps = con.prepareStatement("INSERT INTO Borrower VALUES (bid_counter.nextval,?,?,?,?,?,?,?,?)");
+
+		  ps.setString(1, password);
+		  
+		  ps.setString(2, name);
+		
+		  ps.setString(3, address);
+		 
+		  ps.setString(4, phone);
+		  
+		  ps.setString(5, email);
+		 
+		  ps.setString(6, sinOrStNo);
+		  
+		  ps.setDate(7, (java.sql.Date)expiryDate);
+		  
+		  ps.setString(8, type.getType());
+
+		  ps.executeUpdate();
+
+		  // commit work 
+		  con.commit();
+
+		  ps.close();
+		  
+		  return true;
+		}
+	
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+		    try 
+		    {
+			// undo the insert
+			con.rollback();	
+		    }
+		    catch (SQLException ex2)
+		    {
+			System.out.println("Message: " + ex2.getMessage());
+			System.exit(-1);
+		    }
+			return false;
+		}
+		
+
 	}
 
 	public boolean insertBook(String callNumber, String isbn, String title, 
