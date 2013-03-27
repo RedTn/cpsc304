@@ -1,5 +1,6 @@
 package com.proj3.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Book {
@@ -14,6 +15,17 @@ public class Book {
 	
 	private Set<BookCopy> copies;
 
+	public Book(String callNumber) {
+		this();
+		
+		this.callNumber = callNumber;
+	}
+	public Book() {
+		authors = new HashSet<String>();
+		subjects = new HashSet<String>();
+		copies = new HashSet<BookCopy>();
+	}
+	
 	public String getCallNumber() {
 		return callNumber;
 	}
@@ -97,5 +109,9 @@ public class Book {
 	
 	public void addCopy(BookCopy copy) {
 		copies.add(copy);
+	}
+	
+	public int hashcode() {
+		return callNumber.hashCode();
 	}
 }

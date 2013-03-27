@@ -10,6 +10,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import oracle.sql.DATE;
 
@@ -177,10 +181,41 @@ public class Database {
 
 			ps.close();
 			
+			Map<String, Book> books = new HashMap<String, Book>();
 			while (rs.next()) {
+				String callNumber = rs.getString("callNumber");
+				Book book;
+				if (!books.containsKey(callNumber)) {
+					book = new Book(callNumber);
+					
+					String isbn = rs.getString("isbn");
+					String title = rs.getString("title");
+					String mainAuthor = rs.getString("mainAuthor");
+					String publisher = rs.getString("publisher");
+					String year = rs.getString("year");
+					
+					book.setIsbn(isbn);
+					book.setTitle(title);
+					book.setMainAuthor(mainAuthor);
+					book.setPublisher(publisher);
+					book.setYear(year);
+					books.put(callNumber, book);
+				} else {
+					book = books.get(callNumber);
+				}
 				
+				String author = rs.getString("name");
+				if (!rs.wasNull()) {
+					book.addAuthor(author);
+				}
+				
+				String subject = rs.getString("subject");
+				if (!rs.wasNull()) {
+					book.addSubject(subject);
+				}
 			}
 			
+			return (Book[])books.values().toArray();
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 			try {
