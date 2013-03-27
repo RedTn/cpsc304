@@ -2,22 +2,22 @@ package com.proj3.database;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.event.*;
-//import java.awt.GridLayout;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 
 import oracle.sql.DATE;
 
+import com.proj3.model.Book;
+import com.proj3.model.BookCopy;
 import com.proj3.model.BorrowerType;
 import com.proj3.model.CopyStatus;
+//import java.awt.GridLayout;
 
 public class Database {
 	private String address, username, password;
@@ -161,5 +161,41 @@ public class Database {
 	public boolean insertFine(double amount, DATE issuedDate, DATE paidDate,
 			String borid) {
 		return false;
+	}
+	
+	public Book[] searchBooksByKeyword(String keyword) {
+		ResultSet rs;
+		
+		try {
+			ps = con.prepareStatement("SELECT * FROM Book b, HasAuthor a, HasSubject s WHERE b.callNumber = a.callNumber AND b.callNumber = s.callNumber AND (b.title LIKE '%?%' OR b.mainAuthor LIKE '%?%' OR a.name LIKE '%?%' OR s.subject '%?%')");
+
+			ps.setString(1, keyword);
+			ps.setString(2, keyword);
+			ps.setString(3, keyword);
+			ps.setString(4, keyword);
+			rs = ps.executeQuery();
+
+			ps.close();
+			
+			while (rs.next()) {
+				
+			}
+			
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+			try {
+				// undo the insert
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+		}
+		return new Book[0];
+		
+	}
+	
+	public BookCopy[] searchForBookCopiesByCallNumber(String callNumber) {
+		return new BookCopy[0];
 	}
 }
