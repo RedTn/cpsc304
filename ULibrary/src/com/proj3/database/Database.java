@@ -2,6 +2,11 @@ package com.proj3.database;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import javax.swing.*;
+
+import java.awt.*;
+import java.awt.event.*;
+//import java.awt.GridLayout;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,7 +23,7 @@ public class Database {
 	private String address, username, password;
 	private Connection con;
 	private PreparedStatement ps;
-	
+
 	public Database() {
 		try {
 			// Load the Oracle JDBC driver
@@ -28,13 +33,13 @@ public class Database {
 			System.exit(-1);
 		}
 	}
-	
+
 	public Database(String address, String username, String password) {
 		this();
 		this.address = address;
 		this.username = username;
 		this.password = password;
-		
+
 	}
 
 	public Database(String filePath) {
@@ -49,23 +54,23 @@ public class Database {
 				this.address = line;
 				line = br.readLine();
 			}
-			
+
 			if (line != null) {
 				this.username = line;
 				line = br.readLine();
 			}
-			
+
 			if (line != null) {
 				this.password = line;
 			}
-			
+
 			br.close();
 		} catch (IOException e) {
 			System.out.print(e.getMessage());
 		} finally {
 		}
 	}
-	
+
 	public boolean connect() {
 
 		try {
@@ -109,9 +114,7 @@ public class Database {
 			ps.close();
 
 			return true;
-		}
-
-		catch (SQLException ex) {
+		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 			try {
 				// undo the insert
@@ -120,9 +123,8 @@ public class Database {
 				System.out.println("Message: " + ex2.getMessage());
 				System.exit(-1);
 			}
-			return false;
 		}
-
+		return false;
 	}
 
 	public boolean insertBook(String callNumber, String isbn, String title,
