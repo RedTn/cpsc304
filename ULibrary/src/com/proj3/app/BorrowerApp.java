@@ -10,10 +10,10 @@ import com.proj3.model.Book;
 import com.proj3.model.BookCopy;
 import com.proj3.model.CopyStatus;
 
-public class LibrarianApp {
+public class BorrowerApp {
 	private Database db;
 
-	public LibrarianApp(Database db) {
+	public BorrowerApp(Database db) {
 		this.db = db;
 	}
 
@@ -62,7 +62,7 @@ public class LibrarianApp {
 				int copyNo = copies.getInt("copyNo");
 				CopyStatus status = CopyStatus.get(rs.getString("status"));
 
-				b.addCopy(new BookCopy(callNum, copyNo, status));
+				b.addCopy(new BookCopy(b, copyNo, status));
 			}
 		}
 

@@ -1,21 +1,21 @@
 package com.proj3.model;
 
 public class BookCopy {
-	private String callNumber;
+	private Book book;
 	private int copyNo;
 	private CopyStatus status;
 	
-	public BookCopy(String callNumber, int copyNo, CopyStatus status) {
-		this.callNumber = callNumber;
+	public BookCopy(Book book, int copyNo, CopyStatus status) {
+		this.book = book;
 		this.copyNo = copyNo;
 		this.status = status;
 	}
 	
-	public String getCallNumber() {
-		return callNumber;
+	public Book getBook() {
+		return book;
 	}
-	public void setCallNumber(String callNumber) {
-		this.callNumber = callNumber;
+	public void setBook(Book book) {
+		this.book = book;
 	}
 	
 	public CopyStatus getStatus() {
@@ -33,6 +33,6 @@ public class BookCopy {
 	}
 	
 	public int hashcode() {
-		return callNumber.hashCode()*51859+copyNo;
+		return book.hashCode()*51859+copyNo;
 	}
 }
