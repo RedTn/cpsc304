@@ -1,6 +1,7 @@
 package com.proj3.database;
 
-import java.awt.GridLayout;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,11 +19,7 @@ public class Database {
 	private Connection con;
 	private PreparedStatement ps;
 	
-	public Database(String address, String username, String password) {
-		this.address = address;
-		this.username = username;
-		this.password = password;
-
+	public Database() {
 		try {
 			// Load the Oracle JDBC driver
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
@@ -31,8 +28,44 @@ public class Database {
 			System.exit(-1);
 		}
 	}
+	
+	public Database(String address, String username, String password) {
+		this();
+		this.address = address;
+		this.username = username;
+		this.password = password;
+		
+	}
 
+	public Database(String filePath) {
+		this();
 
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(filePath));
+
+			String line = br.readLine();
+
+			if (line != null) {
+				this.address = line;
+				line = br.readLine();
+			}
+			
+			if (line != null) {
+				this.username = line;
+				line = br.readLine();
+			}
+			
+			if (line != null) {
+				this.password = line;
+			}
+			
+			br.close();
+		} catch (IOException e) {
+			System.out.print(e.getMessage());
+		} finally {
+		}
+	}
+	
 	public boolean connect() {
 
 		try {
@@ -45,88 +78,86 @@ public class Database {
 			return false;
 		}
 	}
-	
+
 	public boolean insertBorrower(String password, String name, String address,
-								String phone, String email, String sinOrStNo, 
-								Date expiryDate, BorrowerType type) {
-		try
-		{
-		  ps = con.prepareStatement("INSERT INTO Borrower VALUES (bid_counter.nextval,?,?,?,?,?,?,?,?)");
+			String phone, String email, String sinOrStNo, Date expiryDate,
+			BorrowerType type) {
+		try {
+			ps = con.prepareStatement("INSERT INTO Borrower VALUES (bid_counter.nextval,?,?,?,?,?,?,?,?)");
 
-		  ps.setString(1, password);
-		  
-		  ps.setString(2, name);
-		
-		  ps.setString(3, address);
-		 
-		  ps.setString(4, phone);
-		  
-		  ps.setString(5, email);
-		 
-		  ps.setString(6, sinOrStNo);
-		  
-		  ps.setDate(7, (java.sql.Date)expiryDate);
-		  
-		  ps.setString(8, type.getType());
+			ps.setString(1, password);
 
-		  ps.executeUpdate();
+			ps.setString(2, name);
 
-		  // commit work 
-		  con.commit();
+			ps.setString(3, address);
 
-		  ps.close();
-		  
-		  return true;
+			ps.setString(4, phone);
+
+			ps.setString(5, email);
+
+			ps.setString(6, sinOrStNo);
+
+			ps.setDate(7, (java.sql.Date) expiryDate);
+
+			ps.setString(8, type.getType());
+
+			ps.executeUpdate();
+
+			// commit work
+			con.commit();
+
+			ps.close();
+
+			return true;
 		}
-	
-		catch (SQLException ex)
-		{
-		    System.out.println("Message: " + ex.getMessage());
-		    try 
-		    {
-			// undo the insert
-			con.rollback();	
-		    }
-		    catch (SQLException ex2)
-		    {
-			System.out.println("Message: " + ex2.getMessage());
-			System.exit(-1);
-		    }
+
+		catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+			try {
+				// undo the insert
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
 			return false;
 		}
-		
 
 	}
 
-	public boolean insertBook(String callNumber, String isbn, String title, 
-							String mainAuthor, String publisher, String year) {
-		//yet to be implemented
-		return false;		
+	public boolean insertBook(String callNumber, String isbn, String title,
+			String mainAuthor, String publisher, String year) {
+		// yet to be implemented
+		return false;
 	}
-	
+
 	public boolean insertHasAuthor(String callNumber, String authorName) {
-		
-		return false;
-	}
-	
-	public boolean insertHasSubject(String callNumber, String subject) {
-		
-		return false;
-	}
-	
-	public boolean insertBookCopy(String callNumber, String copyNo, CopyStatus status) {
-		return false;
-	}
-	
-	public boolean insertHoldRequest(String bid, String callNumber, DATE issuedDate) {
+
 		return false;
 	}
 
-	public boolean insertBorrowing(String bid, String callNumber, String copyNo, DATE outDate, DATE inDate) {
+	public boolean insertHasSubject(String callNumber, String subject) {
+
 		return false;
 	}
-	
-	public boolean insertFine(double amount, DATE issuedDate, DATE paidDate, String borid) {
+
+	public boolean insertBookCopy(String callNumber, String copyNo,
+			CopyStatus status) {
+		return false;
+	}
+
+	public boolean insertHoldRequest(String bid, String callNumber,
+			DATE issuedDate) {
+		return false;
+	}
+
+	public boolean insertBorrowing(String bid, String callNumber,
+			String copyNo, DATE outDate, DATE inDate) {
+		return false;
+	}
+
+	public boolean insertFine(double amount, DATE issuedDate, DATE paidDate,
+			String borid) {
 		return false;
 	}
 }

@@ -67,7 +67,7 @@ public class Gui extends JFrame {
 	
 	public static void main (String args[]) {
 		branch b = new branch();
-		 Gui mygui = new Gui();
+		Gui mygui = new Gui();
 			
 		//CLose on "X"
 		mygui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
