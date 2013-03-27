@@ -12,13 +12,15 @@ import java.io.*;
 //for the login window
 import javax.swing.*;
 
-import java.awt.*;
-import java.awt.event.*;
+import com.proj3.database.Database;
 
 import java.awt.*;
 import java.awt.event.*;
 
-public class Clerk extends Gui {
+import java.awt.*;
+import java.awt.event.*;
+
+public class Clerk extends JFrame {
 	private JLabel label;
 	private JTextField add_text,check_text,process_text,overdue_text;
 	private JButton add_but,check_but,process_but,overdue_but;
@@ -26,9 +28,9 @@ public class Clerk extends Gui {
 	//Instantiate new buffereader 'in'
     private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     
-	private Connection con;
-    
-	public Clerk(JFrame frame) {
+    private Database db;
+	public Clerk(Database db) {
+		this.db = db;
 		//super(frame, "Clerk Mode", true);
 		setLayout(new FlowLayout());
 		
@@ -79,71 +81,9 @@ public class Clerk extends Gui {
 			
 			HideDialog();
 			setLayout(new GridLayout(10,2));
-			
-			con = getCon();
-			
-			try
-			{
-			  ps = con.prepareStatement("INSERT INTO Borrower VALUES (bid_counter.nextval,?,?,?,?,?,?,?,?)");
-
-			  System.out.print("\nBorrower Password: ");
-			  bpassword = in.readLine();
-			  ps.setString(1, bpassword);
-			  
-			  System.out.print("\nBorrower Name: ");
-			  bname = in.readLine();
-			  ps.setString(2, bname);
-
-			  System.out.print("\nBorrower Address: ");
-			  baddress = in.readLine();
-			  ps.setString(3, baddress);
-		
-			  System.out.print("\nBorrower Phone: ");
-			  bphone = in.readLine();
-			  ps.setString(4, bphone);
-			  
-			  System.out.print("\nBorrower Email: ");
-			  bemail = in.readLine();
-			  ps.setString(5, bemail);
-			  
-			  System.out.print("\nBorrower Sin: ");
-			  bsin = in.readLine();
-			  ps.setString(6, bsin);
-			  
-			  bdate = ("TO_DATE('01-JAN-1975','DD-MON-YYYY')");
-			  System.out.print("\nBorrower Expiry Date: " + bdate);
-			  ps.setString(7, bdate);
-			  
-			  System.out.print("\nBorrower Type: ");
-			  btype = in.readLine();
-			  ps.setString(8, btype);
-
-			  ps.executeUpdate();
-
-			  // commit work 
-			  con.commit();
-
-			  ps.close();
-			}
-			catch (IOException e)
-			{
-			    System.out.println("IOException!");
-			}
-			catch (SQLException ex)
-			{
-			    System.out.println("Message: " + ex.getMessage());
-			    try 
-			    {
-				// undo the insert
-				con.rollback();	
-			    }
-			    catch (SQLException ex2)
-			    {
-				System.out.println("Message: " + ex2.getMessage());
-				System.exit(-1);
-			    }
-			}
-		    
+	
+			//TODO make this work
+			//db.insertBorrower(bpassword, bname, baddress, bphone, bemail, bsin, bdate, btype);
 		    
 		}
 	}
