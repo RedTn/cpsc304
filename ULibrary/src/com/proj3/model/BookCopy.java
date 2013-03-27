@@ -5,6 +5,12 @@ public class BookCopy {
 	private int copyNo;
 	private CopyStatus status;
 	
+	public BookCopy(String callNumber, int copyNo, CopyStatus status) {
+		this.callNumber = callNumber;
+		this.copyNo = copyNo;
+		this.status = status;
+	}
+	
 	public String getCallNumber() {
 		return callNumber;
 	}

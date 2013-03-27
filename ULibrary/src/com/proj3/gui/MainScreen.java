@@ -54,7 +54,7 @@ public class MainScreen extends JFrame {
 	public static void main(String args[]) {
 		Database db = new Database("passwordfile");
 		if (db.connect()) {
-			MainScreen mygui = new MainScreen();
+			MainScreen mygui = new MainScreen(db);
 
 			// CLose on "X"
 			mygui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -159,10 +159,10 @@ public class Database {
 			String borid) {
 		return false;
 	}
-	
-	public Book[] searchBooksByKeyword(String keyword) {
-		ResultSet rs;
-		
+
+	public ResultSet searchBooksByKeyword(String keyword) {
+		ResultSet rs  = null;
+
 		try {
 			ps = con.prepareStatement("SELECT * FROM Book b, HasAuthor a, HasSubject s WHERE b.callNumber = a.callNumber AND b.callNumber = s.callNumber AND (b.title LIKE '%?%' OR b.mainAuthor LIKE '%?%' OR a.name LIKE '%?%' OR s.subject '%?%')");
 
@@ -173,42 +173,7 @@ public class Database {
 			rs = ps.executeQuery();
 
 			ps.close();
-			
-			Map<String, Book> books = new HashMap<String, Book>();
-			while (rs.next()) {
-				String callNumber = rs.getString("callNumber");
-				Book book;
-				if (!books.containsKey(callNumber)) {
-					book = new Book(callNumber);
-					
-					String isbn = rs.getString("isbn");
-					String title = rs.getString("title");
-					String mainAuthor = rs.getString("mainAuthor");
-					String publisher = rs.getString("publisher");
-					String year = rs.getString("year");
-					
-					book.setIsbn(isbn);
-					book.setTitle(title);
-					book.setMainAuthor(mainAuthor);
-					book.setPublisher(publisher);
-					book.setYear(year);
-					books.put(callNumber, book);
-				} else {
-					book = books.get(callNumber);
-				}
-				
-				String author = rs.getString("name");
-				if (!rs.wasNull()) {
-					book.addAuthor(author);
-				}
-				
-				String subject = rs.getString("subject");
-				if (!rs.wasNull()) {
-					book.addSubject(subject);
-				}
-			}
-			
-			return (Book[])books.values().toArray();
+
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 			try {
@@ -219,11 +184,33 @@ public class Database {
 				System.exit(-1);
 			}
 		}
-		return new Book[0];
-		
+
+		return rs;
 	}
-	
-	public BookCopy[] searchForBookCopiesByCallNumber(String callNumber) {
-		return new BookCopy[0];
+
+	public ResultSet searchForBookCopiesByCallNumber(String callNumber) {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT copyNo, status FROM BookCopy WHERE callNumber = ?");
+
+			ps.setString(1, callNumber);
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+			try {
+				// undo the insert
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+		}
+
+		return rs;
 	}
 }
