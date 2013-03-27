@@ -8,20 +8,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import oracle.sql.DATE;
 
-import com.proj3.model.Book;
-import com.proj3.model.BookCopy;
-import com.proj3.model.BorrowerType;
-import com.proj3.model.CopyStatus;
-//import java.awt.GridLayout;
+import com.proj3.model.*;
 
 public class Database {
 	private String address, username, password;
