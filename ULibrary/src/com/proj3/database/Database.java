@@ -1,6 +1,10 @@
 package com.proj3.database;
 
-import java.awt.GridLayout;
+import javax.swing.*;
+
+import java.awt.*;
+import java.awt.event.*;
+//import java.awt.GridLayout;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,7 +17,7 @@ import oracle.sql.DATE;
 import com.proj3.model.BorrowerType;
 import com.proj3.model.CopyStatus;
 
-public class Database {
+ public class Database {
 	private String address, username, password;
 	private Connection con;
 	private PreparedStatement ps;
@@ -90,14 +94,16 @@ public class Database {
 		    catch (SQLException ex2)
 		    {
 			System.out.println("Message: " + ex2.getMessage());
-			System.exit(-1);
-		    }
 			return false;
+		    }
+		    return false;
 		}
 		
 
 	}
 
+	
+	
 	public boolean insertBook(String callNumber, String isbn, String title, 
 							String mainAuthor, String publisher, String year) {
 		//yet to be implemented
@@ -123,7 +129,7 @@ public class Database {
 	}
 
 	public boolean insertBorrowing(String bid, String callNumber, String copyNo, DATE outDate, DATE inDate) {
-		return false;
+	    return false;
 	}
 	
 	public boolean insertFine(double amount, DATE issuedDate, DATE paidDate, String borid) {

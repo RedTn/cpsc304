@@ -16,6 +16,7 @@ import java.io.*;
 import javax.swing.*;
 
 import com.proj3.branch;
+import com.proj3.database.Database;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -68,7 +69,7 @@ public class Gui extends JFrame {
 	public static void main (String args[]) {
 		branch b = new branch();
 		 Gui mygui = new Gui();
-			
+		
 		//CLose on "X"
 		mygui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			
