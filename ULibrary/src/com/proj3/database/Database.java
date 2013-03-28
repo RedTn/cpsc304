@@ -202,15 +202,47 @@ public class Database {
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
-			try {
-				// undo the insert
-				con.rollback();
-			} catch (SQLException ex2) {
-				System.out.println("Message: " + ex2.getMessage());
-				System.exit(-1);
-			}
 		}
 
 		return rs;
+	}
+	
+	public ResultSet searchBorrowingsByBorrower(int bid) {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ? AND inDate IS NULL");
+
+			ps.setInt(1, bid);
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	
+	public ResultSet selectBorrowerByIdAndPassword(int bid, String password) {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrower WHERE bid = ? AND password = ?");
+
+			ps.setInt(1, bid);
+			ps.setString(2, password);
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;	
 	}
 }
