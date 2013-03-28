@@ -81,6 +81,7 @@ public class Database {
 		}
 	}
 
+	//Clerk Transaction
 	public boolean insertBorrower(String password, String name, String address,
 			String phone, String email, String sinOrStNo, Date expiryDate,
 			BorrowerType type) {
@@ -150,8 +151,41 @@ public class Database {
 		return false;
 	}
 
+	//Clerk transaction
 	public boolean insertBorrowing(String bid, String callNumber,
-			String copyNo, DATE outDate, DATE inDate) {
+			String copyNo, Date outDate, Date inDate) {
+		try {
+			ps = con.prepareStatement("INSERT INTO Borrowing VALUES (borid_counter.nextval,?,?,?,?,?)");
+
+			ps.setString(1, bid);
+
+			ps.setString(2, callNumber);
+
+			ps.setString(3, copyNo);
+
+			ps.setDate(4, (java.sql.Date)outDate);
+			
+			//TODO, Null condition for inDate
+			ps.setDate(5, (java.sql.Date)inDate);
+			
+			ps.executeUpdate();
+
+			// commit work
+			con.commit();
+
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+			try {
+				// undo the insert
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+		}
 		return false;
 	}
 
@@ -308,6 +342,25 @@ public class Database {
 		
 		try {
 			ps = con.prepareStatement("SELECT * FROM Fine f, Borrowing bor WHERE f.borid = bor.borid AND bor.bid = ? AND f.amount > 0");
+
+			ps.setInt(1, bid);
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	
+	public ResultSet searchBorrowingsByClerk(int bid) {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ? AND inDate IS NULL");
 			ps.setInt(1, bid);
 			
 			rs = ps.executeQuery();
