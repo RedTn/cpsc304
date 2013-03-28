@@ -1,5 +1,8 @@
 package com.proj3.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Borrower {
 	private int bid;
 	private String name, address, phone, email, sinOrStNo;
@@ -17,6 +20,20 @@ public class Borrower {
 	
 	public Borrower() {
 		
+	}
+	
+	public static Borrower getInstance(ResultSet rs) throws SQLException {
+		Borrower currBorrower = new Borrower();
+		currBorrower.setId(rs.getInt("bid"));
+		currBorrower.setName(rs.getString("name"));
+		currBorrower.setAddress(rs.getString("address"));
+		currBorrower.setPhone(rs.getString("phone"));
+		currBorrower.setEmail(rs.getString("emailAddress"));
+		currBorrower.setSinOrStNo(rs.getString("sinOrStNo"));
+		BorrowerType type = BorrowerType.get(rs.getString("type"));
+		currBorrower.setType(type);
+		
+		return currBorrower;
 	}
 	
 	public int getId() {

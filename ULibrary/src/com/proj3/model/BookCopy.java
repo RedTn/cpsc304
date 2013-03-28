@@ -1,5 +1,8 @@
 package com.proj3.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class BookCopy {
 	private Book book;
 	private int copyNo;
@@ -9,6 +12,13 @@ public class BookCopy {
 		this.book = book;
 		this.copyNo = copyNo;
 		this.status = status;
+	}
+	
+	public static BookCopy getInstance(ResultSet rs, Book book) throws SQLException {
+		int copyNo = rs.getInt("copyNo");
+		CopyStatus status = CopyStatus.get(rs.getString("status"));
+
+		return new BookCopy(book, copyNo, status);
 	}
 	
 	public Book getBook() {

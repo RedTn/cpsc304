@@ -160,7 +160,7 @@ public class Database {
 		return false;
 	}
 
-	public ResultSet searchBooksByKeyword(String keyword) {
+	public ResultSet selectBooksByKeyword(String keyword) {
 		ResultSet rs  = null;
 
 		try {
@@ -188,7 +188,7 @@ public class Database {
 		return rs;
 	}
 
-	public ResultSet searchForBookCopiesByCallNumber(String callNumber) {
+	public ResultSet selectBookCopiesByCallNumber(String callNumber) {
 		ResultSet rs  = null;
 
 		try {
@@ -207,7 +207,7 @@ public class Database {
 		return rs;
 	}
 	
-	public ResultSet searchBorrowingsByBorrower(int bid) {
+	public ResultSet selectUnreturnedBorrowingsByBorrower(int bid) {
 		ResultSet rs  = null;
 
 		try {
@@ -226,14 +226,53 @@ public class Database {
 		return rs;
 	}
 	
-	public ResultSet selectBorrowerByIdAndPassword(int bid, String password) {
+	public ResultSet selectBookByCallNumber(String callNumber) {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM Book WHERE callNumber = ?");
+
+			ps.setString(1, callNumber);
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+			
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	
+	public ResultSet selectCopyByCallAndCopyNumber(String callNumber, int copyNo) {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM BookCopy WHERE callNumber = ? AND copyNo = ?");
+
+			ps.setString(1, callNumber);
+			ps.setInt(2, copyNo);
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	
+	public ResultSet selectBorrowerByIdAndPassword(int bid, String pw) {
 		ResultSet rs  = null;
 
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrower WHERE bid = ? AND password = ?");
 
 			ps.setInt(1, bid);
-			ps.setString(2, password);
+			ps.setString(2, pw);
 			
 			rs = ps.executeQuery();
 
@@ -244,5 +283,41 @@ public class Database {
 		}
 
 		return rs;	
+	}
+	
+	public ResultSet selectHoldRequestsByBorrower(int bid) {
+		ResultSet rs = null;
+		
+		try {
+			ps = con.prepareStatement("SELECT * FROM HoldRequest WHERE bid = ?");
+			ps.setInt(1, bid);
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;	
+	}
+	
+	public ResultSet selectFineAndBorrowingByBorrower(int bid) {
+		ResultSet rs = null;
+		
+		try {
+			ps = con.prepareStatement("SELECT * FROM Fine f, Borrowing bor WHERE f.borid = bor.borid AND bor.bid = ? AND f.amount > 0");
+			ps.setInt(1, bid);
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
 	}
 }
