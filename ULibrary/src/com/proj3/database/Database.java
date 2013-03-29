@@ -9,8 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import oracle.sql.DATE;
 
@@ -100,7 +98,7 @@ public class Database {
 
 			ps.setString(6, sinOrStNo);
 
-			ps.setDate(7, (java.sql.Date) expiryDate);
+			ps.setDate(7, new java.sql.Date(expiryDate.getTime()));
 
 			ps.setString(8, type.getType());
 
@@ -146,8 +144,34 @@ public class Database {
 		return false;
 	}
 
-	public boolean insertHoldRequest(String bid, String callNumber,
-			DATE issuedDate) {
+	public boolean insertHoldRequest(int bid, String callNumber, Date issuedDate) {
+		try {
+			ps = con.prepareStatement("INSERT INTO Borrower VALUES (bid_counter.nextval,?,?,?,?,?,?,?,?)");
+
+			ps.setInt(1, bid);
+
+			ps.setString(2, callNumber);
+
+			ps.setDate(3, new java.sql.Date(issuedDate.getTime()));
+			
+			ps.executeUpdate();
+
+			// commit work
+			con.commit();
+
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+			try {
+				// undo the insert
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+		}
 		return false;
 	}
 
@@ -337,7 +361,7 @@ public class Database {
 		return rs;	
 	}
 	
-	public ResultSet selectFineAndBorrowingByBorrower(int bid) {
+	public ResultSet selectOutstandingFineAndBorrowByBorrower(int bid) {
 		ResultSet rs = null;
 		
 		try {
@@ -354,6 +378,33 @@ public class Database {
 		}
 
 		return rs;
+	}
+	
+	public boolean updateFineAmountField(int fid, float amount) {
+		try {
+			ps = con.prepareStatement("UPDATE Fine SET amount=? WHERE fid=?");
+			
+			ps.setFloat(1, amount);
+			ps.setInt(2, fid);
+			
+			ps.executeUpdate();
+			con.commit();
+
+			ps.close();
+			return true;
+		
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		
+			try {
+				con.rollback();
+			} catch (SQLException e) {
+				System.out.println("Message: " + ex.getMessage());
+			}
+			
+		}
+		
+		return false;
 	}
 	
 	public ResultSet searchBorrowingsByClerk(int bid) {

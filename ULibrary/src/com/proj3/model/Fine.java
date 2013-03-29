@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class Fine {
 	private int fid;
-	private double amount;
+	private float amount;
 	private Date issuedDate;
 	private Date paidDate;
 	private Borrowing borrow;
@@ -34,10 +34,10 @@ public class Fine {
 	public void setFid(int fid) {
 		this.fid = fid;
 	}
-	public double getAmount() {
+	public float getAmount() {
 		return amount;
 	}
-	public void setAmount(double amount) {
+	public void setAmount(float amount) {
 		this.amount = amount;
 	}
 	public Date getIssuedDate() {
