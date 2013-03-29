@@ -4,6 +4,7 @@ package com.proj3.gui;
 //Gui package
 import java.awt.Dimension;
 import java.awt.Font;
+import java.sql.SQLException;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -54,11 +55,7 @@ public class MainScreen extends JFrame {
 		//TODO implement this
 	}
 	
-	public static void main(String args[]) {
-		ClerkApp ca = ClerkApp(db);
-		Borrowing[] b = ca.checkOverdueItems();
-		for (int i=0; i<b.length; i++)
-			System.out.println(b[i]);
+	public static void main(String args[]) throws SQLException {
 		 
 		Database db = new Database("passwordfile");
 		if (db.connect()) {
@@ -71,6 +68,11 @@ public class MainScreen extends JFrame {
 			mygui.setLocation(700, 400);
 			mygui.setVisible(true);
 			mygui.setTitle("Login");
+			
+			ClerkApp ca = new ClerkApp(db);
+			Borrowing[] b = ca.checkOverdueItems();
+			for (int i=0; i<b.length; i++)
+				System.out.println(b[i]);
 		} else {
 			
 		}

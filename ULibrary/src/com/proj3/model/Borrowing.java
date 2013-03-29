@@ -102,20 +102,12 @@ public class Borrowing {
 		return callNumber;
 	}
 	
-<<<<<<< HEAD
-	public boolean isOverDue() {
-		if (copy.getStatus() == CopyStatus.in) {
-			return false;
-		}
-		
-		return inDate.before(new Date());
-=======
 	public void setBorid(int borid) {
 		this.borid = borid;
 	}
 	
 	public int getBorid() {
 		return borid;
->>>>>>> checkoverdue done, needs testing
+
 	}
 }
