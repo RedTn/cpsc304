@@ -1,4 +1,3 @@
-
 DROP TABLE Fine;
 DROP TABLE Borrowing;
 DROP TABLE HoldRequest;
@@ -11,3 +10,4 @@ DROP TABLE BorrowerType;
 DROP SEQUENCE bid_counter;
 DROP SEQUENCE borid_counter;
 DROP SEQUENCE hid_counter;
+DROP SEQUENCE fid_counter;
