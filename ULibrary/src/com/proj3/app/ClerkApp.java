@@ -42,7 +42,32 @@ public class ClerkApp {
 		return currBorrower;
 	}
 	
+	public void addBorrower() throws SQLException {
+		String password;
+		String name;
+		String address;
+		String phone;
+		String email;
+		String sinOrStNo;
+		Date expiryDate;
+		BorrowerType type;
+		Boolean result;
+		
+		/*
+		 * TODO: GUI inserts values for function
+		result = insertBorrower(password, name, address,
+				phone, email, sinOrStNo, expiryDate,
+				type);
+				*/
+	}
 	
-	
-	
+	public void checkOutItems(int bid, Book[] books) throws SQLException {
+		ResultSet rs = db.selectBorrowerById(bid);
+		
+		/*
+		 * TODO: GUI checks out item
+		insertBorrowing(bid, callNumber,
+			copyNo, outDate, inDate);
+			*/
+	}
 }
