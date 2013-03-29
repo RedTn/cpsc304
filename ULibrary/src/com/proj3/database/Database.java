@@ -245,6 +245,7 @@ public class Database {
 
 		return rs;
 	}
+	
 
 	public ResultSet selectBookCopiesByCallNumber(String callNumber) {
 		ResultSet rs  = null;
@@ -277,6 +278,41 @@ public class Database {
 
 			ps.close();
 
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	
+	public ResultSet selectBooksBorrowedInAYear(int year) {
+		ResultSet rs = null;
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE outDate = ?");
+
+			ps.setInt(5, year);
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	
+	public ResultSet selectAllBooks() {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM Book");
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+			
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
