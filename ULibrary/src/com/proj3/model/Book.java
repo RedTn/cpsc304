@@ -1,5 +1,7 @@
 package com.proj3.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +26,25 @@ public class Book {
 		authors = new HashSet<String>();
 		subjects = new HashSet<String>();
 		copies = new HashSet<BookCopy>();
+	}
+	
+	public static Book getInstance(ResultSet rs) throws SQLException {
+		String callNumber = rs.getString("callNumber");
+		Book book = new Book(callNumber);
+
+		String isbn = rs.getString("isbn");
+		String title = rs.getString("title");
+		String mainAuthor = rs.getString("mainAuthor");
+		String publisher = rs.getString("publisher");
+		String year = rs.getString("year");
+
+		book.setIsbn(isbn);
+		book.setTitle(title);
+		book.setMainAuthor(mainAuthor);
+		book.setPublisher(publisher);
+		book.setYear(year);
+
+		return book;
 	}
 	
 	public String getCallNumber() {

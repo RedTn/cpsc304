@@ -9,4 +9,5 @@ DROP TABLE Book;
 DROP TABLE Borrower;
 DROP TABLE BorrowerType;
 DROP SEQUENCE bid_counter;
-
+DROP SEQUENCE borid_counter;
+DROP SEQUENCE hid_counter;

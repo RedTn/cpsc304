@@ -2,103 +2,137 @@ package com.proj3.app;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.proj3.database.Database;
 import com.proj3.model.Book;
 import com.proj3.model.BookCopy;
 import com.proj3.model.Borrower;
-import com.proj3.model.BorrowerType;
 import com.proj3.model.Borrowing;
-import com.proj3.model.CopyStatus;
+import com.proj3.model.Fine;
+import com.proj3.model.HoldRequest;
 
 public class BorrowerApp {
 	private Database db;
 	private Borrower currBorrower;
-	
+
 	public BorrowerApp(Database db) {
 		this.db = db;
 	}
-	
+
 	public Borrower login(int bid, String password) throws SQLException {
 		ResultSet rs = db.selectBorrowerByIdAndPassword(bid, password);
 		currBorrower = null;
 		while (rs.next()) {
-			currBorrower = new Borrower();
-			currBorrower.setId(bid);
-			currBorrower.setName(rs.getString("name"));
-			currBorrower.setAddress(rs.getString("address"));
-			currBorrower.setPhone(rs.getString("phone"));
-			currBorrower.setEmail(rs.getString("emailAddress"));
-			currBorrower.setSinOrStNo(rs.getString("sinOrStNo"));
-			BorrowerType type = BorrowerType.get(rs.getString("type"));
-			currBorrower.setType(type);
+			currBorrower = Borrower.getInstance(rs);
 		}
 		return currBorrower;
+	}
+
+	public HoldRequest[] getHolds() throws SQLException {
+		if (currBorrower == null) {
+			return new HoldRequest[0];
+		}
+
+		ResultSet rs = db.selectHoldRequestsByBorrower(currBorrower.getId());
+
+		List<HoldRequest> holds = new ArrayList<HoldRequest>();
+
+		while (rs.next()) {
+			ResultSet bookRs = db.selectBookByCallNumber(rs.getString("callNumber"));
+			Book book = Book.getInstance(bookRs);
+			
+			holds.add(HoldRequest.getInstance(rs, book, currBorrower));
+		}
+
+		return (HoldRequest[]) holds.toArray();
+	}
+	
+	public float payFine(Fine fine, float amount) {
+		float remaining = 0;
+		if (fine.getAmount() > amount) {
+			remaining = fine.getAmount() - amount;
+		}
+		
+		boolean success = db.updateFineAmountField(fine.getFid(), remaining);
+	
+		if (success) {
+			return remaining;
+		}
+		
+		return fine.getAmount();
+	}
+	
+	public boolean placeHold(Book book) {
+		return placeHold(book.getCallNumber());
+	}
+	
+	public boolean placeHold(String callNumber) {
+		return db.insertHoldRequest(currBorrower.getId(), callNumber, new Date());
+	}
+	
+	public Fine[] getFines() throws SQLException {
+		if (currBorrower == null) {
+			return new Fine[0];
+		}
+		
+		ResultSet rs = db.selectOutstandingFineAndBorrowByBorrower(currBorrower.getId());
+		
+		List<Fine> fines = new ArrayList<Fine>();
+		
+		while(rs.next()) {
+
+			String callNumber = rs.getString("callNumber");
+			int copyNo = rs.getInt("copyNo");
+			
+			ResultSet copyRs = db.selectCopyByCallAndCopyNumber(callNumber, copyNo);
+			ResultSet bookRs = db.selectBookByCallNumber(callNumber);
+			
+			Book book = Book.getInstance(bookRs);
+			BookCopy copy = BookCopy.getInstance(copyRs, book);
+
+			fines.add(Fine.getInstance(rs, currBorrower, copy));
+		}
+		
+		return (Fine[])fines.toArray();
 	}
 	
 	public Borrowing[] getBorrowings() throws SQLException {
 		if (currBorrower == null) {
 			return new Borrowing[0];
 		}
-		
-		ResultSet rs = db.searchBorrowingsByBorrower(currBorrower.getId());
-		
+
+		ResultSet rs = db.selectUnreturnedBorrowingsByBorrower(currBorrower.getId());
+
 		List<Borrowing> borrows = new ArrayList<Borrowing>();
-		
+
 		while (rs.next()) {
-			Borrowing b = new Borrowing();
-			
-			int borid = rs.getInt("borid");
 			String callNumber = rs.getString("callNumber");
 			int copyNo = rs.getInt("copyNo");
-			Date outDate = rs.getDate("outDate");
 			
-			Calendar cal = Calendar.getInstance();
-	        cal.setTime(outDate);
-	        cal.add(Calendar.DATE, currBorrower.getType().getBorrowingLimit()); //minus number would decrement the days
-	        Date inDate = cal.getTime();
-	        
-			b.setBid(currBorrower.getId());
-			b.setBorid(borid);
-			b.setCallNumber(callNumber);
-			b.setCopyNo(copyNo);
-			b.setOutDate(outDate);
-			b.setInDate(inDate);
+			ResultSet copyRs = db.selectCopyByCallAndCopyNumber(callNumber, copyNo);
+			ResultSet bookRs = db.selectBookByCallNumber(callNumber);
 			
+			Book book = Book.getInstance(bookRs);
+			BookCopy copy = BookCopy.getInstance(copyRs, book);
+			Borrowing b = Borrowing.getInstance(rs, currBorrower, copy);
 			borrows.add(b);
 		}
-		
-		return (Borrowing[])borrows.toArray();
+
+		return (Borrowing[]) borrows.toArray();
 	}
-	
+
 	public Book[] searchBooksByKeyword(String keyword) throws SQLException {
-		ResultSet rs = db.searchBooksByKeyword(keyword);
+		ResultSet rs = db.selectBooksByKeyword(keyword);
 
 		Map<String, Book> books = new HashMap<String, Book>();
 		while (rs.next()) {
-			String callNumber = rs.getString("callNumber");
+
 			Book book;
+			String callNumber = rs.getString("callNumber");
 			if (!books.containsKey(callNumber)) {
-				book = new Book(callNumber);
-
-				String isbn = rs.getString("isbn");
-				String title = rs.getString("title");
-				String mainAuthor = rs.getString("mainAuthor");
-				String publisher = rs.getString("publisher");
-				String year = rs.getString("year");
-
-				book.setIsbn(isbn);
-				book.setTitle(title);
-				book.setMainAuthor(mainAuthor);
-				book.setPublisher(publisher);
-				book.setYear(year);
-				books.put(callNumber, book);
+				book = Book.getInstance(rs);
+				books.put(book.getCallNumber(), book);
 			} else {
 				book = books.get(callNumber);
 			}
@@ -116,18 +150,14 @@ public class BorrowerApp {
 
 		for (Book b : books.values()) {
 			String callNum = b.getCallNumber();
-			ResultSet copies = db.searchForBookCopiesByCallNumber(callNum);
+			ResultSet copies = db.selectBookCopiesByCallNumber(callNum);
 
 			while (copies.next()) {
-				int copyNo = copies.getInt("copyNo");
-				CopyStatus status = CopyStatus.get(rs.getString("status"));
-
-				b.addCopy(new BookCopy(b, copyNo, status));
+				b.addCopy(BookCopy.getInstance(copies, b));
 			}
 		}
 
 		return (Book[]) books.values().toArray();
 	}
-	
-	
+
 }

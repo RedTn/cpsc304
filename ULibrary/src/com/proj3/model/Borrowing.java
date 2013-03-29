@@ -1,56 +1,59 @@
 package com.proj3.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Borrowing {
 	
-	private int borid, bid, copyNo;
-	private String callNumber;
+	private Borrower borrower;
+	private BookCopy copy;
+	private int bid;
 	private Date outDate, inDate;
 	
 	public Borrowing() {
 		
 	}
 	
-	public Borrowing(int borid, int bid, String callNumber, int copyNo, Date outDate, Date inDate) {
-		this.setBorid(borid);
+	public Borrowing(int bid, BookCopy copy, Borrower borrower, Date outDate, Date inDate) {
+		this.setBorrower(borrower);
 		this.setBid(bid);
-		this.setCallNumber(callNumber);
-		this.setCopyNo(copyNo);
+		this.setCopy(copy);
 		this.setOutDate(outDate);
 		this.setInDate(inDate);
 	}
 
-	public int getBorid() {
-		return borid;
-	}
+	public static Borrowing getInstance(ResultSet rs, Borrower borrower, BookCopy copy) throws SQLException {
+		Borrowing b = new Borrowing();
 
-	public void setBorid(int borid) {
-		this.borid = borid;
-	}
+		int bid = rs.getInt("bid");
+		
+		Date outDate = rs.getDate("outDate");
+		Date inDate = rs.getDate("inDate");
 
+		if (rs.wasNull()) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(outDate);
+			cal.add(Calendar.DATE, borrower.getType().getBorrowingLimit());
+			inDate = cal.getTime();
+		}
+		
+		b.setBid(bid);
+		b.setBorrower(borrower);
+		b.setCopy(copy);
+		b.setOutDate(outDate);
+		b.setInDate(inDate);
+		
+		return b;
+	}
+	
 	public int getBid() {
 		return bid;
 	}
 
 	public void setBid(int bid) {
 		this.bid = bid;
-	}
-
-	public int getCopyNo() {
-		return copyNo;
-	}
-
-	public void setCopyNo(int copyNo) {
-		this.copyNo = copyNo;
-	}
-
-	public String getCallNumber() {
-		return callNumber;
-	}
-
-	public void setCallNumber(String callNumber) {
-		this.callNumber = callNumber;
 	}
 
 	public Date getOutDate() {
@@ -67,6 +70,22 @@ public class Borrowing {
 
 	public void setInDate(Date inDate) {
 		this.inDate = inDate;
+	}
+
+	public Borrower getBorrower() {
+		return borrower;
+	}
+
+	public void setBorrower(Borrower borrower) {
+		this.borrower = borrower;
+	}
+
+	public BookCopy getCopy() {
+		return copy;
+	}
+
+	public void setCopy(BookCopy copy) {
+		this.copy = copy;
 	}
 	
 	
