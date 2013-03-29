@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import oracle.sql.DATE;
@@ -125,22 +126,131 @@ public class Database {
 
 	public boolean insertBook(String callNumber, String isbn, String title,
 			String mainAuthor, String publisher, String year) {
-		// yet to be implemented
+		try {
+			ps = con.prepareStatement("INSERT INTO Book VALUES (?,?,?,?,?,?)");
+
+			ps.setString(1, callNumber);
+
+			ps.setString(2, isbn);
+
+			ps.setString(3, title);
+
+			ps.setString(4, mainAuthor);
+
+			ps.setString(5, publisher);
+
+			ps.setString(6, year);
+
+			ps.executeUpdate();
+
+			// commit work
+			con.commit();
+
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+			try {
+				// undo the insert
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+		}
 		return false;
 	}
 
 	public boolean insertHasAuthor(String callNumber, String authorName) {
 
+		try {
+			ps = con.prepareStatement("INSERT INTO HasAuthor VALUES (?,?)");
+
+			ps.setString(1, callNumber);
+
+			ps.setString(2, authorName);
+
+			ps.executeUpdate();
+
+			// commit work
+			con.commit();
+
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+			try {
+				// undo the insert
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+		}
 		return false;
 	}
 
 	public boolean insertHasSubject(String callNumber, String subject) {
 
+		try {
+			ps = con.prepareStatement("INSERT INTO HasSubject VALUES (?,?)");
+
+			ps.setString(1, callNumber);
+
+			ps.setString(2, subject);
+
+			ps.executeUpdate();
+
+			// commit work
+			con.commit();
+
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+			try {
+				// undo the insert
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+		}
 		return false;
 	}
 
-	public boolean insertBookCopy(String callNumber, String copyNo,
+	public boolean insertBookCopy(String callNumber, int copyNo,
 			CopyStatus status) {
+		try {
+			ps = con.prepareStatement("INSERT INTO BookCopy VALUES (?,?,?)");
+
+			ps.setString(1, callNumber);
+
+			ps.setInt(2, copyNo);
+			
+			ps.setString(3, status.getStatus());
+
+			ps.executeUpdate();
+
+			// commit work
+			con.commit();
+
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+			try {
+				// undo the insert
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+		}
 		return false;
 	}
 
@@ -213,11 +323,350 @@ public class Database {
 		return false;
 	}
 
-	public boolean insertFine(double amount, DATE issuedDate, DATE paidDate,
-			String borid) {
+	public boolean insertFine(double amount, Date issuedDate, Date paidDate,
+			int borid) {
+		try {
+			ps = con.prepareStatement("INSERT INTO Fine VALUES (fid_counter.nextval,?,?,?,?)");
+
+			ps.setDouble(1, amount);
+
+			ps.setDate(2, new java.sql.Date(issuedDate.getTime()));
+			
+			ps.setDate(3, new java.sql.Date(paidDate.getTime()));
+			
+			ps.setInt(4, borid);
+
+			ps.executeUpdate();
+
+			// commit work
+			con.commit();
+
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+			try {
+				// undo the insert
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+		}
 		return false;
 	}
 
+	public boolean deleteBorrower(int bid) {
+		try
+		{
+		  ps = con.prepareStatement("DELETE FROM Borrower WHERE bid = ?");
+		
+		  ps.setInt(1, bid);
+
+		  int rowCount = ps.executeUpdate();
+
+		  if (rowCount == 0)
+		  {
+		      //Does not exist
+			  return false;
+		  }
+
+		  con.commit();
+
+		  ps.close();
+		  
+		  return true;
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+
+	            try 
+		    {
+			con.rollback();	
+		    }
+		    catch (SQLException ex2)
+		    {
+			System.out.println("Message: " + ex2.getMessage());
+			System.exit(-1);
+		    }
+	        return false;
+		}
+	}
+	
+	public boolean deleteBook(String callNumber) {
+		try
+		{
+		  ps = con.prepareStatement("DELETE FROM Book WHERE callNumber = ?");
+		
+		  ps.setString(1, callNumber);
+
+		  int rowCount = ps.executeUpdate();
+
+		  if (rowCount == 0)
+		  {
+		      //Does not exist
+			  return false;
+		  }
+
+		  con.commit();
+
+		  ps.close();
+		  
+		  return true;
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+
+	            try 
+		    {
+			con.rollback();	
+		    }
+		    catch (SQLException ex2)
+		    {
+			System.out.println("Message: " + ex2.getMessage());
+			System.exit(-1);
+		    }
+	        return false;
+		}
+	}
+	
+	public boolean deleteHasAuthor(String callNumber, String name) {
+		try
+		{
+		  ps = con.prepareStatement("DELETE FROM HasAuthor WHERE callNumber = ? AND name = ?");
+		
+		  ps.setString(1, callNumber);
+		  
+		  ps.setString(2, name);
+
+		  int rowCount = ps.executeUpdate();
+
+		  if (rowCount == 0)
+		  {
+		      //Does not exist
+			  return false;
+		  }
+
+		  con.commit();
+
+		  ps.close();
+		  
+		  return true;
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+
+	            try 
+		    {
+			con.rollback();	
+		    }
+		    catch (SQLException ex2)
+		    {
+			System.out.println("Message: " + ex2.getMessage());
+			System.exit(-1);
+		    }
+	        return false;
+		}
+	}
+	
+	public boolean deleteHasSubject(String callNumber, String subject) {
+		try
+		{
+		  ps = con.prepareStatement("DELETE FROM HasSubject WHERE callNumber = ? AND subject = ?");
+		
+		  ps.setString(1, callNumber);
+		  
+		  ps.setString(2, subject);
+
+		  int rowCount = ps.executeUpdate();
+
+		  if (rowCount == 0)
+		  {
+		      //Does not exist
+			  return false;
+		  }
+
+		  con.commit();
+
+		  ps.close();
+		  
+		  return true;
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+
+	            try 
+		    {
+			con.rollback();	
+		    }
+		    catch (SQLException ex2)
+		    {
+			System.out.println("Message: " + ex2.getMessage());
+			System.exit(-1);
+		    }
+	        return false;
+		}
+	}
+	
+	public boolean deleteBookCopy(String callNumber, int copyNo) {
+		try
+		{
+		  ps = con.prepareStatement("DELETE FROM BookCopy WHERE callNumber = ? AND copyNo = ?");
+		
+		  ps.setString(1, callNumber);
+		  
+		  ps.setInt(2, copyNo);
+
+		  int rowCount = ps.executeUpdate();
+
+		  if (rowCount == 0)
+		  {
+		      //Does not exist
+			  return false;
+		  }
+
+		  con.commit();
+
+		  ps.close();
+		  
+		  return true;
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+
+	            try 
+		    {
+			con.rollback();	
+		    }
+		    catch (SQLException ex2)
+		    {
+			System.out.println("Message: " + ex2.getMessage());
+			System.exit(-1);
+		    }
+	        return false;
+		}
+	}
+	
+	public boolean deleteHoldRequest(int hid) {
+		try
+		{
+		  ps = con.prepareStatement("DELETE FROM HoldRequest WHERE hid = ?");
+		
+		  ps.setInt(1, hid);
+
+		  int rowCount = ps.executeUpdate();
+
+		  if (rowCount == 0)
+		  {
+		      //Does not exist
+			  return false;
+		  }
+
+		  con.commit();
+
+		  ps.close();
+		  
+		  return true;
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+
+	            try 
+		    {
+			con.rollback();	
+		    }
+		    catch (SQLException ex2)
+		    {
+			System.out.println("Message: " + ex2.getMessage());
+			System.exit(-1);
+		    }
+	        return false;
+		}
+	}
+	
+	public boolean deleteBorrowing(int borid) {
+		try
+		{
+		  ps = con.prepareStatement("DELETE FROM Borrowing WHERE borid = ?");
+		
+		  ps.setInt(1, borid);
+
+		  int rowCount = ps.executeUpdate();
+
+		  if (rowCount == 0)
+		  {
+		      //Does not exist
+			  return false;
+		  }
+
+		  con.commit();
+
+		  ps.close();
+		  
+		  return true;
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+
+	            try 
+		    {
+			con.rollback();	
+		    }
+		    catch (SQLException ex2)
+		    {
+			System.out.println("Message: " + ex2.getMessage());
+			System.exit(-1);
+		    }
+	        return false;
+		}
+	}
+	
+	public boolean deleteFine(int fid) {
+		try
+		{
+		  ps = con.prepareStatement("DELETE FROM Fine WHERE fid = ?");
+		
+		  ps.setInt(1, fid);
+
+		  int rowCount = ps.executeUpdate();
+
+		  if (rowCount == 0)
+		  {
+		      //Does not exist
+			  return false;
+		  }
+
+		  con.commit();
+
+		  ps.close();
+		  
+		  return true;
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+
+	            try 
+		    {
+			con.rollback();	
+		    }
+		    catch (SQLException ex2)
+		    {
+			System.out.println("Message: " + ex2.getMessage());
+			System.exit(-1);
+		    }
+	        return false;
+		}
+	}
+	
 	public ResultSet selectBooksByKeyword(String keyword) {
 		ResultSet rs  = null;
 
@@ -303,6 +752,7 @@ public class Database {
 		return rs;
 	}
 	
+	//Display all books
 	public ResultSet selectAllBooks() {
 		ResultSet rs  = null;
 
@@ -496,5 +946,161 @@ public class Database {
 		}
 
 		return rs;	
+	}
+	
+	public ResultSet searchBorrowerTypeByType(BorrowerType type) {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM BorrowerType WHERE type = ?");
+			ps.setString(1, type.getType());
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	
+	public ResultSet searchOverDueByDate(Date duedate) {
+		ResultSet rs = null;
+		
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate = IS NULL AND outDate > ?");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			sdf.format(duedate);
+			
+			//TODO: Check if correct implementation
+			ps.setString(1, duedate.toString());
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	
+	public ResultSet displayBorrower() {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrower");
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	public ResultSet displayHasAuthor() {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM HasAuthor");
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	public ResultSet displayHasSubject() {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM HasSubject");
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	
+	public ResultSet displayBookCopy() {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM BookCopy");
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	public ResultSet displayHoldRequest() {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM HoldRequest");
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	
+	public ResultSet displayBorrowing() {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrowing");
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
+	
+	public ResultSet displayFine() {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM Fine");
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
 	}
 }

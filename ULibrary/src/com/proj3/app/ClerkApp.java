@@ -148,8 +148,25 @@ public class ClerkApp {
 			
 			
 		}
-
-
-
+	}
+	
+	public void checkOverdueItems() throws SQLException {
+		if (currBorrower == null) {
+			return;
+		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		//Automatically initialized to current date
+		Date currDate = new Date();
+		//Format dates
+		sdf.format(currDate);
+		
+		//TODO: Add how many days it is from curdate till duedate
+		
+		ResultSet rs = db.searchOverDueByDate(currDate);
+		while (rs.next()) {
+			//Display overdues
+			
+		}
 	}
 }
