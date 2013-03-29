@@ -2,19 +2,22 @@ package com.proj3.model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 public class Borrower {
 	private int bid;
 	private String name, address, phone, email, sinOrStNo;
+	private Date expiryDate;
 	private BorrowerType type;
 	
 	public Borrower(int bid, String name, String address, String phone, 
-			String email, String sinOrStNo, BorrowerType type) {
+			String email, String sinOrStNo, Date expiryDate, BorrowerType type) {
 		this.setName(name);
 		this.setAddress(address);
 		this.setPhone(phone);
 		this.setEmail(email);
 		this.setSinOrStNo(sinOrStNo);
+		this.setExpiryDate(expiryDate);
 		this.type = type;
 	}
 	
@@ -31,6 +34,7 @@ public class Borrower {
 		currBorrower.setEmail(rs.getString("emailAddress"));
 		currBorrower.setSinOrStNo(rs.getString("sinOrStNo"));
 		BorrowerType type = BorrowerType.get(rs.getString("type"));
+		currBorrower.setExpiryDate(rs.getDate("expiryDate"));
 		currBorrower.setType(type);
 		
 		return currBorrower;
@@ -90,7 +94,14 @@ public class Borrower {
 
 	public void setType(BorrowerType type) {
 		this.type = type;
-		
+	}
+	
+	public void setExpiryDate(Date expiryDate) {
+		this.expiryDate = expiryDate;
+	}
+	
+	public Date getExpiryDate() {
+		return expiryDate;
 	}
 
 }
