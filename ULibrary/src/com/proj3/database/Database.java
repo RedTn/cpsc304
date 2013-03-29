@@ -424,4 +424,24 @@ public class Database {
 
 		return rs;
 	}
+	
+	//Exclusive for Clerk
+	public ResultSet selectBorrowerById(int bid) {
+		ResultSet rs  = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrower WHERE bid = ?");
+
+			ps.setInt(1, bid);
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;	
+	}
 }
