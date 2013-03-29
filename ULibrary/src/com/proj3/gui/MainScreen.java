@@ -12,6 +12,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.proj3.database.Database;
+import com.proj3.model.Borrowing;
+import com.proj3.app.*;
+
 //We need to import the java.sql package to use JDBC
 //for reading from the command line
 //for the login window
@@ -52,6 +55,11 @@ public class MainScreen extends JFrame {
 	}
 	
 	public static void main(String args[]) {
+		ClerkApp ca = ClerkApp(db);
+		Borrowing[] b = ca.checkOverdueItems();
+		for (int i=0; i<b.length; i++)
+			System.out.println(b[i]);
+		 
 		Database db = new Database("passwordfile");
 		if (db.connect()) {
 			MainScreen mygui = new MainScreen(db);

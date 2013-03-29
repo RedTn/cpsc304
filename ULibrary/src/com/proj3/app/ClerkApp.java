@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.lang.Integer;
 
 import com.proj3.database.Database;
 import com.proj3.model.Book;
@@ -97,7 +98,7 @@ public class ClerkApp {
 			rs = db.selectBookCopiesByCallNumber(callNumbers[i]);
 			while (rs.next()) {
 				bc = BookCopy.getInstance(rs, null);
-
+				
 			}
 		}
 		////
@@ -123,13 +124,14 @@ public class ClerkApp {
 
 			Borrowing b = Borrowing.getInstance(rs, null, null);
 
-			int bid = b.getBid();
 			String callNumber = b.getCallNumber();
 			Date outDate = b.getOutDate();
 
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			
 			//Automatically initialized to current date
 			Date currDate = new Date();
+			
 			//Format dates
 			sdf.format(currDate);
 			sdf.format(outDate);
@@ -137,36 +139,74 @@ public class ClerkApp {
 			/*TODO: Compare the dates, apply fine if necessary
 		updateFineAmountField(fid,amount);
 			 */
+			
 			ResultSet holdRs = db.selectHoldRequestsByCall(callNumber);
-			if (holdRs.first()) {
+			ResultSet copyRs = db.selectBookCopiesByCallNumber(callNumber);
+			if (holdRs.next()) {
 				//There is a hold
-				
+				if(copyRs.next()) {
+					BookCopy bc = BookCopy.getInstance(rs, null);
+					if(bc.getStatus().equals("out")){
+						if(!db.updateFirstCopyStatus("on-hold", callNumber))
+						{
+							return;
+						}
+						//TODO: Send message to Borrower
+						
+					}
+				}
 			}else {
 				//There is no hold
-				
+				if(copyRs.next()) {
+					BookCopy bc = BookCopy.getInstance(rs, null);
+					if(bc.getStatus().equals("out")){
+						if(!db.updateFirstCopyStatus("in", callNumber))
+						{
+							return;
+						}
+					}
+				}
 			}
-			
 			
 		}
 	}
 	
-	public void checkOverdueItems() throws SQLException {
-		if (currBorrower == null) {
-			return;
-		}
+	public Borrowing[] checkOverdueItems() throws SQLException {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		//Automatically initialized to current date
-		Date currDate = new Date();
-		//Format dates
-		sdf.format(currDate);
+	
+		//Automatically initialized to current date	
+		Calendar c = Calendar.getInstance();
 		
-		//TODO: Add how many days it is from curdate till duedate
+		//Due date for current books are a week before
+		c.add(Calendar.DATE, -7);
 		
-		ResultSet rs = db.searchOverDueByDate(currDate);
-		while (rs.next()) {
-			//Display overdues
-			
+		sdf.format(c.getTime());
+		
+		ResultSet rs = db.searchOverDueByDate(c.getTime());
+		Map<Integer, Borrowing> borrows = new HashMap<Integer, Borrowing>();
+		while(rs.next()) {
+			Borrowing borrow;
+			String borid = rs.getString("borid");
+			if (!borrows.containsKey(borid)) {
+				borrow = Borrowing.getInstance(rs,null,null);
+				borrows.put(borrow.getBorid(), borrow);
+			} else {
+				borrow = borrows.get(borid);
+			}
+
+			int bid = rs.getInt("bid");
+			if (!rs.wasNull()) {
+				borrow.setBid(bid);
+			}
+
+			String callNumber = rs.getString("callNumber");
+			if (!rs.wasNull()) {
+				borrow.setCallNumber(callNumber);
+			}
+		}
+	
+		return (Borrowing[]) borrows.values().toArray();
+		
 		}
 	}
-}

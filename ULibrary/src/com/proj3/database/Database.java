@@ -910,6 +910,33 @@ public class Database {
 		return false;
 	}
 	
+	public boolean updateFirstCopyStatus(String status, String callNumber) {
+		try {
+			ps = con.prepareStatement("UPDATE TOP (1) BookCopy SET status=? WHERE callNumber=?");
+			
+			ps.setString(1, status);
+			ps.setString(2, callNumber);
+			
+			ps.executeUpdate();
+			con.commit();
+
+			ps.close();
+			return true;
+		
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		
+			try {
+				con.rollback();
+			} catch (SQLException e) {
+				System.out.println("Message: " + ex.getMessage());
+			}
+			
+		}
+		
+		return false;
+	}
+	
 	public ResultSet searchBorrowingsByClerk(int borid) {
 		ResultSet rs  = null;
 
