@@ -10,6 +10,7 @@ public class Borrowing {
 	private Borrower borrower;
 	private BookCopy copy;
 	private int bid;
+	private String callNumber;
 	private Date outDate, inDate;
 	
 	public Borrowing() {
@@ -28,6 +29,7 @@ public class Borrowing {
 		Borrowing b = new Borrowing();
 
 		int bid = rs.getInt("bid");
+		String callNumber = rs.getString("callNumber");
 		
 		Date outDate = rs.getDate("outDate");
 		Date inDate = rs.getDate("inDate");
@@ -40,6 +42,7 @@ public class Borrowing {
 		}
 		
 		b.setBid(bid);
+		b.setCallNumber(callNumber);
 		b.setBorrower(borrower);
 		b.setCopy(copy);
 		b.setOutDate(outDate);
@@ -88,5 +91,11 @@ public class Borrowing {
 		this.copy = copy;
 	}
 	
+	public void setCallNumber(String callNumber) {
+		this.callNumber = callNumber;
+	}
 	
+	public String getCallNumber() {
+		return callNumber;
+	}
 }

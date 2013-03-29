@@ -396,6 +396,23 @@ public class Database {
 
 		return rs;	
 	}
+	public ResultSet selectHoldRequestsByCall(String callNumber) {
+		ResultSet rs = null;
+		
+		try {
+			ps = con.prepareStatement("SELECT * FROM HoldRequest WHERE callNumber = ?");
+			ps.setString(1, callNumber);
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;	
+	}
 	
 	public ResultSet selectOutstandingFineAndBorrowByBorrower(int bid) {
 		ResultSet rs = null;
@@ -443,12 +460,12 @@ public class Database {
 		return false;
 	}
 	
-	public ResultSet searchBorrowingsByClerk(int bid) {
+	public ResultSet searchBorrowingsByClerk(int borid) {
 		ResultSet rs  = null;
 
 		try {
-			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ? AND inDate IS NULL");
-			ps.setInt(1, bid);
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE borid = ? AND inDate IS NULL");
+			ps.setInt(1, borid);
 			
 			rs = ps.executeQuery();
 
