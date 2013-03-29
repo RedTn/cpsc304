@@ -16,6 +16,7 @@ import com.proj3.model.Borrower;
 import com.proj3.model.BorrowerType;
 import com.proj3.model.Borrowing;
 import com.proj3.model.CopyStatus;
+import com.proj3.model.HoldRequest;
 
 public class ClerkApp {
 	private Database db;
@@ -29,20 +30,16 @@ public class ClerkApp {
 		ResultSet rs = db.selectBorrowerByIdAndPassword(bid, password);
 		currBorrower = null;
 		while (rs.next()) {
-			currBorrower = new Borrower();
-			currBorrower.setId(bid);
-			currBorrower.setName(rs.getString("name"));
-			currBorrower.setAddress(rs.getString("address"));
-			currBorrower.setPhone(rs.getString("phone"));
-			currBorrower.setEmail(rs.getString("emailAddress"));
-			currBorrower.setSinOrStNo(rs.getString("sinOrStNo"));
-			BorrowerType type = BorrowerType.get(rs.getString("type"));
-			currBorrower.setType(type);
+			currBorrower = Borrower.getInstance(rs);
 		}
 		return currBorrower;
 	}
 	
 	public void addBorrower() throws SQLException {
+		if (currBorrower == null) {
+			return;
+		}
+		
 		String password;
 		String name;
 		String address;
@@ -62,7 +59,18 @@ public class ClerkApp {
 	}
 	
 	public void checkOutItems(int bid, Book[] books) throws SQLException {
+		if (currBorrower == null) {
+			return;
+		}
+		Date currDate;
+	    Borrower aBorrower = null;
+		
 		ResultSet rs = db.selectBorrowerById(bid);
+		
+		while (rs.next()) {
+			aBorrower = Borrower.getInstance(rs);
+		}
+		
 		
 		/*
 		 * TODO: GUI checks out item
