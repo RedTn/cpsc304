@@ -61,4 +61,13 @@ public class ClerkApp {
 				*/
 	}
 	
+	public void checkOutItems(int bid, Book[] books) throws SQLException {
+		ResultSet rs = db.selectBorrowerById(bid);
+		
+		/*
+		 * TODO: GUI checks out item
+		insertBorrowing(bid, callNumber,
+			copyNo, outDate, inDate);
+			*/
+	}
 }
