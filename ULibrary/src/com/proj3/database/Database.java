@@ -146,7 +146,7 @@ public class Database {
 
 	public boolean insertHoldRequest(int bid, String callNumber, Date issuedDate) {
 		try {
-			ps = con.prepareStatement("INSERT INTO Borrower VALUES (bid_counter.nextval,?,?,?,?,?,?,?,?)");
+			ps = con.prepareStatement("INSERT INTO HoldRequest VALUES (hid_counter.nextval,?,?,?)");
 
 			ps.setInt(1, bid);
 
