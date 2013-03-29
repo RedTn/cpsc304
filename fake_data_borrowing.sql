@@ -14,4 +14,4 @@ INSERT INTO Borrowing VALUES(borid_counter.nextVal, 11, 'ROWLING HPOrder', 1, '2
 INSERT INTO Borrowing VALUES(borid_counter.nextVal, 3, 'ROWLING HPHalf', 1, '2014-10-10', '2017-10-10');
 INSERT INTO Borrowing VALUES(borid_counter.nextVal, 5, 'ROWLING HPDeathly', 1, '2013-7-10', '2017-10-10');
 INSERT INTO Borrowing VALUES(borid_counter.nextVal, 7, 'STEWART Calculus', 3, '2012-8-10', '2014-10-10');
-INSERT INTO Borrowing VALUES(borid_counter.nextVal, 9, 'DAWKINS Selfish', 10, '2011-10-10', '2011-11-10');
+INSERT INTO Borrowing VALUES(borid_counter.nextVal, 9, 'DAWKINS Selfish', 10, '2011-10-10', NULL);

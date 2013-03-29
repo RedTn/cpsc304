@@ -1014,8 +1014,8 @@ public class Database {
 		ResultSet rs = null;
 		
 		try {
-			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate = NULL AND outDate < ?");
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < ?;");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			sdf.format(duedate);
 			
 			//TODO: Check if correct implementation
