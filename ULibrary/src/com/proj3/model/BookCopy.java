@@ -21,6 +21,10 @@ public class BookCopy {
 		return new BookCopy(book, copyNo, status);
 	}
 	
+	public String callNumber() {
+		return book.getCallNumber();
+	}
+	
 	public Book getBook() {
 		return book;
 	}

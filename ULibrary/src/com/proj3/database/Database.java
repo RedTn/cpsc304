@@ -928,6 +928,23 @@ public class Database {
 		return rs;
 	}
 	
+	public ResultSet selectAllUnreturnedBorrowings() {
+		ResultSet rs  = null;
+
+		try {
+			//ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL");
+			ps = con.prepareStatement("SELECT * FROM Borrowing");
+			
+			rs = ps.executeQuery();
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return rs;
+	}
 	//Exclusive for Clerk
 	public ResultSet selectBorrowerById(int bid) {
 		ResultSet rs  = null;

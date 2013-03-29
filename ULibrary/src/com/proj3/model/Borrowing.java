@@ -98,4 +98,12 @@ public class Borrowing {
 	public String getCallNumber() {
 		return callNumber;
 	}
+	
+	public boolean isOverDue() {
+		if (copy.getStatus() == CopyStatus.in) {
+			return false;
+		}
+		
+		return inDate.before(new Date());
+	}
 }
