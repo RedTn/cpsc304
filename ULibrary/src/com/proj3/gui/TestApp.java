@@ -36,22 +36,43 @@ public class TestApp {
 		newBook.setYear(year);
 
 		boolean newBookAdded = app2.addNewBook(newBook);
-		System.out.println(newBook.getTitle() + " man");
 
 		if (newBookAdded) {
 			Book newBookinDB = db.selectBookByCallNumber(callNumber);
 			System.out.println(newBookinDB.getTitle());
 		}
+		else 
+			System.out.println("Book already exists.");
+		
+		
+		String callNumber2 = "MARTIN GameOFThronesFeast";
+		String isbn2 = "475323523";
+		String title2 = "Game of Thrones: A Feast For Crows";
+		String mainAuthor2 = "Martin";
+		String publisher2 = "someone";
+		String year2 = "1984";
+
+		Book unaddedBook = new Book(); // new book
+
+		newBook.setCallNumber(callNumber2);
+		newBook.setIsbn(isbn2);
+		newBook.setTitle(title2);
+		newBook.setMainAuthor(mainAuthor2);
+		newBook.setPublisher(publisher2);
+		newBook.setYear(year2);
 		
 		CopyStatus newStatus = CopyStatus.in;
-		int copyNo = 2;
-		BookCopy newBookCopy = new BookCopy(newBook, copyNo, newStatus);
+		int copyNo = 3; // HOW TO MAKE THIS UNIQUE?
+		//BookCopy newBookCopy = new BookCopy(newBook, copyNo, newStatus);
+		BookCopy newBookCopy = new BookCopy(unaddedBook, copyNo, newStatus);
 		boolean newCopyAdded = app2.addNewBookCopy(newBookCopy);
 		
 		if (newCopyAdded){
 			BookCopy newBookCopyinDB = db.selectCopyByBookAndCopyNumber(newBook, copyNo);
 			System.out.println(newBookCopyinDB.getBook().getTitle() + " COPY");
 		}
+		else 
+			System.out.println("Book does not exist in database yet. Add new book instead.");
 		
 		Borrower borrower = app.login(3, "123456");
 		HoldRequest[] holds = app.getHolds();
