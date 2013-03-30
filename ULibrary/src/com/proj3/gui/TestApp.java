@@ -16,9 +16,9 @@ public class TestApp {
 		Database db = new Database("passwordfile");
 		db.connect();
 		BorrowerApp app = new BorrowerApp(db);
-
 		LibrarianApp app2 = new LibrarianApp(db);
 
+		// TEST: ADD NEW BOOK
 		String callNumber = "TOLKIEN LordOTRings";
 		String isbn = "47532639";
 		String title = "Lord of the Rings";
@@ -39,12 +39,13 @@ public class TestApp {
 
 		if (newBookAdded) {
 			Book newBookinDB = db.selectBookByCallNumber(callNumber);
-			System.out.println(newBookinDB.getTitle());
+			System.out.println("New Book Added:" + newBookinDB.getTitle());
 		}
 		else 
 			System.out.println("Book already exists.");
 		
-		
+		// TEST: ADD NEW BOOK COPY
+	 	
 		String callNumber2 = "MARTIN GameOFThronesFeast";
 		String isbn2 = "475323523";
 		String title2 = "Game of Thrones: A Feast For Crows";
@@ -54,25 +55,44 @@ public class TestApp {
 
 		Book unaddedBook = new Book(); // new book
 
-		newBook.setCallNumber(callNumber2);
-		newBook.setIsbn(isbn2);
-		newBook.setTitle(title2);
-		newBook.setMainAuthor(mainAuthor2);
-		newBook.setPublisher(publisher2);
-		newBook.setYear(year2);
+		unaddedBook.setCallNumber(callNumber2);
+		unaddedBook.setIsbn(isbn2);
+		unaddedBook.setTitle(title2);
+		unaddedBook.setMainAuthor(mainAuthor2);
+		unaddedBook.setPublisher(publisher2);
+		unaddedBook.setYear(year2);
 		
 		CopyStatus newStatus = CopyStatus.in;
-		int copyNo = 3; // HOW TO MAKE THIS UNIQUE?
-		//BookCopy newBookCopy = new BookCopy(newBook, copyNo, newStatus);
-		BookCopy newBookCopy = new BookCopy(unaddedBook, copyNo, newStatus);
-		boolean newCopyAdded = app2.addNewBookCopy(newBookCopy);
+		int copyNo = 4; // HOW TO MAKE THIS UNIQUE? (should just get replaced)
 		
+		BookCopy newBookCopy = new BookCopy(newBook, copyNo, newStatus);
+		boolean newCopyAdded = app2.addNewBookCopy(newBookCopy);
 		if (newCopyAdded){
 			BookCopy newBookCopyinDB = db.selectCopyByBookAndCopyNumber(newBook, copyNo);
 			System.out.println(newBookCopyinDB.getBook().getTitle() + " COPY");
 		}
 		else 
 			System.out.println("Book does not exist in database yet. Add new book instead.");
+		
+
+		BookCopy newUnaddedBookCopy = new BookCopy(unaddedBook, copyNo, newStatus); // should not work
+		boolean newUnaddedCopyAdded = app2.addNewBookCopy(newUnaddedBookCopy);
+		if (newUnaddedCopyAdded){
+			BookCopy newUnaddedBookCopyinDB = db.selectCopyByBookAndCopyNumber(newBook, copyNo);
+			System.out.println(newUnaddedBookCopyinDB.getBook().getTitle() + " COPY");
+		}
+		else 
+			System.out.println("Unadded Book does not exist in database yet. Add new book instead.");
+		
+		
+		// TEST: GENERATE CHECKED OUT BOOKS REPORT
+		
+		Borrowing[] bookReport = app2.generateCheckedOutBooksReport();
+		for (int i = 0; i < bookReport.length; i++){
+			System.out.println(bookReport[i].getBook().getTitle());
+			System.out.println("generated?");
+		}
+		
 		
 		Borrower borrower = app.login(3, "123456");
 		HoldRequest[] holds = app.getHolds();

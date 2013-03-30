@@ -34,7 +34,10 @@ public class LibrarianApp {
 		if (existBook == null) {
 			return false;
 		}
-		return db.insertBookCopy(bookCopy.getBook().getCallNumber(), bookCopy.getCopyNo(), bookCopy.getStatus());
+		
+		int copyNo = db.selectMaxCopyNumberForBook(existBook); 
+		
+		return db.insertBookCopy(bookCopy.getBook().getCallNumber(), copyNo+1, bookCopy.getStatus());
 
 	}
 
@@ -49,7 +52,7 @@ public class LibrarianApp {
 			}
 		}
 
-		return (Borrowing[]) checkedOuts.toArray();
+		return checkedOuts.toArray(new Borrowing[checkedOuts.size()]);
 	}
 
 	public BookCopy[] generateCheckedOutBooksReport(String subject) {

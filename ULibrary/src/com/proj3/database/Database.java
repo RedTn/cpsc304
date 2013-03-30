@@ -887,6 +887,28 @@ public class Database {
 		copy.setBook(book);
 		return copy;
 	}
+	
+	public int selectMaxCopyNumberForBook(Book book){
+		ResultSet rs = null;
+		int max = 0;
+		try {
+			ps = con.prepareStatement("SELECT MAX(copyNo) FROM BookCopy WHERE callNumber = ?"); 
+
+			ps.setString(1, book.getCallNumber());
+
+			rs = ps.executeQuery();
+
+			if( rs.next()){
+				max = rs.getInt("max(copyNo)");
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return max;
+	}
 
 	private BookCopy selectCopyByCallAndCopyNumberWithoutBook(
 			String callNumber, int copyNo) {
@@ -1092,7 +1114,7 @@ public class Database {
 		List<Borrowing> borrows = new ArrayList<Borrowing>();
 
 		try {
-			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL");
+			ps = con.prepareStatement("SELECT * FROM Borrowing");
 
 			rs = ps.executeQuery();
 
