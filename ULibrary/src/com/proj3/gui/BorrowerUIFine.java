@@ -21,8 +21,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.proj3.model.Fine;
-
 @SuppressWarnings("serial")
 public class BorrowerUIFine extends JPanel implements ActionListener {
 	
@@ -41,6 +39,9 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 	private JLabel fIDFieldLabel, amountFieldLabel;
 
 	private JButton submitButton;
+	
+	private static final int MAX_BID = Integer.MAX_VALUE;
+	private static final int MIN_BID = 0;
 
 	public JPanel getThisPanel() {
 		return this;
@@ -53,20 +54,20 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 			field.setBorder(BorderFactory.createEtchedBorder());
 	}
 
-	public void displayFineList(Fine[] fines) {
-		//TODO
+	public void displayFineList(String str) {
+		fineArea.append(str + "\n");
 	}
 	
 	public void displayOutput(String str) {
 		mainFrame.displayOutputMessage(str);
 	}
 	
-	public int getFID() {
-		return Integer.parseInt(fIDField.getText());
+	public String getFID() {
+		return fIDField.getText();
 	}
 	
-	public float getAmount() {
-		return Float.parseFloat(amountField.getText());
+	public String getAmount() {
+		return amountField.getText();
 	}
 	
 	public String getCurrentUserBID() {
@@ -77,34 +78,46 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 
 		fIDField = new JTextField();		
 		fIDField.setName(FID_STRING);
-		fIDField.addFocusListener(new MyFocusListener());	
-		fIDField.addKeyListener(new KeyListener(){
-						
-			int lastFid;
-			
-			public void keyTyped(KeyEvent e) {
-				// Do Nothing
+		fIDField.addFocusListener(new FocusListener(){
+
+			public void focusGained(FocusEvent e) {
+				// Do Nothing		
 			}
 
-			public void keyPressed(KeyEvent e) {
+			//Format/Error Checking. Error indicated by red border.
+			public void focusLost(FocusEvent e) {
 				try {
-					lastFid = Integer.parseInt(((JTextField)e.getComponent()).getText());
+					if (!((JTextField)e.getComponent()).getText().isEmpty()) {					
+						bidFieldListenerAction(e);
+						setBorderRed(fIDField, false);
+					}
+					else 					
+						throw new NullPointerException("FID can not be null");
+				} catch (NumberFormatException ex) {
+					setBorderRed(fIDField, true);
+					throw ex;
+				} catch (NullPointerException ex) {
+					setBorderRed(fIDField, true);
+					throw ex;
 				} catch (Exception ex) {
-					// Do Nothing
+					setBorderRed(fIDField, true);
+					throw new IllegalArgumentException("Unknown Argument Exception.");
 				}
 			}
 
-			public void keyReleased(KeyEvent e) {
-				int currentFid = Integer.parseInt(((JTextField)e.getComponent()).getText());
-				if (currentFid > Integer.MAX_VALUE) { 
-					((JTextField)e.getComponent()).setText(Integer.toString(lastFid));
-					throw new IllegalArgumentException("FID can not be greater than "+Integer.MAX_VALUE);
-				} else if (currentFid < 0) {
-					throw new IllegalArgumentException("FID can not be less than 0");
+			//Throws exception if the bid is out of range of not a number
+			public void bidFieldListenerAction(FocusEvent e) {
+				try {					
+					int input = Integer.parseInt(((JTextField) e.getSource()).getText());
+					if (input < MIN_BID || input > MAX_BID) {
+						throw new IllegalArgumentException("Out of Range. Max BID = "+MAX_BID+". Min BID = "+MIN_BID+".");
+					}
+				} catch (NumberFormatException ex) {
+					throw new NumberFormatException("Only numbers are permitted.");
 				}
-			}
-			
-		});
+			}			
+
+		});			
 
 		fIDFieldLabel = new JLabel(FID_STRING + ":");
 		fIDFieldLabel.setLabelFor(fIDField);        
@@ -114,35 +127,48 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 	private void createAmountField() {
 
 		amountField = new JTextField();		
-		amountField.setName(FID_STRING);
-		amountField.addFocusListener(new MyFocusListener());
-		amountField.addKeyListener(new KeyListener(){
-			
-			int lastFid;
-			
-			public void keyTyped(KeyEvent e) {
-				// Do Nothing
+		amountField.setName(AMOUNT_STRING);
+		amountField.addFocusListener(new FocusListener(){
+
+			public void focusGained(FocusEvent e) {
+				// Do Nothing		
 			}
 
-			public void keyPressed(KeyEvent e) {
+			//Format/Error Checking. Error indicated by red border.
+			public void focusLost(FocusEvent e) {
 				try {
-					lastFid = Integer.parseInt(((JTextField)e.getComponent()).getText());
+					if (!((JTextField)e.getComponent()).getText().isEmpty()) {					
+						bidFieldListenerAction(e);
+						setBorderRed(amountField, false);
+					}
+					else 					
+						throw new NullPointerException("Amount can not be null");
+				} catch (NumberFormatException ex) {
+					setBorderRed(amountField, true);
+					throw ex;
+				} catch (NullPointerException ex) {
+					setBorderRed(amountField, true);
+					throw ex;
 				} catch (Exception ex) {
-					// Do Nothing
+					setBorderRed(amountField, true);
+					throw new IllegalArgumentException("Unknown Argument Exception.");
 				}
 			}
 
-			public void keyReleased(KeyEvent e) {
-				int currentFid = Integer.parseInt(((JTextField)e.getComponent()).getText());
-				if (currentFid > Integer.MAX_VALUE) { 
-					((JTextField)e.getComponent()).setText(Integer.toString(lastFid));
-					throw new IllegalArgumentException("FID can not be greater than "+Integer.MAX_VALUE);
-				} else if (currentFid < 0) {
-					throw new IllegalArgumentException("FID can not be less than 0");
+			//Throws exception if the bid is out of range of not a number
+			public void bidFieldListenerAction(FocusEvent e) {
+				try {					
+					int input = Integer.parseInt(((JTextField) e.getSource()).getText());
+					if (input < MIN_BID || input > MAX_BID) {
+						throw new IllegalArgumentException("Out of Range. Max BID = "+MAX_BID+". Min BID = "+MIN_BID+".");
+					}
+				} catch (NumberFormatException ex) {
+					throw new NumberFormatException("Only numbers are permitted.");
 				}
-			}
-			
-		});
+			}			
+
+		});		
+
 		amountFieldLabel = new JLabel(AMOUNT_STRING + ":");
 		amountFieldLabel.setLabelFor(amountField);        
 
@@ -287,14 +313,15 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 						getThisPanel().validate();
 						getThisPanel().repaint();
 
-						String message = "Did not pay the fine.";
-						if (mainFrame.bApp().payFine(getFID(), getAmount())) {
-							message = "Fine successfully paid";
-						}
-						
-						displayFineList(mainFrame.bApp().getFines());
-						displayOutput(message);
-						
+						//TODO INSERT METHOD HERE
+						// USE displayItems(String str)
+						// BELOW IS AN EXAMPLE
+						displayFineList("Thread Started");
+						displayFineList("FID: "+getFID());			
+						displayOutput("FID: "+getFID());
+						Thread.sleep(3000);						
+						displayFineList("Thread Ended");
+
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());
 					} finally {

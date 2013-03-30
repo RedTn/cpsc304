@@ -46,11 +46,11 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 	private static final int MAX_BID = Integer.MAX_VALUE;
 	private static final int MIN_BID = 0;
 
-	private JTextField bidField, passwordField, passwordConfirmationField,
+	private JTextField passwordField, passwordConfirmationField,
 	nameField, addressField, phoneField, emailField, sinField,
 	expireField, typeField;
 
-	private JLabel bidFieldLabel, passwordFieldLabel, passwordConfirmationFieldLabel,
+	private JLabel passwordFieldLabel, passwordConfirmationFieldLabel,
 	nameFieldLabel, addressFieldLabel, phoneFieldLabel,
 	emailFieldLabel, sinFieldLabel, expireFieldLabel, typeFieldLabel;
 
@@ -70,11 +70,7 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 	public void displayOutput(String str) {
 		mainFrame.displayOutputMessage(str);
 	}
-	
-	public String getBID() {
-		return bidField.getText();
-	}
-	
+		
 	public String getPassword() {
 		return passwordField.getText();
 	}
@@ -105,58 +101,8 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 	
 	public String getType() {
 		return typeField.getText();
-	}
+	}	
 	
-	private void createBidField() {
-
-		bidField = new JTextField();		
-		bidField.setName(BID_STRING);
-		bidField.addFocusListener(new FocusListener(){
-
-			public void focusGained(FocusEvent e) {
-				// Do Nothing		
-			}
-
-			//Format/Error Checking. Error indicated by red border.
-			public void focusLost(FocusEvent e) {
-				try {
-					if (!((JTextField)e.getComponent()).getText().isEmpty()) {					
-						bidFieldListenerAction(e);
-						setBorderRed(bidField, false);
-					}
-					else 					
-						throw new NullPointerException("BID can not be null");
-				} catch (NumberFormatException ex) {
-					setBorderRed(bidField, true);
-					throw ex;
-				} catch (NullPointerException ex) {
-					setBorderRed(bidField, true);
-					throw ex;
-				} catch (Exception ex) {
-					setBorderRed(bidField, true);
-					throw new IllegalArgumentException("Unknown Argument Exception.");
-				}
-			}
-
-			//Throws exception if the bid is out of range of not a number
-			public void bidFieldListenerAction(FocusEvent e) {
-				try {					
-					int input = Integer.parseInt(((JTextField) e.getSource()).getText());
-					if (input < MIN_BID || input > MAX_BID) {
-						throw new IllegalArgumentException("Out of Range. Max BID = "+MAX_BID+". Min BID = "+MIN_BID+".");
-					}
-				} catch (NumberFormatException ex) {
-					throw new NumberFormatException("Only numbers are permitted.");
-				}
-			}			
-
-		});		
-
-		bidFieldLabel = new JLabel(BID_STRING + ":");
-		bidFieldLabel.setLabelFor(bidField);        
-
-	}
-
 	private void createPasswordField() {
 
 		passwordField = new JPasswordField(255);
@@ -393,7 +339,6 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 		this.setLayout(gridb);
 
 		//Create text fields for inputs
-		createBidField();
 		createPasswordField();
 		createPasswordConfirmationField();
 		createNameField();
@@ -406,10 +351,10 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 		createSubmit();
 
 		//Group labels and text fields
-		JTextField[] textFields = {bidField, passwordField, passwordConfirmationField,
+		JTextField[] textFields = {passwordField, passwordConfirmationField,
 				nameField, addressField, phoneField, emailField, sinField,
 				expireField, typeField};
-		JLabel[] labels = {bidFieldLabel, passwordFieldLabel, passwordConfirmationFieldLabel,
+		JLabel[] labels = {passwordFieldLabel, passwordConfirmationFieldLabel,
 				nameFieldLabel, addressFieldLabel, phoneFieldLabel,
 				emailFieldLabel, sinFieldLabel, expireFieldLabel, typeFieldLabel};
 
@@ -473,10 +418,12 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
 						displayOutput("Thread Started");
+
 						Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(getExpireDate());
 						Database db = mainFrame.getDB();
 						db.insertBorrower(getPassword(), getName(), getAddress(), getPhoneNumber(), getEmailAddress(), getSinOrStNo(),
 								date, BorrowerType.get(getType()));		
+
 						displayOutput("Thread Ended");
 
 					} catch (Exception e) {
