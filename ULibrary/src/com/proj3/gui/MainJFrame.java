@@ -27,6 +27,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.BevelBorder;
 
+import com.proj3.app.BorrowerApp;
+import com.proj3.app.ClerkApp;
+import com.proj3.app.LibrarianApp;
+
 @SuppressWarnings("serial")
 public class MainJFrame extends JFrame {
 
@@ -46,6 +50,16 @@ public class MainJFrame extends JFrame {
 	private Container defaultPane;
 	
 	private Boolean isConnected = false;
+	
+	private BorrowerApp bApp;
+	private LibrarianApp lApp;
+	private ClerkApp cApp;
+	
+	public MainJFrame(BorrowerApp b, LibrarianApp l, ClerkApp c) {
+		bApp = b;
+		lApp = l;
+		cApp = c;
+	}
 	
 	public String getCurrentUserBID() {
 		return borrowerUILogin.getBID();
@@ -500,7 +514,7 @@ public class MainJFrame extends JFrame {
 		
 	}
 	
-	private void createAndShowGUI() {
+	public void createAndShowGUI() {
 		
 		frame = new JFrame("UBC CPSC 304 LIBRARY");		
 		frame.setIconImage(createImageIcon("/library.png").getImage());
@@ -530,14 +544,18 @@ public class MainJFrame extends JFrame {
 		systemEventQueue.push(new MyEventQueue());
 		
 	}
+	
+	public BorrowerApp bApp() {
+		return bApp;
+	}
 
-	public static void main(String[] args) {
-		
-		javax.swing.SwingUtilities.invokeLater(new Runnable(){
-			public void run() {
-				new MainJFrame().createAndShowGUI();
-			}
-		});
+
+	public LibrarianApp lApp() {
+		return lApp;
+	}
+
+	public ClerkApp cApp() {
+		return cApp;
 	}
 
 	// EventQueue to handle all runtime exceptions thrown by Swing componenets

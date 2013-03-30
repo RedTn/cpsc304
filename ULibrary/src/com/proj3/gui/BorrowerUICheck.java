@@ -18,6 +18,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.proj3.model.Borrowing;
+import com.proj3.model.Fine;
+import com.proj3.model.HoldRequest;
+
 @SuppressWarnings("serial")
 public class BorrowerUICheck extends JPanel implements ActionListener{
 
@@ -43,15 +47,15 @@ public class BorrowerUICheck extends JPanel implements ActionListener{
 			field.setBorder(BorderFactory.createEtchedBorder());
 	}	
 	
-	public void displayBorrowedBooks(String str) {
+	public void displayBorrowedBooks(Borrowing[] books) {
 		borrowedBookArea.append("Overdue \n");
 	}
 	
-	public void displayFine(String str) {
+	public void displayFine(Fine[] fines) {
 		fineArea.append("Overdue \n");
 	}
 	
-	public void displayHoldRequests(String str) {
+	public void displayHoldRequests(HoldRequest[] holds) {
 		holdRequestArea.append("Overdue \n");
 	}
 	
@@ -215,9 +219,9 @@ public class BorrowerUICheck extends JPanel implements ActionListener{
 						//TODO INSERT METHOD HERE
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
-						displayBorrowedBooks("Thread Started");
-						displayFine("Fine");
-						displayHoldRequests("Request ");						
+						displayBorrowedBooks(mainFrame.bApp().getBorrowings());
+						displayFine(mainFrame.bApp().getFines());
+						displayHoldRequests(mainFrame.bApp().getHolds());						
 						Thread.sleep(3000);						
 						displayOutput("Thread Ended");
 
