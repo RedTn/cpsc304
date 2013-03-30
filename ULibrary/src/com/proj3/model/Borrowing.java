@@ -10,7 +10,6 @@ public class Borrowing {
 	private Borrower borrower;
 	private BookCopy copy;
 	private int bid,borid;
-	private String callNumber;
 	private Date outDate, inDate;
 	
 	public Borrowing() {
@@ -45,7 +44,6 @@ public class Borrowing {
 		
 		b.setBid(borid);
 		b.setBid(bid);
-		b.setCallNumber(callNumber);
 		b.setBorrower(borrower);
 		b.setCopy(copy);
 		b.setOutDate(outDate);
@@ -94,12 +92,8 @@ public class Borrowing {
 		this.copy = copy;
 	}
 	
-	public void setCallNumber(String callNumber) {
-		this.callNumber = callNumber;
-	}
-	
-	public String getCallNumber() {
-		return callNumber;
+	public Book getBook() {
+		return copy.getBook();
 	}
 	
 	public void setBorid(int borid) {
@@ -109,5 +103,9 @@ public class Borrowing {
 	public int getBorid() {
 		return borid;
 
+	}
+	
+	public String getCallNumber() {
+		return copy.getCallNumber();
 	}
 }

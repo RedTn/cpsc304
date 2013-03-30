@@ -46,6 +46,10 @@ public class BookCopy {
 		this.copyNo = copyNo;
 	}
 	
+	public String getCallNumber() {
+		return book.getCallNumber();
+	}
+	
 	public int hashcode() {
 		return book.hashCode()*51859+copyNo;
 	}
