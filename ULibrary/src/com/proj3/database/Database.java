@@ -332,7 +332,7 @@ public class Database {
 		return false;
 	}
 
-	public boolean insertFine(float amount, Date issuedDate, int borid) {
+	public boolean insertFine(float amount, Date issuedDate, Date paidDate, int borid) {
 		try {
 			ps = con.prepareStatement("INSERT INTO Fine VALUES (fid_counter.nextval,?,?,?,?)");
 
@@ -340,7 +340,12 @@ public class Database {
 
 			ps.setDate(2, new java.sql.Date(issuedDate.getTime()));
 
-			// ps.setDate(3, new java.sql.Date(paidDate.getTime()));
+			if(paidDate != null){
+			ps.setDate(3, new java.sql.Date(paidDate.getTime()));
+			}
+			else{
+				ps.setNull(3, java.sql.Types.DATE);
+			}
 
 			ps.setInt(4, borid);
 
@@ -1300,7 +1305,7 @@ public class Database {
 
 		return false;
 	}
-	public BookCopy[] selectBookCopiesByBookAndStatus(Book book, String status) {
+	public BookCopy[] selectBookCopiesByBookAndStatus(Book book, CopyStatus status) {
 		ResultSet rs = null;
 		List<BookCopy> copies = new ArrayList<BookCopy>();
 
@@ -1308,7 +1313,7 @@ public class Database {
 			ps = con.prepareStatement("SELECT * FROM BookCopy WHERE callNumber = ? AND status = ?");
 
 			ps.setString(1, book.getCallNumber());
-			ps.setString(2, status);
+			ps.setString(2, status.getStatus());
 
 			rs = ps.executeQuery();
 
