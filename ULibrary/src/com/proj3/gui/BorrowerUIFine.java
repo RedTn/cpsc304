@@ -21,6 +21,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.proj3.model.Fine;
+
 @SuppressWarnings("serial")
 public class BorrowerUIFine extends JPanel implements ActionListener {
 	
@@ -51,20 +53,20 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 			field.setBorder(BorderFactory.createEtchedBorder());
 	}
 
-	public void displayFineList(String str) {
-		fineArea.append(str + "\n");
+	public void displayFineList(Fine[] fines) {
+		//TODO
 	}
 	
 	public void displayOutput(String str) {
 		mainFrame.displayOutputMessage(str);
 	}
 	
-	public String getFID() {
-		return fIDField.getText();
+	public int getFID() {
+		return Integer.parseInt(fIDField.getText());
 	}
 	
-	public String getAmount() {
-		return amountField.getText();
+	public float getAmount() {
+		return Float.parseFloat(amountField.getText());
 	}
 	
 	public String getCurrentUserBID() {
@@ -259,15 +261,14 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 						getThisPanel().validate();
 						getThisPanel().repaint();
 
-						//TODO INSERT METHOD HERE
-						// USE displayItems(String str)
-						// BELOW IS AN EXAMPLE
-						displayFineList("Thread Started");
-						displayFineList("FID: "+getFID());			
-						displayOutput("FID: "+getFID());
-						Thread.sleep(3000);						
-						displayFineList("Thread Ended");
-
+						String message = "Did not pay the fine.";
+						if (mainFrame.bApp().payFine(getFID(), getAmount())) {
+							message = "Fine successfully paid";
+						}
+						
+						displayFineList(mainFrame.bApp().getFines());
+						displayOutput(message);
+						
 					} catch (Exception e) {
 						throw new RuntimeException("Error while processing [" +
 								getThisPanel().getName() + "] Method.");

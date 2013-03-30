@@ -25,7 +25,6 @@ public class BorrowerUILogin extends JPanel {
 	private JTextField bidField;
 	private JPasswordField passwordField;
 	private JButton loginButton;
-	private Boolean isLoggedIn;
 
 	public JPanel getThisPanel() {
 		return this;
@@ -61,15 +60,16 @@ public class BorrowerUILogin extends JPanel {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (isLoggedIn==false) {
-					//TODO - Borrower log in method here
+				if (!mainFrame.bApp().isLoggedIn()) {
 					loginButton.setText("Log Out");
 					bidField.setEnabled(false);
 					passwordField.setEnabled(false);
+					mainFrame.bApp().login(Integer.parseInt(bidField.getText()), new String(passwordField.getPassword()));
 				} else {
 					loginButton.setText("Log In");
 					bidField.setEnabled(true);
 					passwordField.setEnabled(true);
+					mainFrame.bApp().logout();
 				}
 			}
 

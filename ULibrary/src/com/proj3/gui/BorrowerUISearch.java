@@ -20,6 +20,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.proj3.model.Book;
+import com.proj3.model.CopyStatus;
+
 @SuppressWarnings("serial")
 public class BorrowerUISearch extends JPanel implements ActionListener {
 
@@ -52,16 +55,16 @@ public class BorrowerUISearch extends JPanel implements ActionListener {
 			field.setBorder(BorderFactory.createEtchedBorder());
 	}
 
-	public void displayItems(String str) {
-		itemListArea.append(str+"\n");
+	public void displayItem(Book book) {
+		//TODO
 	}
 	
-	public void displayNumberOfIn(String str) {
-		copyInArea.append(str+"\n");
+	public void displayNumberOfIn(int numIn) {
+		//TODO
 	}
 	
-	public void displayNumberOfOut(String str) {
-		copyOutArea.append(str+"\n");
+	public void displayNumberOfOut(int numOut) {
+		//TODO
 	}
 	
 	public void displayOutput(String str) {
@@ -311,15 +314,18 @@ public class BorrowerUISearch extends JPanel implements ActionListener {
 						getThisPanel().validate();
 						getThisPanel().repaint();
 
-						//TODO INSERT METHOD HERE
-						// USE displayItems(String str)
-						// BELOW IS AN EXAMPLE
-						displayOutput("Thread Started");
-						displayItems(getTitle());
-						displayNumberOfIn(getAuthor());
-						displayNumberOfOut(getSubject());
-						Thread.sleep(3000);						
-						displayOutput("Thread Ended");
+						//TODO separate search by author, title or subject 
+					
+						Book[] books = mainFrame.bApp().searchBooksByKeyword(getTitle());
+						displayOutput(books.length + "items found");
+						
+						for (int i=0; i<books.length; i++) {
+							displayItem(books[i]);
+							int numIn = mainFrame.bApp().getNumCopiesByStatus(books[i],CopyStatus.in);
+							int numOut = mainFrame.bApp().getNumCopiesByStatus(books[i], CopyStatus.out);
+							displayNumberOfIn(numIn);
+							displayNumberOfOut(numOut);
+						}
 
 					} catch (Exception e) {
 						throw new RuntimeException("Error while processing [" +

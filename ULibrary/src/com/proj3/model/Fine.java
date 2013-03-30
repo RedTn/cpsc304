@@ -58,4 +58,13 @@ public class Fine {
 	public void setBorrowing(Borrowing borrowing) {
 		this.borrow = borrowing;
 	}
+
+	public void decreaseAmountBy(float paid) {
+		if (amount < paid) {
+			amount = 0;
+		} else {
+			amount -= paid;
+		}
+		
+	}
 }

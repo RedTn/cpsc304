@@ -1034,11 +1034,36 @@ public class Database {
 		return fines.toArray(new Fine[fines.size()]);
 	}
 
+	private Fine selectFineById(int fid) {
+		ResultSet rs = null;
+		Fine fine = null;
+		
+		try {
+			ps = con.prepareStatement("SELECT * FROM Fine WHERE fid = ?");
+			ps.setInt(1, fid);
+
+			rs = ps.executeQuery();
+
+			if(rs.next()) {
+				fine = Fine.getInstance(rs, null);
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return fine;
+	}
+	
 	public boolean updateFineAmountField(int fid, float amount) {
+		Fine fine = selectFineById(fid);
+		fine.decreaseAmountBy(amount);
+		
 		try {
 			ps = con.prepareStatement("UPDATE Fine SET amount=? WHERE fid=?");
 
-			ps.setFloat(1, amount);
+			ps.setFloat(1, fine.getAmount());
 			ps.setInt(2, fid);
 
 			ps.executeUpdate();
@@ -1379,85 +1404,30 @@ public class Database {
 
 		return false;
 	}
-	
-	
-	/*
-	 * public ResultSet displayHasAuthor() { ResultSet rs = null;
-	 * 
-	 * try { ps = con.prepareStatement("SELECT * FROM HasAuthor");
-	 * 
-	 * rs = ps.executeQuery();
-	 * 
-	 * ps.close();
-	 * 
-	 * } catch (SQLException ex) { System.out.println("Message: " +
-	 * ex.getMessage()); }
-	 * 
-	 * return rs; }
-	 * 
-	 * public ResultSet displayHasSubject() { ResultSet rs = null;
-	 * 
-	 * try { ps = con.prepareStatement("SELECT * FROM HasSubject");
-	 * 
-	 * rs = ps.executeQuery();
-	 * 
-	 * ps.close();
-	 * 
-	 * } catch (SQLException ex) { System.out.println("Message: " +
-	 * ex.getMessage()); }
-	 * 
-	 * return rs; }
-	 * 
-	 * public ResultSet displayBookCopy() { ResultSet rs = null;
-	 * 
-	 * try { ps = con.prepareStatement("SELECT * FROM BookCopy");
-	 * 
-	 * rs = ps.executeQuery();
-	 * 
-	 * ps.close();
-	 * 
-	 * } catch (SQLException ex) { System.out.println("Message: " +
-	 * ex.getMessage()); }
-	 * 
-	 * return rs; }
-	 * 
-	 * public ResultSet displayHoldRequest() { ResultSet rs = null;
-	 * 
-	 * try { ps = con.prepareStatement("SELECT * FROM HoldRequest");
-	 * 
-	 * rs = ps.executeQuery();
-	 * 
-	 * ps.close();
-	 * 
-	 * } catch (SQLException ex) { System.out.println("Message: " +
-	 * ex.getMessage()); }
-	 * 
-	 * return rs; }
-	 * 
-	 * public ResultSet displayBorrowing() { ResultSet rs = null;
-	 * 
-	 * try { ps = con.prepareStatement("SELECT * FROM Borrowing");
-	 * 
-	 * rs = ps.executeQuery();
-	 * 
-	 * ps.close();
-	 * 
-	 * } catch (SQLException ex) { System.out.println("Message: " +
-	 * ex.getMessage()); }
-	 * 
-	 * return rs; }
-	 * 
-	 * public ResultSet displayFine() { ResultSet rs = null;
-	 * 
-	 * try { ps = con.prepareStatement("SELECT * FROM Fine");
-	 * 
-	 * rs = ps.executeQuery();
-	 * 
-	 * ps.close();
-	 * 
-	 * } catch (SQLException ex) { System.out.println("Message: " +
-	 * ex.getMessage()); }
-	 * 
-	 * return rs; }
-	 */
+
+	public int getCopyCountByCallNumberAndStatus(String callNumber,
+			String status) {
+		ResultSet rs = null;
+		int count = 0;
+
+		try {
+			ps = con.prepareStatement("SELECT COUNT(copyNo) FROM BookCopy WHERE callnumber = ? and status=?");			
+			ps.setString(1, callNumber);
+			ps.setString(2, status);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				count = rs.getInt("Count(copyNo)");
+
+			}
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return count;
+	}
 }

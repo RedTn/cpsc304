@@ -18,6 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
+import com.proj3.model.HoldRequest;
+
 @SuppressWarnings("serial")
 public class BorrowerUIHold extends JPanel implements ActionListener{
 
@@ -41,6 +43,10 @@ public class BorrowerUIHold extends JPanel implements ActionListener{
 			field.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.pink));
 		else
 			field.setBorder(BorderFactory.createEtchedBorder());
+	}
+	
+	public void displayHolds(HoldRequest[] holds) {
+		//TODO
 	}
 	
 	public void displayOutput(String str) {
@@ -195,14 +201,13 @@ public class BorrowerUIHold extends JPanel implements ActionListener{
 						getThisPanel().validate();
 						getThisPanel().repaint();
 
-						//TODO INSERT METHOD HERE
-						// USE displayItems(String str)
-						// BELOW IS AN EXAMPLE
-						displayOutput("Thread Started");
-						displayOutput("Call Number: "+getCallNumber());
-						displayOutput("Date: "+getDate());
-						Thread.sleep(3000);						
-						displayOutput("Thread Ended");
+						String msg = "Failed to place the hold request";
+						if (mainFrame.bApp().placeHold(getCallNumber())) {
+							msg = "Successfully placed the hold request";
+						}
+						
+						displayOutput(msg);
+						displayHolds(mainFrame.bApp().getHolds());
 
 					} catch (Exception e) {
 						throw new RuntimeException("Error while processing [" +

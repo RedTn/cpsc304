@@ -6,6 +6,7 @@ import com.proj3.database.Database;
 import com.proj3.model.Book;
 import com.proj3.model.Borrower;
 import com.proj3.model.Borrowing;
+import com.proj3.model.CopyStatus;
 import com.proj3.model.Fine;
 import com.proj3.model.HoldRequest;
 
@@ -37,19 +38,10 @@ public class BorrowerApp {
 		return holds;
 	}
 	
-	public float payFine(Fine fine, float amount) {
-		float remaining = 0;
-		if (fine.getAmount() > amount) {
-			remaining = fine.getAmount() - amount;
-		}
-		
-		boolean success = db.updateFineAmountField(fine.getFid(), remaining);
 	
-		if (success) {
-			return remaining;
-		}
-		
-		return fine.getAmount();
+	public boolean payFine(int fid, float amount) {
+	
+		return db.updateFineAmountField(fid, amount);
 	}
 	
 	public boolean placeHold(Book book) {
@@ -78,6 +70,14 @@ public class BorrowerApp {
 
 	public Book[] searchBooksByKeyword(String keyword) {
 		return db.selectBooksByKeyword(keyword);
+	}
+
+	public void logout() {
+		currBorrower = null;
+	}
+
+	public int getNumCopiesByStatus(Book book, CopyStatus in) {
+		return db.getCopyCountByCallNumberAndStatus(book.getCallNumber(), in.getStatus());
 	}
 
 }
