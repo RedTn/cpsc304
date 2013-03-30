@@ -55,9 +55,13 @@ public class MainScreen extends JFrame {
 		//TODO implement this
 	}
 	
+	
 	public static void main(String args[]) throws SQLException {
 		 
-		Database db = new Database("passwordfile");
+		//Database db = new Database("passwordfile");
+		String connectURL = "jdbc:oracle:thin:@dbhost.ugrad.cs.ubc.ca:1522:ug";
+		Database db = new Database(connectURL,"ora_s0l7", "a70949094");
+		
 		if (db.connect()) {
 			MainScreen mygui = new MainScreen(db);
 
@@ -69,14 +73,20 @@ public class MainScreen extends JFrame {
 			mygui.setVisible(true);
 			mygui.setTitle("Login");
 			
+			
+			
 			ClerkApp ca = new ClerkApp(db);
+			ca.processReturn(32);
+			/*
 			Borrowing[] b = ca.checkOverdueItems();
 			for (int i=0; i<b.length; i++)
 				System.out.println(b[i]);
+				*/
+			
 		} else {
 			
 		}
 
 	}
-
+	
 }

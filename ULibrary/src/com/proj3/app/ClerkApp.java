@@ -24,9 +24,18 @@ import com.proj3.model.HoldRequest;
 public class ClerkApp {
 	private Database db;
 	private Borrower currBorrower;
+	private Calendar cal;
+	private Calendar today;
 
 	public ClerkApp(Database db) {
 		this.db = db;
+		
+		//Automatically initialized to current date	
+		cal = Calendar.getInstance();
+		today = Calendar.getInstance();
+		
+		//Due date for current books are a week before
+		cal.add(Calendar.DATE, -7);
 	}
 
 	public Borrower login(int bid, String password) throws SQLException {
@@ -114,31 +123,36 @@ public class ClerkApp {
 		 */
 	}
 
-	public void proessReturn(int borid) throws SQLException {
+	public void processReturn(int borid) throws SQLException {
+		/*
 		if (currBorrower == null) {
 			return;
 		}
-		
+		*/
 		ResultSet rs = db.searchBorrowingsByClerk(borid);
 		while (rs.next()) {
 
 			Borrowing b = Borrowing.getInstance(rs, null, null);
 
 			String callNumber = b.getCallNumber();
-			Date outDate = b.getOutDate();
-
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			Calendar borrowDate = Calendar.getInstance();
+			borrowDate.setTime(b.getOutDate());
 			
-			//Automatically initialized to current date
-			Date currDate = new Date();
-			
-			//Format dates
-			sdf.format(currDate);
-			sdf.format(outDate);
-
-			/*TODO: Compare the dates, apply fine if necessary
-		updateFineAmountField(fid,amount);
-			 */
+			if(borrowDate.getTime().before(cal.getTime())) {
+				System.out.println("Expired");
+				Date curDate = cal.getTime();
+				Date bookDate = borrowDate.getTime();
+				long curTime = curDate.getTime();
+				long bookTime = bookDate.getTime();
+				long diffTime = curTime - bookTime;
+				long diffDays = diffTime / (1000 * 60 * 60 * 24);
+				System.out.format("Differnce in days is: %d" + diffDays);
+				float amount = diffDays * 1;
+				if(!db.insertFine(amount, cal.getTime(), borid)){
+					System.out.println("Fine not inserted");
+				}
+					
+			}
 			
 			ResultSet holdRs = db.selectHoldRequestsByCall(callNumber);
 			ResultSet copyRs = db.selectBookCopiesByCallNumber(callNumber);
@@ -172,18 +186,8 @@ public class ClerkApp {
 	}
 	
 	public Borrowing[] checkOverdueItems() throws SQLException {
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
-		//Automatically initialized to current date	
-		Calendar c = Calendar.getInstance();
-		
-		//Due date for current books are a week before
-		c.add(Calendar.DATE, -7);
-		
-		sdf.format(c.getTime());
-		
-		ResultSet rs = db.searchOverDueByDate(c.getTime());
+		ResultSet rs = db.searchOverDueByDate(cal.getTime());
 		Map<Integer, Borrowing> borrows = new HashMap<Integer, Borrowing>();
 		while(rs.next()) {
 			Borrowing borrow;

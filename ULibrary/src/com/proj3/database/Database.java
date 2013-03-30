@@ -323,16 +323,16 @@ public class Database {
 		return false;
 	}
 
-	public boolean insertFine(double amount, Date issuedDate, Date paidDate,
+	public boolean insertFine(float amount, Date issuedDate,
 			int borid) {
 		try {
 			ps = con.prepareStatement("INSERT INTO Fine VALUES (fid_counter.nextval,?,?,?,?)");
 
-			ps.setDouble(1, amount);
+			ps.setFloat(1, amount);
 
 			ps.setDate(2, new java.sql.Date(issuedDate.getTime()));
 			
-			ps.setDate(3, new java.sql.Date(paidDate.getTime()));
+			//ps.setDate(3, new java.sql.Date(paidDate.getTime()));
 			
 			ps.setInt(4, borid);
 
@@ -1014,11 +1014,13 @@ public class Database {
 		ResultSet rs = null;
 		
 		try {
-			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < TO_DATE(?, 'YYYY-MM-DD');");
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < ?");
+			//ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < TO_DATE('2013-10-10', 'YYYY-MM-DD');");
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			sdf.format(duedate);
-			
-			ps.setString(1, duedate.toString());
+			//String formatedDate = "TO_DATE('" + sdf.format(duedate) + "', 'YYYY-MM-DD');";
+			String formatedDate = sdf.format(duedate);
+			System.out.println(formatedDate);
+			ps.setString(1, formatedDate);
 			
 			rs = ps.executeQuery();
 
