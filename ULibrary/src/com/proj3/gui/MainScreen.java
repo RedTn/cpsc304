@@ -4,6 +4,7 @@ package com.proj3.gui;
 //Gui package
 import java.awt.Dimension;
 import java.awt.Font;
+import java.sql.SQLException;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -12,6 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.proj3.database.Database;
+import com.proj3.model.Borrowing;
+import com.proj3.app.*;
+
 //We need to import the java.sql package to use JDBC
 //for reading from the command line
 //for the login window
@@ -51,7 +55,8 @@ public class MainScreen extends JFrame {
 		//TODO implement this
 	}
 	
-	public static void main(String args[]) {
+	public static void main(String args[]) throws SQLException {
+		 
 		Database db = new Database("passwordfile");
 		if (db.connect()) {
 			MainScreen mygui = new MainScreen(db);
@@ -63,6 +68,11 @@ public class MainScreen extends JFrame {
 			mygui.setLocation(700, 400);
 			mygui.setVisible(true);
 			mygui.setTitle("Login");
+			
+			ClerkApp ca = new ClerkApp(db);
+			Borrowing[] b = ca.checkOverdueItems();
+			for (int i=0; i<b.length; i++)
+				System.out.println(b[i]);
 		} else {
 			
 		}

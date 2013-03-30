@@ -9,7 +9,7 @@ public class Borrowing {
 	
 	private Borrower borrower;
 	private BookCopy copy;
-	private int bid;
+	private int bid,borid;
 	private String callNumber;
 	private Date outDate, inDate;
 	
@@ -17,7 +17,8 @@ public class Borrowing {
 		
 	}
 	
-	public Borrowing(int bid, BookCopy copy, Borrower borrower, Date outDate, Date inDate) {
+	public Borrowing(int borid, int bid, BookCopy copy, Borrower borrower, Date outDate, Date inDate) {
+		this.setBorid(borid);
 		this.setBorrower(borrower);
 		this.setBid(bid);
 		this.setCopy(copy);
@@ -28,6 +29,7 @@ public class Borrowing {
 	public static Borrowing getInstance(ResultSet rs, Borrower borrower, BookCopy copy) throws SQLException {
 		Borrowing b = new Borrowing();
 
+		int borid = rs.getInt("borid");
 		int bid = rs.getInt("bid");
 		String callNumber = rs.getString("callNumber");
 		
@@ -41,6 +43,7 @@ public class Borrowing {
 			inDate = cal.getTime();
 		}
 		
+		b.setBid(borid);
 		b.setBid(bid);
 		b.setCallNumber(callNumber);
 		b.setBorrower(borrower);
@@ -99,11 +102,12 @@ public class Borrowing {
 		return callNumber;
 	}
 	
-	public boolean isOverDue() {
-		if (copy.getStatus() == CopyStatus.in) {
-			return false;
-		}
-		
-		return inDate.before(new Date());
+	public void setBorid(int borid) {
+		this.borid = borid;
+	}
+	
+	public int getBorid() {
+		return borid;
+
 	}
 }
