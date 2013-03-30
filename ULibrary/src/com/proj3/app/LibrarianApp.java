@@ -1,7 +1,5 @@
 package com.proj3.app;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +8,6 @@ import java.util.Map;
 import com.proj3.database.Database;
 import com.proj3.model.Book;
 import com.proj3.model.BookCopy;
-import com.proj3.model.Borrower;
 import com.proj3.model.Borrowing;
 import com.proj3.model.CopyStatus;
 
@@ -23,9 +20,9 @@ public class LibrarianApp {
 		this.db = db;
 	}
 
-	public boolean addNewBook(Book book) throws SQLException {
-		ResultSet rs = db.selectBookByCallNumber(book.getCallNumber());
-		if (rs.next()) {
+	public boolean addNewBook(Book book) {
+		Book existBook = db.selectBookByCallNumber(book.getCallNumber());
+		if (existBook == null) {
 			return false;
 		}
 		return db.insertBook(book.getCallNumber(), book.getIsbn(),
@@ -42,47 +39,35 @@ public class LibrarianApp {
 
 	}
 
-	public Borrowing[] generateCheckedOutBooksReport() throws SQLException {
-		ResultSet rs = db.selectAllUnreturnedBorrowings();
-		
+	public Borrowing[] generateCheckedOutBooksReport() {
+		Borrowing borrs[] = db.selectAllUnreturnedBorrowings();
+
 		List<Borrowing> checkedOuts = new ArrayList<Borrowing>();
 
-		while (rs.next()) {
-			String callNumber = rs.getString("callNumber");
-			int copyNo = rs.getInt("copyNo");
-			int bid = rs.getInt("bid");
-			
-			ResultSet bookRs = db.selectBookByCallNumber(callNumber);
-			ResultSet copyRs = db.selectCopyByCallAndCopyNumber(callNumber, copyNo);
-			ResultSet borrowerRs = db.selectBorrowerById(bid);
-			
-			Book book = Book.getInstance(bookRs);
-			BookCopy copy = BookCopy.getInstance(copyRs, book);
-			Borrower borrower = Borrower.getInstance(borrowerRs);
-			
-			if (copy.getStatus() != CopyStatus.in) {
-				Borrowing borr =Borrowing.getInstance(rs, borrower, copy);
-				checkedOuts.add(borr);
+		for (int i = 0; i < borrs.length; i++) {
+			if (borrs[i].getCopy().getStatus() != CopyStatus.in) {
+				checkedOuts.add(borrs[i]);
 			}
 		}
 
 		return (Borrowing[]) checkedOuts.toArray();
 	}
 
-	public BookCopy[] generateCheckedOutBooksReport(String subject)
-			throws SQLException {
-		ResultSet rs = db.selectBooksByKeyword(subject);
-		CopyStatus checkedOut = CopyStatus.out;
+	public BookCopy[] generateCheckedOutBooksReport(String subject) {
+		Book books[] = db.selectBooksByKeyword(subject);
+
 		List<BookCopy> checkedOutBooks = new ArrayList<BookCopy>();
 
-		while (rs.next()) {
-			Book book = Book.getInstance(rs);
-			BookCopy copy = BookCopy.getInstance(rs, book);
-			if (copy.getStatus() == checkedOut) {
-				checkedOutBooks.add(copy);
-				// if(book. indate = null && todays date > ){
-				// flag as overdue
-				// }
+		for (int i = 0; i < books.length; i++) {
+
+			BookCopy[] copies = db.selectBookCopiesByBook(books[i]);
+			for (int j = 0; j < copies.length; j++) {
+				if (copies[i].getStatus() == CopyStatus.out) {
+					checkedOutBooks.add(copies[i]);
+					// if(book. indate = null && todays date > ){
+					// flag as overdue
+					// }
+				}
 			}
 		}
 		// print list of each book with DATE CHECKED OUT and DUE DATE
@@ -126,17 +111,13 @@ public class LibrarianApp {
 		return sortedBooks;
 	}
 
-	public Book[] generatePopularBooksReport(int year, int n)
-			throws SQLException {
+	public Book[] generatePopularBooksReport(int year, int n) {
 
-		ResultSet rs = db.selectBooksBorrowedInAYear(year);
+		Borrowing[] borrows = db.selectBooksBorrowedInAYear(year);
 		Map<Book, Integer> popularBooks = new HashMap<Book, Integer>();
-		
-		while (rs.next()) {
-			String callNumber = rs.getString("callNumber");
-			ResultSet bookRs = db.selectBookByCallNumber(callNumber);
-			Book book = Book.getInstance(bookRs);
 
+		for (int i=0; i<borrows.length; i++) {
+			Book book = borrows[i].getBook();
 			if (popularBooks.containsKey(book)) {
 				int timesCheckedOut = popularBooks.get(book);
 				popularBooks.put(book, timesCheckedOut + 1);
@@ -148,7 +129,6 @@ public class LibrarianApp {
 		}
 
 		return getTopNBooks(popularBooks, n);
-
 
 	}
 

@@ -14,8 +14,6 @@ public class Book {
 	private String year;
 	private Set<String> authors;
 	private Set<String> subjects;
-	
-	private Set<BookCopy> copies;
 
 	public Book(String callNumber) {
 		this();
@@ -25,7 +23,6 @@ public class Book {
 	public Book() {
 		authors = new HashSet<String>();
 		subjects = new HashSet<String>();
-		copies = new HashSet<BookCopy>();
 	}
 	
 	public static Book getInstance(ResultSet rs) throws SQLException {
@@ -118,18 +115,6 @@ public class Book {
 
 	public void addSubject(String subject) {
 		subjects.add(subject);
-	}
-	
-	public Set<BookCopy> getCopies() {
-		return copies;
-	}
-
-	public void setCopies(Set<BookCopy> copies) {
-		this.copies = copies;
-	}
-	
-	public void addCopy(BookCopy copy) {
-		copies.add(copy);
 	}
 	
 	public int hashcode() {

@@ -9,9 +9,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import oracle.sql.DATE;
 
 import com.proj3.model.*;
 
@@ -80,7 +83,7 @@ public class Database {
 		}
 	}
 
-	//Clerk Transaction
+	// Clerk Transaction
 	public boolean insertBorrower(String password, String name, String address,
 			String phone, String email, String sinOrStNo, Date expiryDate,
 			BorrowerType type) {
@@ -230,7 +233,7 @@ public class Database {
 			ps.setString(1, callNumber);
 
 			ps.setInt(2, copyNo);
-			
+
 			ps.setString(3, status.getStatus());
 
 			ps.executeUpdate();
@@ -263,7 +266,7 @@ public class Database {
 			ps.setString(2, callNumber);
 
 			ps.setDate(3, new java.sql.Date(issuedDate.getTime()));
-			
+
 			ps.executeUpdate();
 
 			// commit work
@@ -285,7 +288,7 @@ public class Database {
 		return false;
 	}
 
-	//Clerk transaction
+	// Clerk transaction
 	public boolean insertBorrowing(String bid, String callNumber,
 			String copyNo, Date outDate, Date inDate) {
 		try {
@@ -297,11 +300,11 @@ public class Database {
 
 			ps.setString(3, copyNo);
 
-			ps.setDate(4, (java.sql.Date)outDate);
-			
-			//TODO, Null condition for inDate
-			ps.setDate(5, (java.sql.Date)inDate);
-			
+			ps.setDate(4, (java.sql.Date) outDate);
+
+			// TODO, Null condition for inDate
+			ps.setDate(5, (java.sql.Date) inDate);
+
 			ps.executeUpdate();
 
 			// commit work
@@ -323,17 +326,16 @@ public class Database {
 		return false;
 	}
 
-	public boolean insertFine(float amount, Date issuedDate,
-			int borid) {
+	public boolean insertFine(float amount, Date issuedDate, int borid) {
 		try {
 			ps = con.prepareStatement("INSERT INTO Fine VALUES (fid_counter.nextval,?,?,?,?)");
 
 			ps.setFloat(1, amount);
 
 			ps.setDate(2, new java.sql.Date(issuedDate.getTime()));
-			
-			//ps.setDate(3, new java.sql.Date(paidDate.getTime()));
-			
+
+			// ps.setDate(3, new java.sql.Date(paidDate.getTime()));
+
 			ps.setInt(4, borid);
 
 			ps.executeUpdate();
@@ -358,318 +360,263 @@ public class Database {
 	}
 
 	public boolean deleteBorrower(int bid) {
-		try
-		{
-		  ps = con.prepareStatement("DELETE FROM Borrower WHERE bid = ?");
-		
-		  ps.setInt(1, bid);
+		try {
+			ps = con.prepareStatement("DELETE FROM Borrower WHERE bid = ?");
 
-		  int rowCount = ps.executeUpdate();
+			ps.setInt(1, bid);
 
-		  if (rowCount == 0)
-		  {
-		      //Does not exist
-			  return false;
-		  }
+			int rowCount = ps.executeUpdate();
 
-		  con.commit();
+			if (rowCount == 0) {
+				// Does not exist
+				return false;
+			}
 
-		  ps.close();
-		  
-		  return true;
-		}
-		catch (SQLException ex)
-		{
-		    System.out.println("Message: " + ex.getMessage());
+			con.commit();
 
-	            try 
-		    {
-			con.rollback();	
-		    }
-		    catch (SQLException ex2)
-		    {
-			System.out.println("Message: " + ex2.getMessage());
-			System.exit(-1);
-		    }
-	        return false;
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+
+			try {
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+			return false;
 		}
 	}
-	
+
 	public boolean deleteBook(String callNumber) {
-		try
-		{
-		  ps = con.prepareStatement("DELETE FROM Book WHERE callNumber = ?");
-		
-		  ps.setString(1, callNumber);
+		try {
+			ps = con.prepareStatement("DELETE FROM Book WHERE callNumber = ?");
 
-		  int rowCount = ps.executeUpdate();
+			ps.setString(1, callNumber);
 
-		  if (rowCount == 0)
-		  {
-		      //Does not exist
-			  return false;
-		  }
+			int rowCount = ps.executeUpdate();
 
-		  con.commit();
+			if (rowCount == 0) {
+				// Does not exist
+				return false;
+			}
 
-		  ps.close();
-		  
-		  return true;
-		}
-		catch (SQLException ex)
-		{
-		    System.out.println("Message: " + ex.getMessage());
+			con.commit();
 
-	            try 
-		    {
-			con.rollback();	
-		    }
-		    catch (SQLException ex2)
-		    {
-			System.out.println("Message: " + ex2.getMessage());
-			System.exit(-1);
-		    }
-	        return false;
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+
+			try {
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+			return false;
 		}
 	}
-	
+
 	public boolean deleteHasAuthor(String callNumber, String name) {
-		try
-		{
-		  ps = con.prepareStatement("DELETE FROM HasAuthor WHERE callNumber = ? AND name = ?");
-		
-		  ps.setString(1, callNumber);
-		  
-		  ps.setString(2, name);
+		try {
+			ps = con.prepareStatement("DELETE FROM HasAuthor WHERE callNumber = ? AND name = ?");
 
-		  int rowCount = ps.executeUpdate();
+			ps.setString(1, callNumber);
 
-		  if (rowCount == 0)
-		  {
-		      //Does not exist
-			  return false;
-		  }
+			ps.setString(2, name);
 
-		  con.commit();
+			int rowCount = ps.executeUpdate();
 
-		  ps.close();
-		  
-		  return true;
-		}
-		catch (SQLException ex)
-		{
-		    System.out.println("Message: " + ex.getMessage());
+			if (rowCount == 0) {
+				// Does not exist
+				return false;
+			}
 
-	            try 
-		    {
-			con.rollback();	
-		    }
-		    catch (SQLException ex2)
-		    {
-			System.out.println("Message: " + ex2.getMessage());
-			System.exit(-1);
-		    }
-	        return false;
+			con.commit();
+
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+
+			try {
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+			return false;
 		}
 	}
-	
+
 	public boolean deleteHasSubject(String callNumber, String subject) {
-		try
-		{
-		  ps = con.prepareStatement("DELETE FROM HasSubject WHERE callNumber = ? AND subject = ?");
-		
-		  ps.setString(1, callNumber);
-		  
-		  ps.setString(2, subject);
+		try {
+			ps = con.prepareStatement("DELETE FROM HasSubject WHERE callNumber = ? AND subject = ?");
 
-		  int rowCount = ps.executeUpdate();
+			ps.setString(1, callNumber);
 
-		  if (rowCount == 0)
-		  {
-		      //Does not exist
-			  return false;
-		  }
+			ps.setString(2, subject);
 
-		  con.commit();
+			int rowCount = ps.executeUpdate();
 
-		  ps.close();
-		  
-		  return true;
-		}
-		catch (SQLException ex)
-		{
-		    System.out.println("Message: " + ex.getMessage());
+			if (rowCount == 0) {
+				// Does not exist
+				return false;
+			}
 
-	            try 
-		    {
-			con.rollback();	
-		    }
-		    catch (SQLException ex2)
-		    {
-			System.out.println("Message: " + ex2.getMessage());
-			System.exit(-1);
-		    }
-	        return false;
+			con.commit();
+
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+
+			try {
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+			return false;
 		}
 	}
-	
+
 	public boolean deleteBookCopy(String callNumber, int copyNo) {
-		try
-		{
-		  ps = con.prepareStatement("DELETE FROM BookCopy WHERE callNumber = ? AND copyNo = ?");
-		
-		  ps.setString(1, callNumber);
-		  
-		  ps.setInt(2, copyNo);
+		try {
+			ps = con.prepareStatement("DELETE FROM BookCopy WHERE callNumber = ? AND copyNo = ?");
 
-		  int rowCount = ps.executeUpdate();
+			ps.setString(1, callNumber);
 
-		  if (rowCount == 0)
-		  {
-		      //Does not exist
-			  return false;
-		  }
+			ps.setInt(2, copyNo);
 
-		  con.commit();
+			int rowCount = ps.executeUpdate();
 
-		  ps.close();
-		  
-		  return true;
-		}
-		catch (SQLException ex)
-		{
-		    System.out.println("Message: " + ex.getMessage());
+			if (rowCount == 0) {
+				// Does not exist
+				return false;
+			}
 
-	            try 
-		    {
-			con.rollback();	
-		    }
-		    catch (SQLException ex2)
-		    {
-			System.out.println("Message: " + ex2.getMessage());
-			System.exit(-1);
-		    }
-	        return false;
+			con.commit();
+
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+
+			try {
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+			return false;
 		}
 	}
-	
+
 	public boolean deleteHoldRequest(int hid) {
-		try
-		{
-		  ps = con.prepareStatement("DELETE FROM HoldRequest WHERE hid = ?");
-		
-		  ps.setInt(1, hid);
+		try {
+			ps = con.prepareStatement("DELETE FROM HoldRequest WHERE hid = ?");
 
-		  int rowCount = ps.executeUpdate();
+			ps.setInt(1, hid);
 
-		  if (rowCount == 0)
-		  {
-		      //Does not exist
-			  return false;
-		  }
+			int rowCount = ps.executeUpdate();
 
-		  con.commit();
+			if (rowCount == 0) {
+				// Does not exist
+				return false;
+			}
 
-		  ps.close();
-		  
-		  return true;
-		}
-		catch (SQLException ex)
-		{
-		    System.out.println("Message: " + ex.getMessage());
+			con.commit();
 
-	            try 
-		    {
-			con.rollback();	
-		    }
-		    catch (SQLException ex2)
-		    {
-			System.out.println("Message: " + ex2.getMessage());
-			System.exit(-1);
-		    }
-	        return false;
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+
+			try {
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+			return false;
 		}
 	}
-	
+
 	public boolean deleteBorrowing(int borid) {
-		try
-		{
-		  ps = con.prepareStatement("DELETE FROM Borrowing WHERE borid = ?");
-		
-		  ps.setInt(1, borid);
+		try {
+			ps = con.prepareStatement("DELETE FROM Borrowing WHERE borid = ?");
 
-		  int rowCount = ps.executeUpdate();
+			ps.setInt(1, borid);
 
-		  if (rowCount == 0)
-		  {
-		      //Does not exist
-			  return false;
-		  }
+			int rowCount = ps.executeUpdate();
 
-		  con.commit();
+			if (rowCount == 0) {
+				// Does not exist
+				return false;
+			}
 
-		  ps.close();
-		  
-		  return true;
-		}
-		catch (SQLException ex)
-		{
-		    System.out.println("Message: " + ex.getMessage());
+			con.commit();
 
-	            try 
-		    {
-			con.rollback();	
-		    }
-		    catch (SQLException ex2)
-		    {
-			System.out.println("Message: " + ex2.getMessage());
-			System.exit(-1);
-		    }
-	        return false;
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+
+			try {
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+			return false;
 		}
 	}
-	
+
 	public boolean deleteFine(int fid) {
-		try
-		{
-		  ps = con.prepareStatement("DELETE FROM Fine WHERE fid = ?");
-		
-		  ps.setInt(1, fid);
+		try {
+			ps = con.prepareStatement("DELETE FROM Fine WHERE fid = ?");
 
-		  int rowCount = ps.executeUpdate();
+			ps.setInt(1, fid);
 
-		  if (rowCount == 0)
-		  {
-		      //Does not exist
-			  return false;
-		  }
+			int rowCount = ps.executeUpdate();
 
-		  con.commit();
+			if (rowCount == 0) {
+				// Does not exist
+				return false;
+			}
 
-		  ps.close();
-		  
-		  return true;
-		}
-		catch (SQLException ex)
-		{
-		    System.out.println("Message: " + ex.getMessage());
+			con.commit();
 
-	            try 
-		    {
-			con.rollback();	
-		    }
-		    catch (SQLException ex2)
-		    {
-			System.out.println("Message: " + ex2.getMessage());
-			System.exit(-1);
-		    }
-	        return false;
+			ps.close();
+
+			return true;
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+
+			try {
+				con.rollback();
+			} catch (SQLException ex2) {
+				System.out.println("Message: " + ex2.getMessage());
+				System.exit(-1);
+			}
+			return false;
 		}
 	}
-	
-	public ResultSet selectBooksByKeyword(String keyword) {
-		ResultSet rs  = null;
 
+	public Book[] selectBooksByKeyword(String keyword) {
+		ResultSet rs = null;
+
+		Map<String, Book> books = new HashMap<String, Book>();
 		try {
 			ps = con.prepareStatement("SELECT * FROM Book b, HasAuthor a, HasSubject s WHERE b.callNumber = a.callNumber AND b.callNumber = s.callNumber AND (b.title LIKE '%?%' OR b.mainAuthor LIKE '%?%' OR a.name LIKE '%?%' OR s.subject '%?%')");
 
@@ -678,6 +625,28 @@ public class Database {
 			ps.setString(3, keyword);
 			ps.setString(4, keyword);
 			rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				Book book;
+				String callNumber = rs.getString("callNumber");
+				if (!books.containsKey(callNumber)) {
+					book = Book.getInstance(rs);
+					books.put(book.getCallNumber(), book);
+				} else {
+					book = books.get(callNumber);
+				}
+
+				String author = rs.getString("name");
+				if (!rs.wasNull()) {
+					book.addAuthor(author);
+				}
+
+				String subject = rs.getString("subject");
+				if (!rs.wasNull()) {
+					book.addSubject(subject);
+				}
+			}
 
 			ps.close();
 
@@ -692,313 +661,397 @@ public class Database {
 			}
 		}
 
-		return rs;
+		return books.values().toArray(new Book[books.size()]);
 	}
-	
 
-	public ResultSet selectBookCopiesByCallNumber(String callNumber) {
-		ResultSet rs  = null;
-
+	public BookCopy[] selectBookCopiesByBook(Book book) {
+		ResultSet rs = null;
+		List<BookCopy> copies = new ArrayList<BookCopy>();
+		
 		try {
 			ps = con.prepareStatement("SELECT copyNo, status FROM BookCopy WHERE callNumber = ?");
 
-			ps.setString(1, callNumber);
-			
+			ps.setString(1, book.getCallNumber());
+
 			rs = ps.executeQuery();
 
+			while (rs.next()) {
+				copies.add(BookCopy.getInstance(rs, book));
+			}
+			
 			ps.close();
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;
+		return copies.toArray(new BookCopy[copies.size()]);
 	}
-	
-	public ResultSet selectUnreturnedBorrowingsByBorrower(int bid) {
-		ResultSet rs  = null;
 
-		try {
-			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ? AND inDate IS NULL");
-
-			ps.setInt(1, bid);
-			
-			rs = ps.executeQuery();
-
-			ps.close();
-
-		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
-		}
-
-		return rs;
-	}
-	
-	public ResultSet selectBooksBorrowedInAYear(int year) {
+	public Borrowing[] selectUnreturnedBorrowingsByBorrower(Borrower borrower) {
 		ResultSet rs = null;
+		List<Borrowing> borrowings = new ArrayList<Borrowing>();
+		
+		try {
+			//ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ? AND inDate IS NULL");
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ?");
+
+			ps.setInt(1, borrower.getId());
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				String callNumber = rs.getString("callNumber");
+				int copyNo = rs.getInt("copyNo");
+				
+				BookCopy copy = selectCopyByCallAndCopyNumber(callNumber, copyNo);
+				borrowings.add(Borrowing.getInstance(rs, borrower, copy));
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return borrowings.toArray(new Borrowing[borrowings.size()]);
+	}
+
+	public Borrowing[] selectBooksBorrowedInAYear(int year) {
+		ResultSet rs = null;
+		List<Borrowing> borrows = new ArrayList<Borrowing>();
+		
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE outDate = ?");
 
-			ps.setInt(5, year);
-			
+			ps.setInt(1, year);
+
 			rs = ps.executeQuery();
 
+			while (rs.next()) {
+				borrows.add(constructBorrowing(rs));
+			}
 			ps.close();
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;
+		return borrows.toArray(new Borrowing[borrows.size()]);
 	}
-	
-	//Display all books
-	public ResultSet selectAllBooks() {
-		ResultSet rs  = null;
 
+	private Borrowing constructBorrowing(ResultSet rs) throws SQLException {
+		Borrower borrower = selectBorrowerById(rs.getInt("bid"));
+		BookCopy copy = selectCopyByCallAndCopyNumber(rs.getString("callNumber"), rs.getInt("copyNo"));
+		return Borrowing.getInstance(rs, borrower, copy);
+	}
+	// Display all books
+	public Book[] selectAllBooks() {
+		ResultSet rs = null;
+		List<Book> books = new ArrayList<Book>();
 		try {
 			ps = con.prepareStatement("SELECT * FROM Book");
-			
+
 			rs = ps.executeQuery();
 
-			ps.close();
+			while (rs.next()) {
+				books.add(Book.getInstance(rs));
+			}
 			
+			ps.close();
+
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;
+		return books.toArray(new Book[books.size()]);
 	}
-	
-	public ResultSet selectBookByCallNumber(String callNumber) {
-		ResultSet rs  = null;
 
+	public Book selectBookByCallNumber(String callNumber) {
+		ResultSet rs = null;
+		Book book = null;
 		try {
 			ps = con.prepareStatement("SELECT * FROM Book WHERE callNumber = ?");
 
 			ps.setString(1, callNumber);
-			
+
 			rs = ps.executeQuery();
 
+			if (rs.next()) {
+				book = Book.getInstance(rs);
+			}
 			ps.close();
-			
+
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;
+		return book;
+	}
+
+	public BookCopy selectCopyByBookAndCopyNumber(Book book, int copyNo) {
+		BookCopy copy = selectCopyByCallAndCopyNumberWithoutBook(book.getCallNumber(), copyNo);
+		
+		copy.setBook(book);	
+		return copy;
 	}
 	
-	public ResultSet selectCopyByCallAndCopyNumber(String callNumber, int copyNo) {
-		ResultSet rs  = null;
-
+	public BookCopy selectCopyByCallAndCopyNumber(String callNumber, int copyNo) {
+		BookCopy copy = selectCopyByCallAndCopyNumberWithoutBook(callNumber, copyNo);
+		
+		Book book = selectBookByCallNumber(callNumber);
+		copy.setBook(book);
+		return copy;
+	}
+	
+	private BookCopy selectCopyByCallAndCopyNumberWithoutBook(String callNumber, int copyNo) {
+		ResultSet rs = null;
+		BookCopy copy = null;
 		try {
 			ps = con.prepareStatement("SELECT * FROM BookCopy WHERE callNumber = ? AND copyNo = ?");
 
 			ps.setString(1, callNumber);
 			ps.setInt(2, copyNo);
-			
+
 			rs = ps.executeQuery();
 
+			if (rs.next()) {
+				copy = BookCopy.getInstance(rs, null);
+			}
+			
 			ps.close();
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;
+		return copy;
 	}
-	
-	public ResultSet selectBorrowerByIdAndPassword(int bid, String pw) {
-		ResultSet rs  = null;
-
+	public Borrower selectBorrowerByIdAndPassword(int bid, String pw) {
+		ResultSet rs = null;
+		Borrower borrower = null;
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrower WHERE bid = ? AND password = ?");
 
 			ps.setInt(1, bid);
 			ps.setString(2, pw);
-			
+
 			rs = ps.executeQuery();
 
+			if (rs.next()) {
+				borrower = Borrower.getInstance(rs);
+			}
 			ps.close();
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;	
+		return borrower;
 	}
-	
-	public ResultSet selectHoldRequestsByBorrower(int bid) {
+
+	public HoldRequest[] selectHoldRequestsByBorrower(Borrower borrower) {
 		ResultSet rs = null;
-		
+
 		try {
 			ps = con.prepareStatement("SELECT * FROM HoldRequest WHERE bid = ?");
-			ps.setInt(1, bid);
-			
+			ps.setInt(1, borrower.getId());
+
 			rs = ps.executeQuery();
 
+			List<HoldRequest> holds = new ArrayList<HoldRequest>();
+
+			while (rs.next()) {
+				Book book = selectBookByCallNumber(rs.getString("callNumber"));
+
+				holds.add(HoldRequest.getInstance(rs, book, borrower));
+			}
+
 			ps.close();
+
+			return holds.toArray(new HoldRequest[holds.size()]);
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;	
+		return new HoldRequest[0];
 	}
-	public ResultSet selectHoldRequestsByCall(String callNumber) {
+
+	public HoldRequest[] selectHoldRequestsByCall(Book book) {
 		ResultSet rs = null;
+		List<HoldRequest> holds = new ArrayList<HoldRequest>();
 		
 		try {
 			ps = con.prepareStatement("SELECT * FROM HoldRequest WHERE callNumber = ?");
-			ps.setString(1, callNumber);
-			
+			ps.setString(1, book.getCallNumber());
+
 			rs = ps.executeQuery();
 
+			while (rs.next()) {
+				Borrower borrower = selectBorrowerById(rs.getInt("bid"));
+				holds.add(HoldRequest.getInstance(rs, book, borrower));
+			}
 			ps.close();
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;	
+		return holds.toArray(new HoldRequest[holds.size()]);
 	}
-	
-	public ResultSet selectOutstandingFineAndBorrowByBorrower(int bid) {
+
+	public Fine[] selectOutstandingFineByBorrower(Borrower borrower) {
 		ResultSet rs = null;
-		
-		try {
-			ps = con.prepareStatement("SELECT * FROM Fine f, Borrowing bor WHERE f.borid = bor.borid AND bor.bid = ? AND f.amount > 0");
 
-			ps.setInt(1, bid);
-			
+		List<Fine> fines = new ArrayList<Fine>();
+		try {
+			ps = con.prepareStatement("SELECT f.* FROM Fine f, Borrowing bor WHERE f.borid = bor.borid AND bor.bid = ? AND f.amount > 0");
+
+			ps.setInt(1, borrower.getId());
+
 			rs = ps.executeQuery();
 
+			while (rs.next()) {
+				Borrowing borrow = searchBorrowingsByClerk(rs.getInt("borid"));
+				fines.add(Fine.getInstance(rs, borrow));
+			}
+			
 			ps.close();
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;
+		return fines.toArray(new Fine[fines.size()]);
 	}
-	
+
 	public boolean updateFineAmountField(int fid, float amount) {
 		try {
 			ps = con.prepareStatement("UPDATE Fine SET amount=? WHERE fid=?");
-			
+
 			ps.setFloat(1, amount);
 			ps.setInt(2, fid);
-			
+
 			ps.executeUpdate();
 			con.commit();
 
 			ps.close();
 			return true;
-		
+
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
-		
+
 			try {
 				con.rollback();
 			} catch (SQLException e) {
 				System.out.println("Message: " + ex.getMessage());
 			}
-			
+
 		}
-		
+
 		return false;
 	}
-	
+
 	public boolean updateFirstCopyStatus(String status, String callNumber) {
 		try {
 			ps = con.prepareStatement("UPDATE TOP (1) BookCopy SET status=? WHERE callNumber=?");
-			
+
 			ps.setString(1, status);
 			ps.setString(2, callNumber);
-			
+
 			ps.executeUpdate();
 			con.commit();
 
 			ps.close();
 			return true;
-		
+
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
-		
+
 			try {
 				con.rollback();
 			} catch (SQLException e) {
 				System.out.println("Message: " + ex.getMessage());
 			}
-			
+
 		}
-		
+
 		return false;
 	}
-	
-	public ResultSet searchBorrowingsByClerk(int borid) {
-		ResultSet rs  = null;
 
+	public Borrowing searchBorrowingsByClerk(int borid) {
+		ResultSet rs = null;
+		Borrowing b = null;
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE borid = ? AND inDate IS NULL");
 			ps.setInt(1, borid);
-			
+
 			rs = ps.executeQuery();
 
+			if (rs.next()) {
+				b = constructBorrowing(rs);
+			}
 			ps.close();
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;
+		return b;
 	}
-	
-	public ResultSet selectAllUnreturnedBorrowings() {
-		ResultSet rs  = null;
 
+	public Borrowing[] selectAllUnreturnedBorrowings() {
+		ResultSet rs = null;
+		List<Borrowing> borrows = new ArrayList<Borrowing>();
+		
 		try {
-			//ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL");
-			ps = con.prepareStatement("SELECT * FROM Borrowing");
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL");
 			
 			rs = ps.executeQuery();
 
+			while (rs.next()) {
+				borrows.add(constructBorrowing(rs));
+			}
+			
 			ps.close();
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;
+		return borrows.toArray(new Borrowing[borrows.size()]);
 	}
-	//Exclusive for Clerk
-	public ResultSet selectBorrowerById(int bid) {
-		ResultSet rs  = null;
 
+	// Exclusive for Clerk
+	public Borrower selectBorrowerById(int bid) {
+		ResultSet rs = null;
+		Borrower borrower = null;
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrower WHERE bid = ?");
 
 			ps.setInt(1, bid);
-			
+
 			rs = ps.executeQuery();
 
+			if (rs.next()) {
+				borrower = Borrower.getInstance(rs);
+			}
 			ps.close();
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;	
+		return borrower;
 	}
-	
-	public ResultSet searchBorrowerTypeByType(BorrowerType type) {
-		ResultSet rs  = null;
+
+	/*public ResultSet searchBorrowerTypeByType(BorrowerType type) {
+		ResultSet rs = null;
 
 		try {
 			ps = con.prepareStatement("SELECT * FROM BorrowerType WHERE type = ?");
 			ps.setString(1, type.getType());
-			
+
 			rs = ps.executeQuery();
 
 			ps.close();
@@ -1008,53 +1061,64 @@ public class Database {
 		}
 
 		return rs;
-	}
-	
-	public ResultSet searchOverDueByDate(Date duedate) {
+	}*/
+
+	public Borrowing[] selectOverDueBorrowingByDate(Date dueDate) {
 		ResultSet rs = null;
-		
+
+		List<Borrowing> bs = new ArrayList<Borrowing>();
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < ?");
-			//ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < TO_DATE('2013-10-10', 'YYYY-MM-DD');");
+			// ps =
+			// con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < TO_DATE('2013-10-10', 'YYYY-MM-DD');");
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			//String formatedDate = "TO_DATE('" + sdf.format(duedate) + "', 'YYYY-MM-DD');";
-			String formatedDate = sdf.format(duedate);
+			// String formatedDate = "TO_DATE('" + sdf.format(duedate) +
+			// "', 'YYYY-MM-DD');";
+			String formatedDate = sdf.format(dueDate);
 			System.out.println(formatedDate);
 			ps.setString(1, formatedDate);
-			
+
 			rs = ps.executeQuery();
 
+			while (rs.next()) {
+				bs.add(constructBorrowing(rs));
+			}
 			ps.close();
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;
+		return bs.toArray(new Borrowing[bs.size()]);
 	}
-	
-	public ResultSet displayBorrower() {
-		ResultSet rs  = null;
 
+	public Borrower[] selectAllBorrowers() {
+		ResultSet rs = null;
+		List<Borrower> borrowers = new ArrayList<Borrower>();
+		
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrower");
-			
+
 			rs = ps.executeQuery();
 
+			while (rs.next()) {
+				borrowers.add(Borrower.getInstance(rs));
+			}
 			ps.close();
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
-		return rs;
+		return borrowers.toArray(new Borrower[borrowers.size()]);
 	}
-	public ResultSet displayHasAuthor() {
-		ResultSet rs  = null;
+
+/*	public ResultSet displayHasAuthor() {
+		ResultSet rs = null;
 
 		try {
 			ps = con.prepareStatement("SELECT * FROM HasAuthor");
-			
+
 			rs = ps.executeQuery();
 
 			ps.close();
@@ -1065,12 +1129,13 @@ public class Database {
 
 		return rs;
 	}
+
 	public ResultSet displayHasSubject() {
-		ResultSet rs  = null;
+		ResultSet rs = null;
 
 		try {
 			ps = con.prepareStatement("SELECT * FROM HasSubject");
-			
+
 			rs = ps.executeQuery();
 
 			ps.close();
@@ -1081,13 +1146,13 @@ public class Database {
 
 		return rs;
 	}
-	
+
 	public ResultSet displayBookCopy() {
-		ResultSet rs  = null;
+		ResultSet rs = null;
 
 		try {
 			ps = con.prepareStatement("SELECT * FROM BookCopy");
-			
+
 			rs = ps.executeQuery();
 
 			ps.close();
@@ -1098,12 +1163,13 @@ public class Database {
 
 		return rs;
 	}
+
 	public ResultSet displayHoldRequest() {
-		ResultSet rs  = null;
+		ResultSet rs = null;
 
 		try {
 			ps = con.prepareStatement("SELECT * FROM HoldRequest");
-			
+
 			rs = ps.executeQuery();
 
 			ps.close();
@@ -1114,13 +1180,13 @@ public class Database {
 
 		return rs;
 	}
-	
+
 	public ResultSet displayBorrowing() {
-		ResultSet rs  = null;
+		ResultSet rs = null;
 
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing");
-			
+
 			rs = ps.executeQuery();
 
 			ps.close();
@@ -1131,13 +1197,13 @@ public class Database {
 
 		return rs;
 	}
-	
+
 	public ResultSet displayFine() {
-		ResultSet rs  = null;
+		ResultSet rs = null;
 
 		try {
 			ps = con.prepareStatement("SELECT * FROM Fine");
-			
+
 			rs = ps.executeQuery();
 
 			ps.close();
@@ -1147,5 +1213,5 @@ public class Database {
 		}
 
 		return rs;
-	}
+	}*/
 }
