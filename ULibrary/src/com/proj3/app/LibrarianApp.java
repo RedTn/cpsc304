@@ -1,5 +1,6 @@
 package com.proj3.app;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,12 +43,12 @@ public class LibrarianApp {
 	}
 
 	public Borrowing[] generateCheckedOutBooksReport() {
-		Borrowing borrs[] = db.selectAllUnreturnedBorrowings();
+		Borrowing borrs[] = db.selectAllBorrowings();
 
 		List<Borrowing> checkedOuts = new ArrayList<Borrowing>();
 
 		for (int i = 0; i < borrs.length; i++) {
-			if (borrs[i].getCopy().getStatus() != CopyStatus.in) {
+			if (borrs[i].getStatus() != CopyStatus.in) {
 				checkedOuts.add(borrs[i]);
 			}
 		}
@@ -55,26 +56,18 @@ public class LibrarianApp {
 		return checkedOuts.toArray(new Borrowing[checkedOuts.size()]);
 	}
 
-	public BookCopy[] generateCheckedOutBooksReport(String subject) {
-		Book books[] = db.selectBooksByKeyword(subject);
+	public Borrowing[] generateCheckedOutBooksReport(String subject) {
+		Borrowing borrs[] = db.selectAllBorrowingsByKeyword(subject);
 
-		List<BookCopy> checkedOutBooks = new ArrayList<BookCopy>();
+		List<Borrowing> checkedOuts = new ArrayList<Borrowing>();
 
-		for (int i = 0; i < books.length; i++) {
-
-			BookCopy[] copies = db.selectBookCopiesByBook(books[i]);
-			for (int j = 0; j < copies.length; j++) {
-				if (copies[i].getStatus() == CopyStatus.out) {
-					checkedOutBooks.add(copies[i]);
-					// if(book. indate = null && todays date > ){
-					// flag as overdue
-					// }
-				}
+		for (int i = 0; i < borrs.length; i++) {
+			if (borrs[i].getStatus() != CopyStatus.in) {
+				checkedOuts.add(borrs[i]);
 			}
 		}
-		// print list of each book with DATE CHECKED OUT and DUE DATE
 
-		return (BookCopy[]) checkedOutBooks.toArray();
+		return checkedOuts.toArray(new Borrowing[checkedOuts.size()]);
 	}
 
 	private Book[] getTopNBooks(Map<Book, Integer> popularBooks, int n) {
@@ -113,7 +106,7 @@ public class LibrarianApp {
 		return sortedBooks;
 	}
 
-	public Book[] generatePopularBooksReport(int year, int n) {
+	public Book[] generatePopularBooksReport(Date year, int n) {
 
 		Borrowing[] borrows = db.selectBooksBorrowedInAYear(year);
 		Map<Book, Integer> popularBooks = new HashMap<Book, Integer>();

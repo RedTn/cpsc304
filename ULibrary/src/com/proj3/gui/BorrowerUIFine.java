@@ -28,14 +28,15 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 
 	private static final String FID_STRING = "FINE ID";
 	private static final String FIDLIST_STRING = "FINE LIST";
+	private static final String AMOUNT_STRING = "AMOUNT($)";
 
 	private JTextArea fineArea;
 	
 	private JScrollPane fineAreaPane;
 	
-	private JTextField fIDField;
+	private JTextField fIDField, amountField;
 
-	private JLabel fIDFieldLabel;
+	private JLabel fIDFieldLabel, amountFieldLabel;
 
 	private JButton submitButton;
 
@@ -60,6 +61,10 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 	
 	public String getFID() {
 		return fIDField.getText();
+	}
+	
+	public String getAmount() {
+		return amountField.getText();
 	}
 	
 	public String getCurrentUserBID() {
@@ -103,6 +108,17 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 		fIDFieldLabel.setLabelFor(fIDField);        
 
 	}
+	
+	private void createAmountField() {
+
+		amountField = new JTextField();		
+		amountField.setName(FID_STRING);
+		amountField.addFocusListener(new MyFocusListener());
+
+		amountFieldLabel = new JLabel(AMOUNT_STRING + ":");
+		amountFieldLabel.setLabelFor(amountField);        
+
+	}
 
 	private void createFinePane() {
 
@@ -138,6 +154,7 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 
 		//Create text fields for inputs
 		createFIDField();
+		createAmountField();
 		createFinePane();
 		createSubmit();
 		
@@ -163,7 +180,6 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 		gridc.gridx = 0;
 		gridc.gridy = 2;
 		gridc.weightx = 0;
-		gridc.gridwidth = GridBagConstraints.RELATIVE;
 		this.add(fIDFieldLabel, gridc);
 
 		gridc = new GridBagConstraints();
@@ -171,10 +187,24 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 		gridc.gridx = 1;
 		gridc.gridy = 2;
 		gridc.weightx = 1;
-		gridc.gridwidth = GridBagConstraints.REMAINDER;
 		gridc.fill = GridBagConstraints.HORIZONTAL;
 		this.add(fIDField, gridc);
 						
+		gridc = new GridBagConstraints();
+		gridc.anchor = GridBagConstraints.EAST;
+		gridc.gridx = 2;
+		gridc.gridy = 2;
+		gridc.weightx = 0;
+		this.add(amountFieldLabel, gridc);
+
+		gridc = new GridBagConstraints();
+		gridc.anchor = GridBagConstraints.WEST;
+		gridc.gridx = 3;
+		gridc.gridy = 2;
+		gridc.weightx = 1;
+		gridc.fill = GridBagConstraints.HORIZONTAL;
+		this.add(amountField, gridc);
+		
 		//Insert spacing between the fields and the submit button
 		gridc = new GridBagConstraints();
 		gridc.gridy = 3;
@@ -182,8 +212,9 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 
 		//Insert the submit button
 		gridc.anchor = GridBagConstraints.CENTER;
-		gridc.gridwidth = 2;
+		gridc.gridwidth = GridBagConstraints.REMAINDER;
 		gridc.gridy = 4;
+		gridc.weightx = 1;
 		gridc.fill = GridBagConstraints.HORIZONTAL;
 		this.add(submitButton, gridc);
 
