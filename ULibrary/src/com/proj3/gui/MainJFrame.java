@@ -64,6 +64,10 @@ public class MainJFrame extends JFrame {
 		db = d;
 	}
 	
+	public Database getDB() {
+		return db;
+	}
+	
 	public String getCurrentUserBID() {
 		return borrowerUILogin.getBID();
 	}
