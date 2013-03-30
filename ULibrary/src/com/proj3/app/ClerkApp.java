@@ -36,9 +36,6 @@ public class ClerkApp {
 	}
 
 	public void addBorrower() {
-		if (currBorrower == null) {
-			return;
-		}
 
 		String password;
 		String name;
