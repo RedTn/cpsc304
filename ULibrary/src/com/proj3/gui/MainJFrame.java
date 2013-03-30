@@ -488,7 +488,7 @@ public class MainJFrame extends JFrame {
 			
 		});
 		JPanel panel = new JPanel();
-		panel.add(Box.createVerticalStrut(FRAME_HEIGHT/2));
+		panel.add( Box.createVerticalStrut(FRAME_HEIGHT/2) );
 		panel.add(button, new BorderLayout());
 		
 		return panel;
