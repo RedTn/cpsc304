@@ -17,6 +17,11 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
+import com.proj3.app.LibrarianApp;
+import com.proj3.model.Book;
+import com.proj3.model.BookCopy;
+import com.proj3.model.CopyStatus;
+
 @SuppressWarnings("serial")
 public class LibrarianUIAddCopy extends JPanel implements ActionListener {
 	
@@ -163,14 +168,20 @@ public class LibrarianUIAddCopy extends JPanel implements ActionListener {
 						//TODO INSERT METHOD HERE
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
-						displayOutput("Thread Started");
+						String callNumber = getCallNumber();
+
+						Book newBook = new Book(); // new book
+						newBook.setCallNumber(callNumber);
+						LibrarianApp app = new LibrarianApp(mainFrame.getDB());
+						BookCopy newBookCopy = new BookCopy(newBook, 0, CopyStatus.in);
+						app.addNewBookCopy(newBookCopy);
+						
+						displayOutput("New copy successfully added into Database.");	
 						displayOutput("Call Number: "+getCallNumber());						
-						Thread.sleep(3000);						
-						displayOutput("Thread Ended");
+						Thread.sleep(1000);						
 
 					} catch (Exception e) {
-						throw new RuntimeException("Error while processing [" +
-								getThisPanel().getName() + "] Method.");
+						mainFrame.displayErrorMessage(e.getMessage());
 					} finally {
 						submitButton.setEnabled(true);
 						getThisPanel().remove(progressBar);

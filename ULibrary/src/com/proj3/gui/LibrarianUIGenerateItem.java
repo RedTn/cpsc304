@@ -243,8 +243,7 @@ public class LibrarianUIGenerateItem extends JPanel implements ActionListener {
 						displayItems("Thread Ended");
 
 					} catch (Exception e) {
-						throw new RuntimeException("Error while processing [" +
-								getThisPanel().getName() + "] Method.");
+						mainFrame.displayErrorMessage(e.getMessage());
 					} finally {
 						submitButton.setEnabled(true);
 						getThisPanel().remove(progressBar);

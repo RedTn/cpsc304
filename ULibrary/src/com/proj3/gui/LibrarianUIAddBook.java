@@ -99,7 +99,7 @@ public class LibrarianUIAddBook extends JPanel implements ActionListener {
 	
 	private void createIsbnField() {
 
-		isbnField = new JTextField(255);		
+		isbnField = new JTextField(13);		
 		isbnField.setName(ISBN_STRING);
 		isbnField.addFocusListener(new MyFocusListener());		
 		isbnField.addKeyListener(new MyTextFieldKeyListener());
@@ -111,7 +111,7 @@ public class LibrarianUIAddBook extends JPanel implements ActionListener {
 	
 	private void createTitleField() {
 
-		titleField = new JTextField(13);		
+		titleField = new JTextField(255);		
 		titleField.setName(TITLE_STRING);
 		titleField.addFocusListener(new MyFocusListener());		
 		titleField.addKeyListener(new MyTextFieldKeyListener());
@@ -276,7 +276,7 @@ public class LibrarianUIAddBook extends JPanel implements ActionListener {
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
 						
-						//String callNumber = getCallNumber();
+						String callNumber = getCallNumber();
 						String isbn = getISBN();
 						String title = getTitle();
 						String mainAuthor = getMainAuthor();
@@ -285,29 +285,29 @@ public class LibrarianUIAddBook extends JPanel implements ActionListener {
 
 						Book newBook = new Book(); // new book
 
-						//newBook.setCallNumber(callNumber);
+						newBook.setCallNumber(callNumber);
 						newBook.setIsbn(isbn);
 						newBook.setTitle(title);
 						newBook.setMainAuthor(mainAuthor);
 						newBook.setPublisher(publisher);
 						newBook.setYear(year);
 						
-						Database db = new Database("passwordfile");
-						LibrarianApp app = new LibrarianApp(db);
+						
+						LibrarianApp app = new LibrarianApp(mainFrame.getDB());
 						app.addNewBook(newBook);
 						
-						displayOutput("Thread Started");
+						displayOutput("New Book Successfully Added");
+						displayOutput("CALL NUMBER: " +getCallNumber());
 						displayOutput("ISBN: "+getISBN());
 						displayOutput("TITLE: "+getTitle());
 						displayOutput("MAIN AUTHOR: "+getMainAuthor());	
 						displayOutput("PUBLISHER: "+getPublisher());
 						displayOutput("YEAR: "+getYear());
 						Thread.sleep(3000);						
-						displayOutput("Thread Ended");
+				
 
 					} catch (Exception e) {
-						throw new RuntimeException("Error while processing [" +
-								getThisPanel().getName() + "] Method.");
+						mainFrame.displayErrorMessage(e.getMessage());
 					} finally {
 						submitButton.setEnabled(true);
 						getThisPanel().remove(progressBar);

@@ -210,8 +210,7 @@ public class BorrowerUIHold extends JPanel implements ActionListener{
 						displayHolds(mainFrame.bApp().getHolds());
 
 					} catch (Exception e) {
-						throw new RuntimeException("Error while processing [" +
-								getThisPanel().getName() + "] Method.");
+						mainFrame.displayErrorMessage(e.getMessage());
 					} finally {
 						submitButton.setEnabled(true);
 						getThisPanel().remove(progressBar);

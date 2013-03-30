@@ -270,8 +270,7 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 						displayOutput(message);
 						
 					} catch (Exception e) {
-						throw new RuntimeException("Error while processing [" +
-								getThisPanel().getName() + "] Method.");
+						mainFrame.displayErrorMessage(e.getMessage());
 					} finally {
 						submitButton.setEnabled(true);
 						getThisPanel().remove(progressBar);

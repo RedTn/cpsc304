@@ -19,6 +19,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.proj3.app.LibrarianApp;
+import com.proj3.model.Borrowing;
+
 @SuppressWarnings("serial")
 public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 
@@ -290,21 +293,30 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 						//TODO INSERT METHOD HERE
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
-						displayBooks("Thread Started");
-						displayBooks("Subject: "+getSubject());
-						displayCheckOutDate("Subject: "+getSubject());
-						displayDueDate("Subject: "+getSubject());						
-						if (bookListArea.getLineCount()%2==0)
+						
+						LibrarianApp app = new LibrarianApp(mainFrame.getDB());
+						Borrowing[] bookReport = app.generateCheckedOutBooksReport();
+						System.out.println("why");
+						for (int i = 0; i < bookReport.length; i++){
+							System.out.println(bookReport[i].getBook().getTitle());
+						}
+						for (int i = 0; i < bookReport.length; i++){
+							displayBooks(bookReport[i].getBook().getTitle());
+							displayCheckOutDate("bookReport[i].getOutDate()");
+							displayDueDate("bookReport[i].getInDate()");	
+						}
+											
+						/*if (bookListArea.getLineCount()%2==0)
 							displayOverDueFlag(true);
 						else
-							displayOverDueFlag(false);
+							displayOverDueFlag(false);*/
+						
 						displayOutput("Subject: "+getSubject());
-						Thread.sleep(3000);						
-						displayBooks("Thread Ended");
+						Thread.sleep(1000);						
+						//displayBooks("Thread Ended");
 
 					} catch (Exception e) {
-						throw new RuntimeException("Error while processing [" +
-								getThisPanel().getName() + "] Method.");
+						mainFrame.displayErrorMessage(e.getMessage());
 					} finally {
 						submitButton.setEnabled(true);
 						getThisPanel().remove(progressBar);
