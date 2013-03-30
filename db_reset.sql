@@ -1,0 +1,9 @@
+START db_drop.sql
+START db_start.sql
+START fake_data_books.sql
+START fake_data_borrowers.sql
+START fake_data_bookhas.sql
+START fake_data_bookcopy.sql
+START fake_data_borrowing.sql
+START fake_data_holdrequest.sql
+START fake_data_fine.sql
