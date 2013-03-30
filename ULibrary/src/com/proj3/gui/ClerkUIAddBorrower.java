@@ -9,7 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -20,6 +23,9 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
+
+import com.proj3.database.Database;
+import com.proj3.model.BorrowerType;
 
 @SuppressWarnings("serial")
 public class ClerkUIAddBorrower extends JPanel implements ActionListener {
@@ -466,16 +472,10 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
 						displayOutput("Thread Started");
-						displayOutput(getBID());
-						displayOutput(getPassword());
-						displayOutput(getName());
-						displayOutput(getAddress());
-						displayOutput(getPhoneNumber());
-						displayOutput(getEmailAddress());
-						displayOutput(getSinOrStNo());
-						displayOutput(getExpireDate());
-						displayOutput(getType());
-						Thread.sleep(3000);						
+						Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(getExpireDate());
+						Database db = mainFrame.getDB();
+						db.insertBorrower(getPassword(), getName(), getAddress(), getPhoneNumber(), getEmailAddress(), getSinOrStNo(),
+								date, BorrowerType.valueOf(getType()));		
 						displayOutput("Thread Ended");
 
 					} catch (Exception e) {
