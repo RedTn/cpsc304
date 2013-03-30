@@ -22,8 +22,8 @@ public class LibrarianApp {
 	public boolean addNewBook(Book book) {
 		Book existBook = db.selectBookByCallNumber(book.getCallNumber());
 		if (existBook != null) {
-			//throw new RuntimeException("Book already exists. Add new copy.");
-			return false;
+			throw new RuntimeException("Book already exists. Add new copy.");
+			//return false;
 		}
 		return db.insertBook(book.getCallNumber(), book.getIsbn(),
 				book.getTitle(), book.getMainAuthor(), book.getPublisher(),
