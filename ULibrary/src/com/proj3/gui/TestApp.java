@@ -1,7 +1,5 @@
 package com.proj3.gui;
 
-import java.sql.SQLException;
-
 import com.proj3.app.BorrowerApp;
 import com.proj3.database.Database;
 import com.proj3.model.Borrower;

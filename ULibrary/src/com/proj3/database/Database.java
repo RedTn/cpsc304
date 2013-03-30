@@ -693,9 +693,8 @@ public class Database {
 		List<Borrowing> borrowings = new ArrayList<Borrowing>();
 		
 		try {
-			//ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ? AND inDate IS NULL");
-			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ?");
-
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ? AND inDate IS NULL");
+			
 			ps.setInt(1, borrower.getId());
 
 			rs = ps.executeQuery();
