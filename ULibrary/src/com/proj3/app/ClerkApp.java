@@ -113,9 +113,11 @@ public class ClerkApp {
 			if (!db.insertFine(amount, cal.getTime(), borid)) {
 				System.out.println("Fine not inserted");
 			}
-
+			
+			
 		}
-
+		
+		
 		/* I don't understand this
 		 * ResultSet holdRs = db.selectHoldRequestsByCall(b.getBook());
 		ResultSet copyRs = db.selectBookCopiesByBook(b.getBook());

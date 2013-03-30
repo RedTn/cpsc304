@@ -81,7 +81,7 @@ public class MainScreen extends JFrame {
 			Borrowing[] b = ca.checkOverdueItems();
 			for (int i=0; i<b.length; i++)
 				System.out.println(b[i]);
-				*/
+			 	*/
 			
 		} else {
 			
