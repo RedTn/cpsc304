@@ -116,7 +116,33 @@ public class BorrowerUIFine extends JPanel implements ActionListener {
 		amountField = new JTextField();		
 		amountField.setName(FID_STRING);
 		amountField.addFocusListener(new MyFocusListener());
+		amountField.addKeyListener(new KeyListener(){
+			
+			int lastFid;
+			
+			public void keyTyped(KeyEvent e) {
+				// Do Nothing
+			}
 
+			public void keyPressed(KeyEvent e) {
+				try {
+					lastFid = Integer.parseInt(((JTextField)e.getComponent()).getText());
+				} catch (Exception ex) {
+					// Do Nothing
+				}
+			}
+
+			public void keyReleased(KeyEvent e) {
+				int currentFid = Integer.parseInt(((JTextField)e.getComponent()).getText());
+				if (currentFid > Integer.MAX_VALUE) { 
+					((JTextField)e.getComponent()).setText(Integer.toString(lastFid));
+					throw new IllegalArgumentException("FID can not be greater than "+Integer.MAX_VALUE);
+				} else if (currentFid < 0) {
+					throw new IllegalArgumentException("FID can not be less than 0");
+				}
+			}
+			
+		});
 		amountFieldLabel = new JLabel(AMOUNT_STRING + ":");
 		amountFieldLabel.setLabelFor(amountField);        
 
