@@ -18,6 +18,10 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
+import com.proj3.app.LibrarianApp;
+import com.proj3.database.Database;
+import com.proj3.model.Book;
+
 @SuppressWarnings("serial")
 public class LibrarianUIAddBook extends JPanel implements ActionListener {
 
@@ -253,6 +257,27 @@ public class LibrarianUIAddBook extends JPanel implements ActionListener {
 						//TODO INSERT METHOD HERE
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
+						
+						//String callNumber = getCallNumber();
+						String isbn = getISBN();
+						String title = getTitle();
+						String mainAuthor = getMainAuthor();
+						String publisher = getPublisher();
+						String year = getYear();
+
+						Book newBook = new Book(); // new book
+
+						//newBook.setCallNumber(callNumber);
+						newBook.setIsbn(isbn);
+						newBook.setTitle(title);
+						newBook.setMainAuthor(mainAuthor);
+						newBook.setPublisher(publisher);
+						newBook.setYear(year);
+						
+						Database db = new Database("passwordfile");
+						LibrarianApp app = new LibrarianApp(db);
+						app.addNewBook(newBook);
+						
 						displayOutput("Thread Started");
 						displayOutput("ISBN: "+getISBN());
 						displayOutput("TITLE: "+getTitle());
