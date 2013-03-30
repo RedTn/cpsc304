@@ -2,6 +2,7 @@ package com.proj3.gui;
 
 import com.proj3.app.BorrowerApp;
 import com.proj3.database.Database;
+import com.proj3.model.Book;
 import com.proj3.model.Borrower;
 import com.proj3.model.Borrowing;
 import com.proj3.model.HoldRequest;
@@ -16,5 +17,8 @@ public class TestApp {
 		Borrower borrower = app.login(3, "123456");
 		HoldRequest[] holds = app.getHolds();
 		Borrowing[] borrows = app.getBorrowings();
+		Book[] booksBySubject = app.searchBooksByKeyword("fiction");
+		
+		
 	}
 }

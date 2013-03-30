@@ -120,4 +120,25 @@ public class Book {
 	public int hashcode() {
 		return callNumber.hashCode();
 	}
+	
+	public void addAllAuthors(String[] authors) {
+		for (int i=0; i<authors.length; i++) {
+			addAuthor(authors[i]);
+		}
+	}
+	
+	public void addAllSubjects(String[] subjects) {
+		for (int i=0; i< subjects.length; i++) {
+			addSubject(subjects[i]);
+		}
+	}
+	
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof Book)) {
+			return false;
+		}
+		
+		return ((Book)o).getCallNumber() == callNumber;
+	}
+	
 }

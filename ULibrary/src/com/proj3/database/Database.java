@@ -11,12 +11,18 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
-
-import com.proj3.model.*;
+import com.proj3.model.Book;
+import com.proj3.model.BookCopy;
+import com.proj3.model.Borrower;
+import com.proj3.model.BorrowerType;
+import com.proj3.model.Borrowing;
+import com.proj3.model.CopyStatus;
+import com.proj3.model.Fine;
+import com.proj3.model.HoldRequest;
 
 public class Database {
 	private String address, username, password;
@@ -616,39 +622,58 @@ public class Database {
 	public Book[] selectBooksByKeyword(String keyword) {
 		ResultSet rs = null;
 
-		Map<String, Book> books = new HashMap<String, Book>();
-		try {
-			ps = con.prepareStatement("SELECT * FROM Book b, HasAuthor a, HasSubject s WHERE b.callNumber = a.callNumber AND b.callNumber = s.callNumber AND (b.title LIKE '%?%' OR b.mainAuthor LIKE '%?%' OR a.name LIKE '%?%' OR s.subject '%?%')");
+		Set<Book> books = new HashSet<Book>();
 
-			ps.setString(1, keyword);
-			ps.setString(2, keyword);
-			ps.setString(3, keyword);
-			ps.setString(4, keyword);
+		String kwRegex = "%" + keyword + "%";
+		try {
+			ps = con.prepareStatement("SELECT * FROM Book WHERE title LIKE ? OR mainAuthor LIKE ? ");
+
+			ps.setString(1, kwRegex);
+			ps.setString(2, kwRegex);
+
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
+				Book book = Book.getInstance(rs);
 
-				Book book;
-				String callNumber = rs.getString("callNumber");
-				if (!books.containsKey(callNumber)) {
-					book = Book.getInstance(rs);
-					books.put(book.getCallNumber(), book);
-				} else {
-					book = books.get(callNumber);
-				}
-
-				String author = rs.getString("name");
-				if (!rs.wasNull()) {
-					book.addAuthor(author);
-				}
-
-				String subject = rs.getString("subject");
-				if (!rs.wasNull()) {
-					book.addSubject(subject);
+				if (!books.contains(book)) {
+					book = constructBook(rs);
+					books.add(book);
 				}
 			}
 
 			ps.close();
+
+			ps = con.prepareStatement("SELECT * FROM Book b, HasAuthor a WHERE name LIKE ? AND b.callNumber = a.callNumber ");
+
+			ps.setString(1, kwRegex);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				Book book = Book.getInstance(rs);
+
+				if (!books.contains(book)) {
+					book = constructBook(rs);
+					books.add(book);
+				}
+			}
+
+			ps.close();
+			ps = con.prepareStatement("SELECT * FROM Book b, HasSubject s WHERE subject LIKE ? AND b.callNumber = s.callNumber ");
+
+			ps.setString(1, kwRegex);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				Book book = Book.getInstance(rs);
+
+				if (!books.contains(book)) {
+					book = constructBook(rs);
+					books.add(book);
+				}
+			}
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
@@ -660,14 +685,14 @@ public class Database {
 				System.exit(-1);
 			}
 		}
-
-		return books.values().toArray(new Book[books.size()]);
+		
+		return books.toArray(new Book[books.size()]);
 	}
 
 	public BookCopy[] selectBookCopiesByBook(Book book) {
 		ResultSet rs = null;
 		List<BookCopy> copies = new ArrayList<BookCopy>();
-		
+
 		try {
 			ps = con.prepareStatement("SELECT copyNo, status FROM BookCopy WHERE callNumber = ?");
 
@@ -678,7 +703,7 @@ public class Database {
 			while (rs.next()) {
 				copies.add(BookCopy.getInstance(rs, book));
 			}
-			
+
 			ps.close();
 
 		} catch (SQLException ex) {
@@ -691,10 +716,10 @@ public class Database {
 	public Borrowing[] selectUnreturnedBorrowingsByBorrower(Borrower borrower) {
 		ResultSet rs = null;
 		List<Borrowing> borrowings = new ArrayList<Borrowing>();
-		
+
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ? AND inDate IS NULL");
-			
+
 			ps.setInt(1, borrower.getId());
 
 			rs = ps.executeQuery();
@@ -702,8 +727,9 @@ public class Database {
 			while (rs.next()) {
 				String callNumber = rs.getString("callNumber");
 				int copyNo = rs.getInt("copyNo");
-				
-				BookCopy copy = selectCopyByCallAndCopyNumber(callNumber, copyNo);
+
+				BookCopy copy = selectCopyByCallAndCopyNumber(callNumber,
+						copyNo);
 				borrowings.add(Borrowing.getInstance(rs, borrower, copy));
 			}
 			ps.close();
@@ -718,7 +744,7 @@ public class Database {
 	public Borrowing[] selectBooksBorrowedInAYear(int year) {
 		ResultSet rs = null;
 		List<Borrowing> borrows = new ArrayList<Borrowing>();
-		
+
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE outDate = ?");
 
@@ -740,9 +766,11 @@ public class Database {
 
 	private Borrowing constructBorrowing(ResultSet rs) throws SQLException {
 		Borrower borrower = selectBorrowerById(rs.getInt("bid"));
-		BookCopy copy = selectCopyByCallAndCopyNumber(rs.getString("callNumber"), rs.getInt("copyNo"));
+		BookCopy copy = selectCopyByCallAndCopyNumber(
+				rs.getString("callNumber"), rs.getInt("copyNo"));
 		return Borrowing.getInstance(rs, borrower, copy);
 	}
+
 	// Display all books
 	public Book[] selectAllBooks() {
 		ResultSet rs = null;
@@ -753,9 +781,9 @@ public class Database {
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-				books.add(Book.getInstance(rs));
+				books.add(constructBook(rs));
 			}
-			
+
 			ps.close();
 
 		} catch (SQLException ex) {
@@ -776,7 +804,7 @@ public class Database {
 			rs = ps.executeQuery();
 
 			if (rs.next()) {
-				book = Book.getInstance(rs);
+				book = constructBook(rs);
 			}
 			ps.close();
 
@@ -787,22 +815,81 @@ public class Database {
 		return book;
 	}
 
+	private Book constructBook(ResultSet rs) throws SQLException {
+		Book book = Book.getInstance(rs);
+		String[] authors = selectAdditionalAuthorsByCallNumber(book
+				.getCallNumber());
+		book.addAllAuthors(authors);
+
+		String[] subjects = selectSubjectsByCallNumber(book.getCallNumber());
+		book.addAllSubjects(subjects);
+
+		return book;
+	}
+
+	public String[] selectAdditionalAuthorsByCallNumber(String callNumber) {
+		ResultSet rs = null;
+		List<String> authors = new ArrayList<String>();
+		try {
+			ps = con.prepareStatement("SELECT name FROM hasAuthor WHERE callNumber = ?");
+
+			ps.setString(1, callNumber);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				authors.add(rs.getString("name"));
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return authors.toArray(new String[authors.size()]);
+	}
+
+	public String[] selectSubjectsByCallNumber(String callNumber) {
+		ResultSet rs = null;
+		List<String> subjects = new ArrayList<String>();
+		try {
+			ps = con.prepareStatement("SELECT subject FROM hasSubject WHERE callNumber = ?");
+
+			ps.setString(1, callNumber);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				subjects.add(rs.getString("subject"));
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return subjects.toArray(new String[subjects.size()]);
+	}
+
 	public BookCopy selectCopyByBookAndCopyNumber(Book book, int copyNo) {
-		BookCopy copy = selectCopyByCallAndCopyNumberWithoutBook(book.getCallNumber(), copyNo);
-		
-		copy.setBook(book);	
+		BookCopy copy = selectCopyByCallAndCopyNumberWithoutBook(
+				book.getCallNumber(), copyNo);
+
+		copy.setBook(book);
 		return copy;
 	}
-	
+
 	public BookCopy selectCopyByCallAndCopyNumber(String callNumber, int copyNo) {
-		BookCopy copy = selectCopyByCallAndCopyNumberWithoutBook(callNumber, copyNo);
-		
+		BookCopy copy = selectCopyByCallAndCopyNumberWithoutBook(callNumber,
+				copyNo);
+
 		Book book = selectBookByCallNumber(callNumber);
 		copy.setBook(book);
 		return copy;
 	}
-	
-	private BookCopy selectCopyByCallAndCopyNumberWithoutBook(String callNumber, int copyNo) {
+
+	private BookCopy selectCopyByCallAndCopyNumberWithoutBook(
+			String callNumber, int copyNo) {
 		ResultSet rs = null;
 		BookCopy copy = null;
 		try {
@@ -816,7 +903,7 @@ public class Database {
 			if (rs.next()) {
 				copy = BookCopy.getInstance(rs, null);
 			}
-			
+
 			ps.close();
 
 		} catch (SQLException ex) {
@@ -825,6 +912,7 @@ public class Database {
 
 		return copy;
 	}
+
 	public Borrower selectBorrowerByIdAndPassword(int bid, String pw) {
 		ResultSet rs = null;
 		Borrower borrower = null;
@@ -879,7 +967,7 @@ public class Database {
 	public HoldRequest[] selectHoldRequestsByCall(Book book) {
 		ResultSet rs = null;
 		List<HoldRequest> holds = new ArrayList<HoldRequest>();
-		
+
 		try {
 			ps = con.prepareStatement("SELECT * FROM HoldRequest WHERE callNumber = ?");
 			ps.setString(1, book.getCallNumber());
@@ -914,7 +1002,7 @@ public class Database {
 				Borrowing borrow = searchBorrowingsByClerk(rs.getInt("borid"));
 				fines.add(Fine.getInstance(rs, borrow));
 			}
-			
+
 			ps.close();
 
 		} catch (SQLException ex) {
@@ -1002,16 +1090,16 @@ public class Database {
 	public Borrowing[] selectAllUnreturnedBorrowings() {
 		ResultSet rs = null;
 		List<Borrowing> borrows = new ArrayList<Borrowing>();
-		
+
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL");
-			
+
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
 				borrows.add(constructBorrowing(rs));
 			}
-			
+
 			ps.close();
 
 		} catch (SQLException ex) {
@@ -1044,23 +1132,23 @@ public class Database {
 		return borrower;
 	}
 
-	/*public ResultSet searchBorrowerTypeByType(BorrowerType type) {
-		ResultSet rs = null;
-
-		try {
-			ps = con.prepareStatement("SELECT * FROM BorrowerType WHERE type = ?");
-			ps.setString(1, type.getType());
-
-			rs = ps.executeQuery();
-
-			ps.close();
-
-		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
-		}
-
-		return rs;
-	}*/
+	/*
+	 * public ResultSet searchBorrowerTypeByType(BorrowerType type) { ResultSet
+	 * rs = null;
+	 * 
+	 * try { ps =
+	 * con.prepareStatement("SELECT * FROM BorrowerType WHERE type = ?");
+	 * ps.setString(1, type.getType());
+	 * 
+	 * rs = ps.executeQuery();
+	 * 
+	 * ps.close();
+	 * 
+	 * } catch (SQLException ex) { System.out.println("Message: " +
+	 * ex.getMessage()); }
+	 * 
+	 * return rs; }
+	 */
 
 	public Borrowing[] selectOverDueBorrowingByDate(Date dueDate) {
 		ResultSet rs = null;
@@ -1094,7 +1182,7 @@ public class Database {
 	public Borrower[] selectAllBorrowers() {
 		ResultSet rs = null;
 		List<Borrower> borrowers = new ArrayList<Borrower>();
-		
+
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrower");
 
@@ -1112,105 +1200,83 @@ public class Database {
 		return borrowers.toArray(new Borrower[borrowers.size()]);
 	}
 
-/*	public ResultSet displayHasAuthor() {
-		ResultSet rs = null;
-
-		try {
-			ps = con.prepareStatement("SELECT * FROM HasAuthor");
-
-			rs = ps.executeQuery();
-
-			ps.close();
-
-		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
-		}
-
-		return rs;
-	}
-
-	public ResultSet displayHasSubject() {
-		ResultSet rs = null;
-
-		try {
-			ps = con.prepareStatement("SELECT * FROM HasSubject");
-
-			rs = ps.executeQuery();
-
-			ps.close();
-
-		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
-		}
-
-		return rs;
-	}
-
-	public ResultSet displayBookCopy() {
-		ResultSet rs = null;
-
-		try {
-			ps = con.prepareStatement("SELECT * FROM BookCopy");
-
-			rs = ps.executeQuery();
-
-			ps.close();
-
-		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
-		}
-
-		return rs;
-	}
-
-	public ResultSet displayHoldRequest() {
-		ResultSet rs = null;
-
-		try {
-			ps = con.prepareStatement("SELECT * FROM HoldRequest");
-
-			rs = ps.executeQuery();
-
-			ps.close();
-
-		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
-		}
-
-		return rs;
-	}
-
-	public ResultSet displayBorrowing() {
-		ResultSet rs = null;
-
-		try {
-			ps = con.prepareStatement("SELECT * FROM Borrowing");
-
-			rs = ps.executeQuery();
-
-			ps.close();
-
-		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
-		}
-
-		return rs;
-	}
-
-	public ResultSet displayFine() {
-		ResultSet rs = null;
-
-		try {
-			ps = con.prepareStatement("SELECT * FROM Fine");
-
-			rs = ps.executeQuery();
-
-			ps.close();
-
-		} catch (SQLException ex) {
-			System.out.println("Message: " + ex.getMessage());
-		}
-
-		return rs;
-	}*/
+	/*
+	 * public ResultSet displayHasAuthor() { ResultSet rs = null;
+	 * 
+	 * try { ps = con.prepareStatement("SELECT * FROM HasAuthor");
+	 * 
+	 * rs = ps.executeQuery();
+	 * 
+	 * ps.close();
+	 * 
+	 * } catch (SQLException ex) { System.out.println("Message: " +
+	 * ex.getMessage()); }
+	 * 
+	 * return rs; }
+	 * 
+	 * public ResultSet displayHasSubject() { ResultSet rs = null;
+	 * 
+	 * try { ps = con.prepareStatement("SELECT * FROM HasSubject");
+	 * 
+	 * rs = ps.executeQuery();
+	 * 
+	 * ps.close();
+	 * 
+	 * } catch (SQLException ex) { System.out.println("Message: " +
+	 * ex.getMessage()); }
+	 * 
+	 * return rs; }
+	 * 
+	 * public ResultSet displayBookCopy() { ResultSet rs = null;
+	 * 
+	 * try { ps = con.prepareStatement("SELECT * FROM BookCopy");
+	 * 
+	 * rs = ps.executeQuery();
+	 * 
+	 * ps.close();
+	 * 
+	 * } catch (SQLException ex) { System.out.println("Message: " +
+	 * ex.getMessage()); }
+	 * 
+	 * return rs; }
+	 * 
+	 * public ResultSet displayHoldRequest() { ResultSet rs = null;
+	 * 
+	 * try { ps = con.prepareStatement("SELECT * FROM HoldRequest");
+	 * 
+	 * rs = ps.executeQuery();
+	 * 
+	 * ps.close();
+	 * 
+	 * } catch (SQLException ex) { System.out.println("Message: " +
+	 * ex.getMessage()); }
+	 * 
+	 * return rs; }
+	 * 
+	 * public ResultSet displayBorrowing() { ResultSet rs = null;
+	 * 
+	 * try { ps = con.prepareStatement("SELECT * FROM Borrowing");
+	 * 
+	 * rs = ps.executeQuery();
+	 * 
+	 * ps.close();
+	 * 
+	 * } catch (SQLException ex) { System.out.println("Message: " +
+	 * ex.getMessage()); }
+	 * 
+	 * return rs; }
+	 * 
+	 * public ResultSet displayFine() { ResultSet rs = null;
+	 * 
+	 * try { ps = con.prepareStatement("SELECT * FROM Fine");
+	 * 
+	 * rs = ps.executeQuery();
+	 * 
+	 * ps.close();
+	 * 
+	 * } catch (SQLException ex) { System.out.println("Message: " +
+	 * ex.getMessage()); }
+	 * 
+	 * return rs; }
+	 */
 }
