@@ -4,6 +4,7 @@
 *ULibrary/.classpath
 *ULibrary/bin
 *ULibrary/bin/*
+*ULibrary/bin1
 .classpath
 passwordfile
 *TestApp.java
