@@ -22,6 +22,7 @@ public class LibrarianApp {
 	public boolean addNewBook(Book book) {
 		Book existBook = db.selectBookByCallNumber(book.getCallNumber());
 		if (existBook != null) {
+			//throw new RuntimeException("Book already exists. Add new copy.");
 			return false;
 		}
 		return db.insertBook(book.getCallNumber(), book.getIsbn(),
@@ -33,12 +34,14 @@ public class LibrarianApp {
 	public boolean addNewBookCopy(BookCopy bookCopy) {
 		Book existBook = db.selectBookByCallNumber(bookCopy.getCallNumber());
 		if (existBook == null) {
+			//throw new RuntimeException();
 			return false;
 		}
 		
 		int copyNo = db.selectMaxCopyNumberForBook(existBook); 
+		CopyStatus defaultStatus = CopyStatus.in;
 		
-		return db.insertBookCopy(bookCopy.getBook().getCallNumber(), copyNo+1, bookCopy.getStatus());
+		return db.insertBookCopy(bookCopy.getBook().getCallNumber(), copyNo+1, defaultStatus);
 
 	}
 

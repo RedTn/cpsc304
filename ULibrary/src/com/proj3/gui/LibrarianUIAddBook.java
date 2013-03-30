@@ -292,18 +292,19 @@ public class LibrarianUIAddBook extends JPanel implements ActionListener {
 						newBook.setPublisher(publisher);
 						newBook.setYear(year);
 						
-						Database db = new Database("passwordfile");
-						LibrarianApp app = new LibrarianApp(db);
+						
+						LibrarianApp app = new LibrarianApp(mainFrame.getDB());
 						app.addNewBook(newBook);
 						
-						displayOutput("Thread Started");
+						displayOutput("New Book Successfully Added");
+						displayOutput("CALL NUMBER: " +getCallNumber());
 						displayOutput("ISBN: "+getISBN());
 						displayOutput("TITLE: "+getTitle());
 						displayOutput("MAIN AUTHOR: "+getMainAuthor());	
 						displayOutput("PUBLISHER: "+getPublisher());
 						displayOutput("YEAR: "+getYear());
 						Thread.sleep(3000);						
-						displayOutput("Thread Ended");
+				
 
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());
