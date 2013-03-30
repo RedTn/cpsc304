@@ -1014,11 +1014,10 @@ public class Database {
 		ResultSet rs = null;
 		
 		try {
-			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < ?;");
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < TO_DATE(?, 'YYYY-MM-DD');");
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			sdf.format(duedate);
 			
-			//TODO: Check if correct implementation
 			ps.setString(1, duedate.toString());
 			
 			rs = ps.executeQuery();
