@@ -716,28 +716,28 @@ public class Database {
 	public Borrowing[] selectUnreturnedBorrowingsByBorrower(Borrower borrower) {
 		ResultSet rs = null;
 		List<Borrowing> borrowings = new ArrayList<Borrowing>();
-
+	
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ? AND inDate IS NULL");
-
+	
 			ps.setInt(1, borrower.getId());
-
+	
 			rs = ps.executeQuery();
-
+	
 			while (rs.next()) {
 				String callNumber = rs.getString("callNumber");
 				int copyNo = rs.getInt("copyNo");
-
+	
 				BookCopy copy = selectCopyByCallAndCopyNumber(callNumber,
 						copyNo);
 				borrowings.add(Borrowing.getInstance(rs, borrower, copy));
 			}
 			ps.close();
-
+	
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
-
+	
 		return borrowings.toArray(new Borrowing[borrowings.size()]);
 	}
 
@@ -1156,12 +1156,11 @@ public class Database {
 		List<Borrowing> bs = new ArrayList<Borrowing>();
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < ?");
-			// ps =
-			// con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < TO_DATE('2013-10-10', 'YYYY-MM-DD');");
+			
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			// String formatedDate = "TO_DATE('" + sdf.format(duedate) +
-			// "', 'YYYY-MM-DD');";
-			String formatedDate = sdf.format(dueDate);
+			 String formatedDate = "TO_DATE('" + sdf.format(dueDate) +
+			 "', 'YYYY-MM-DD');";
+			//String formatedDate = sdf.format(dueDate);
 			System.out.println(formatedDate);
 			ps.setString(1, formatedDate);
 
