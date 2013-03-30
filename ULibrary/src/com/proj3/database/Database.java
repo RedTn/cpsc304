@@ -685,7 +685,7 @@ public class Database {
 				System.exit(-1);
 			}
 		}
-		
+
 		return books.toArray(new Book[books.size()]);
 	}
 
@@ -716,39 +716,39 @@ public class Database {
 	public Borrowing[] selectUnreturnedBorrowingsByBorrower(Borrower borrower) {
 		ResultSet rs = null;
 		List<Borrowing> borrowings = new ArrayList<Borrowing>();
-	
+
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ? AND inDate IS NULL");
-	
+
 			ps.setInt(1, borrower.getId());
-	
+
 			rs = ps.executeQuery();
-	
+
 			while (rs.next()) {
 				String callNumber = rs.getString("callNumber");
 				int copyNo = rs.getInt("copyNo");
-	
+
 				BookCopy copy = selectCopyByCallAndCopyNumber(callNumber,
 						copyNo);
 				borrowings.add(Borrowing.getInstance(rs, borrower, copy));
 			}
 			ps.close();
-	
+
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
-	
+
 		return borrowings.toArray(new Borrowing[borrowings.size()]);
 	}
 
-	public Borrowing[] selectBooksBorrowedInAYear(int year) {
+	public Borrowing[] selectBooksBorrowedInAYear(Date year) {
 		ResultSet rs = null;
 		List<Borrowing> borrows = new ArrayList<Borrowing>();
 
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE outDate = ?");
 
-			ps.setInt(1, year);
+			ps.setDate(1, new java.sql.Date(year.getTime()));
 
 			rs = ps.executeQuery();
 
@@ -887,18 +887,18 @@ public class Database {
 		copy.setBook(book);
 		return copy;
 	}
-	
-	public int selectMaxCopyNumberForBook(Book book){
+
+	public int selectMaxCopyNumberForBook(Book book) {
 		ResultSet rs = null;
 		int max = 0;
 		try {
-			ps = con.prepareStatement("SELECT MAX(copyNo) FROM BookCopy WHERE callNumber = ?"); 
+			ps = con.prepareStatement("SELECT MAX(copyNo) FROM BookCopy WHERE callNumber = ?");
 
 			ps.setString(1, book.getCallNumber());
 
 			rs = ps.executeQuery();
 
-			if( rs.next()){
+			if (rs.next()) {
 				max = rs.getInt("max(copyNo)");
 			}
 			ps.close();
@@ -1109,7 +1109,7 @@ public class Database {
 		return b;
 	}
 
-	public Borrowing[] selectAllUnreturnedBorrowings() {
+	public Borrowing[] selectAllBorrowings() {
 		ResultSet rs = null;
 		List<Borrowing> borrows = new ArrayList<Borrowing>();
 
@@ -1120,6 +1120,7 @@ public class Database {
 
 			while (rs.next()) {
 				borrows.add(constructBorrowing(rs));
+
 			}
 
 			ps.close();
@@ -1131,6 +1132,33 @@ public class Database {
 		return borrows.toArray(new Borrowing[borrows.size()]);
 	}
 
+	public Borrowing[] selectAllBorrowingsByKeyword(String keyword) {
+		ResultSet rs = null;
+		List<Borrowing> borrows = new ArrayList<Borrowing>();
+
+		//String percentage = "%" + keyword + "%";
+		
+		try {
+			ps = con.prepareStatement("SELECT * FROM Book, Borrowing, HasSubject WHERE borrowing.callnumber = book.callnumber and book.callnumber = hassubject.callnumber and hassubject.subject = ? ");
+			
+			ps.setString(1, keyword);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				borrows.add(constructBorrowing(rs));
+
+			}
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return borrows.toArray(new Borrowing[borrows.size()]);
+	}
+	
 	// Exclusive for Clerk
 	public Borrower selectBorrowerById(int bid) {
 		ResultSet rs = null;
@@ -1178,11 +1206,11 @@ public class Database {
 		List<Borrowing> bs = new ArrayList<Borrowing>();
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < ?");
-			
+
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			 String formatedDate = "TO_DATE('" + sdf.format(dueDate) +
-			 "', 'YYYY-MM-DD');";
-			//String formatedDate = sdf.format(dueDate);
+			String formatedDate = "TO_DATE('" + sdf.format(dueDate)
+					+ "', 'YYYY-MM-DD');";
+			// String formatedDate = sdf.format(dueDate);
 			System.out.println(formatedDate);
 			ps.setString(1, formatedDate);
 
