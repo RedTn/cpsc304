@@ -14,8 +14,6 @@ import com.proj3.model.CopyStatus;
 public class LibrarianApp {
 	private Database db;
 
-	// private Borrower currBorrower;
-
 	public LibrarianApp(Database db) {
 		this.db = db;
 	}
@@ -32,10 +30,7 @@ public class LibrarianApp {
 	}
 
 	public boolean addNewBookCopy(BookCopy bookCopy) {
-		// return db.insertBookCopy(bookCopy.gwfscallNumber,
-		// bookCopy.getCopyNo(),
-		// bookCopy.getStatus());
-		return true; // just for now, not actually
+		return db.insertBookCopy(bookCopy.getBook().getCallNumber(), bookCopy.getCopyNo(), bookCopy.getStatus());
 
 	}
 
