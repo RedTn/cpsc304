@@ -30,6 +30,7 @@ import javax.swing.border.BevelBorder;
 import com.proj3.app.BorrowerApp;
 import com.proj3.app.ClerkApp;
 import com.proj3.app.LibrarianApp;
+import com.proj3.database.Database;
 
 @SuppressWarnings("serial")
 public class MainJFrame extends JFrame {
@@ -54,11 +55,13 @@ public class MainJFrame extends JFrame {
 	private BorrowerApp bApp;
 	private LibrarianApp lApp;
 	private ClerkApp cApp;
+	private Database db;
 	
-	public MainJFrame(BorrowerApp b, LibrarianApp l, ClerkApp c) {
+	public MainJFrame(BorrowerApp b, LibrarianApp l, ClerkApp c, Database d) {
 		bApp = b;
 		lApp = l;
 		cApp = c;
+		db = d;
 	}
 	
 	public String getCurrentUserBID() {
@@ -470,9 +473,12 @@ public class MainJFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (isConnected == false) {
 					try {
-						//TODO - ORACLE CONNECTION METHOD
-						((JButton)e.getSource()).setText("Connected!!  " +
+						isConnected = db.connect();
+						if (isConnected == true)
+							((JButton)e.getSource()).setText("Connected!!  " +
 								"Click to Disconnect");
+						else
+							throw new RuntimeException("Failed Connection");
 					} catch (Exception ex) {
 						((JButton)e.getSource()).setText("Connection Unsuccessful.  " +
 								"Try Again by Clicking this Button");
