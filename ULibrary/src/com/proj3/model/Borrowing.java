@@ -108,4 +108,8 @@ public class Borrowing {
 	public String getCallNumber() {
 		return copy.getCallNumber();
 	}
+	
+	public CopyStatus getStatus() {
+		return copy.getStatus();
+	}
 }
