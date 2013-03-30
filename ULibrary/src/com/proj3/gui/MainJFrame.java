@@ -508,7 +508,7 @@ public class MainJFrame extends JFrame {
 		return this;
 	}
 
-	private void displayErrorMessage(String s) {
+	void displayErrorMessage(String s) {
 		
 		errorLog.append(s+"\n");
 		errorLog.validate();
