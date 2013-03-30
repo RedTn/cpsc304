@@ -1,14 +1,14 @@
 package com.proj3.gui;
 
+import java.sql.Date;
+
 import com.proj3.app.BorrowerApp;
 import com.proj3.app.LibrarianApp;
 import com.proj3.database.Database;
 import com.proj3.model.Book;
 import com.proj3.model.BookCopy;
-import com.proj3.model.Borrower;
 import com.proj3.model.Borrowing;
 import com.proj3.model.CopyStatus;
-import com.proj3.model.HoldRequest;
 
 public class TestApp {
 
@@ -18,6 +18,7 @@ public class TestApp {
 		BorrowerApp app = new BorrowerApp(db);
 		LibrarianApp app2 = new LibrarianApp(db);
 
+		
 		// TEST: ADD NEW BOOK
 		String callNumber = "TOLKIEN LordOTRings";
 		String isbn = "47532639";
@@ -90,14 +91,24 @@ public class TestApp {
 		Borrowing[] bookReport = app2.generateCheckedOutBooksReport();
 		for (int i = 0; i < bookReport.length; i++){
 			System.out.println(bookReport[i].getBook().getTitle());
-			System.out.println("generated?");
 		}
 		
+		Borrowing[] bookKeywordReport = app2.generateCheckedOutBooksReport("fiction");
+		for (int i = 0; i < bookKeywordReport.length; i++){
+			System.out.println(bookKeywordReport[i].getBook().getTitle());
+		}
 		
-		Borrower borrower = app.login(3, "123456");
-		HoldRequest[] holds = app.getHolds();
-		Borrowing[] borrows = app.getBorrowings();
-		Book[] booksBySubject = app.searchBooksByKeyword("fiction");
+	
+		//Date newDate = new Date(2017, 10, 21);
+		//Book[] popularBooks = app2.generatePopularBooksReport(newDate, 2);
+		//for (int i = 0; i < popularBooks.length; i++){
+			//System.out.println(popularBooks[i].getTitle());
+		//}
+		
+		//Borrower borrower = app.login(4001, "123456");
+		//HoldRequest[] holds = app.getHolds();
+		//Borrowing[] borrows = app.getBorrowings();
+		//Book[] booksBySubject = app.searchBooksByKeyword("fiction");
 
 
 	}
