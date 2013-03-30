@@ -295,16 +295,16 @@ public class Database {
 	}
 
 	// Clerk transaction
-	public boolean insertBorrowing(String bid, String callNumber,
-			String copyNo, Date outDate, Date inDate) {
+	public boolean insertBorrowing(int bid, String callNumber,
+			int copyNo, Date outDate, Date inDate) {
 		try {
 			ps = con.prepareStatement("INSERT INTO Borrowing VALUES (borid_counter.nextval,?,?,?,?,?)");
 
-			ps.setString(1, bid);
+			ps.setInt(1, bid);
 
 			ps.setString(2, callNumber);
 
-			ps.setString(3, copyNo);
+			ps.setInt(3, copyNo);
 
 			ps.setDate(4, (java.sql.Date) outDate);
 
@@ -1221,6 +1221,138 @@ public class Database {
 		return borrowers.toArray(new Borrower[borrowers.size()]);
 	}
 
+	public BookCopy selectCopyByCallAndStatus(
+			String callNumber, CopyStatus status) {
+		ResultSet rs = null;
+		BookCopy copy = null;
+		try {
+			ps = con.prepareStatement("SELECT * FROM BookCopy WHERE callNumber = ? AND status = ?");
+
+			ps.setString(1, callNumber);
+			ps.setString(2, status.getStatus());
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				copy = BookCopy.getInstance(rs, null);
+			}
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return copy;
+	}
+	public boolean updateCopyStatus(CopyStatus status, int copyNo, String callNumber) {
+		try {
+			ps = con.prepareStatement("UPDATE BookCopy SET status=? WHERE callNumber=? AND copyNo = ?");
+
+			ps.setString(1, status.getStatus());
+			ps.setString(2, callNumber);
+			ps.setInt(3, copyNo);
+
+			ps.executeUpdate();
+			con.commit();
+
+			ps.close();
+			return true;
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+
+			try {
+				con.rollback();
+			} catch (SQLException e) {
+				System.out.println("Message: " + ex.getMessage());
+			}
+
+		}
+
+		return false;
+	}
+	public BookCopy[] selectBookCopiesByBookAndStatus(Book book, String status) {
+		ResultSet rs = null;
+		List<BookCopy> copies = new ArrayList<BookCopy>();
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM BookCopy WHERE callNumber = ? AND status = ?");
+
+			ps.setString(1, book.getCallNumber());
+			ps.setString(2, status);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				copies.add(BookCopy.getInstance(rs, book));
+			}
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return copies.toArray(new BookCopy[copies.size()]);
+	}
+	
+	public boolean updateFirstCopyStatus(CopyStatus status, String callNumber) {
+		try {
+			ps = con.prepareStatement("UPDATE TOP (1) BookCopy SET status=? WHERE callNumber=?");
+
+			ps.setString(1, status.getStatus());
+			ps.setString(2, callNumber);
+
+			ps.executeUpdate();
+			con.commit();
+
+			ps.close();
+			return true;
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+
+			try {
+				con.rollback();
+			} catch (SQLException e) {
+				System.out.println("Message: " + ex.getMessage());
+			}
+
+		}
+
+		return false;
+	}
+	
+	public boolean updateBorrowingByIndate(int borid, Date inDate) {
+		Date formatedDate = new java.sql.Date(inDate.getTime());
+		try {
+			ps = con.prepareStatement("UPDATE Borrowing SET inDate=? WHERE borid=?");
+
+			ps.setInt(1, borid);
+			ps.setDate(2, (java.sql.Date)formatedDate);
+
+			ps.executeUpdate();
+			con.commit();
+
+			ps.close();
+			return true;
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+
+			try {
+				con.rollback();
+			} catch (SQLException e) {
+				System.out.println("Message: " + ex.getMessage());
+			}
+
+		}
+
+		return false;
+	}
+	
+	
 	/*
 	 * public ResultSet displayHasAuthor() { ResultSet rs = null;
 	 * 

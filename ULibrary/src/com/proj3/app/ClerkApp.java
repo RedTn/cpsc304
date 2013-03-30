@@ -1,30 +1,40 @@
 package com.proj3.app;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.text.SimpleDateFormat;
 
 import com.proj3.database.Database;
+import com.proj3.model.Book;
 import com.proj3.model.BookCopy;
 import com.proj3.model.Borrower;
 import com.proj3.model.BorrowerType;
 import com.proj3.model.Borrowing;
+import com.proj3.model.CopyStatus;
+import com.proj3.model.HoldRequest;
 
 public class ClerkApp {
 	private Database db;
 	private Borrower currBorrower;
 	private Calendar cal;
+	private Date currDate;
+	private Calendar expCal;
 
 	public ClerkApp(Database db) {
 		this.db = db;
 
 		// Automatically initialized to current date
 		cal = Calendar.getInstance();
+		expCal = Calendar.getInstance();
+		currDate = new Date();
 
 		// Due date for current books are a week before
 		cal.add(Calendar.DATE, -7);
+		expCal.add(Calendar.DATE, 7);
 	}
-	
+
 	public void addBorrower() {
 		if (currBorrower == null) {
 			return;
@@ -47,53 +57,41 @@ public class ClerkApp {
 		 */
 	}
 
-	public void checkOutItems(int bid, String[] callNumbers) {
-		int numbooks;
-
-		if (currBorrower == null) {
-			return;
-		}
+	public boolean checkOutItems(int bid, Book[] books) {
 		Borrower aBorrower = db.selectBorrowerById(bid);
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		// Automatically initialized to current date
-		Date currDate = new Date();
-		// Format dates
-		sdf.format(currDate);
-		sdf.format(aBorrower.getExpiryDate());
-
-		if (currDate.after(aBorrower.getExpiryDate())) {
-			// Borrower id is expired
-			return;
+		if ((cal.getTime()).before(aBorrower.getExpiryDate())){
+			System.out.println("Error, borrower is expired");
+			return false;
 		}
 
-		// //Determine if books are borrowable
-		// TOFINISH
-		numbooks = callNumbers.length;
+		for (int i=0; i<books.length; i++) {
+			HoldRequest[] hr = db.selectHoldRequestsByCall(books[i]);
+			if(hr.length == 0) {
+				//This book is available
+				BookCopy bc = db.selectCopyByCallAndStatus(books[i].getCallNumber(), CopyStatus.in);
+				
+				if(!db.updateCopyStatus(CopyStatus.out, bc.getCopyNo(), books[i].getCallNumber())){
+					System.out.println("Error, bookcopy not checked out");
+				}
+				if(!db.insertBorrowing(bid, books[i].getCallNumber(),  bc.getCopyNo(), 
+						cal.getTime(), null)){
+					System.out.println("Error, borrowing record not created");
+				}
+				
+				//TODO: Gui prints THIS borrowing record
+				//and expiry date: expCal.getTime();
+			}
+			else {
+				System.out.format("Book %s is on-hold", books[i].getCallNumber());
+				return false;
+			}
 
-		BookCopy bc = null;
-
-		/*
-		 * what is this? for (int i = 0; i < numbooks; i++) { rs =
-		 * db.selectBookCopiesByCallNumber(callNumbers[i]); while (rs.next()) {
-		 * bc = BookCopy.getInstance(rs, null);
-		 * 
-		 * } }
-		 */
-		// //
-
-		// Add book to borrowing
-
-		/*
-		 * TODO: GUI checks out item for (int i = 0; i < numbooks, i++) {
-		 * insertBorrowing(bid, callNumber[i], copyNo, outDate, inDate); }
-		 */
+		}
+		return true;
 	}
 
-	public void processReturn(int borid) {
-		/*
-		 * if (currBorrower == null) { return; }
-		 */
+	public boolean processReturn(int borid) {
 		Borrowing b = db.searchBorrowingsByClerk(borid);
 
 		String callNumber = b.getCallNumber();
@@ -112,40 +110,42 @@ public class ClerkApp {
 			float amount = diffDays * 1;
 			if (!db.insertFine(amount, cal.getTime(), borid)) {
 				System.out.println("Fine not inserted");
+				return false;
 			}
-			
-			
 		}
-		
-		
-		/* I don't understand this
-		 * ResultSet holdRs = db.selectHoldRequestsByCall(b.getBook());
-		ResultSet copyRs = db.selectBookCopiesByBook(b.getBook());
-		if (holdRs.next()) {
-			// There is a hold
-			if (copyRs.next()) {
-				BookCopy bc = BookCopy.getInstance(rs, null);
-				if (bc.getStatus().equals("out")) {
-					if (!db.updateFirstCopyStatus("on-hold", callNumber)) {
-						return;
-					}
-					// TODO: Send message to Borrower
 
-				}
+		BookCopy[] bc = db.selectBookCopiesByBookAndStatus(b.getBook(), "out");
+		HoldRequest[] hold = db.selectHoldRequestsByCall(b.getBook());
+		if((hold.length == 0) && (bc.length != 0)) {
+			if(!db.updateFirstCopyStatus(CopyStatus.in, callNumber)) {
+				System.out.println("Error, bookcopy not updated(1)");
+				return false;
 			}
-		} else {
-			// There is no hold
-			if (copyRs.next()) {
-				BookCopy bc = BookCopy.getInstance(rs, null);
-				if (bc.getStatus().equals("out")) {
-					if (!db.updateFirstCopyStatus("in", callNumber)) {
-						return;
-					}
-				}
+			if(!db.updateBorrowingByIndate(borid,currDate)){
+				System.out.println("Error, borrowing record not inserted");
+				return false;
+			}
+			
+		}else if ((hold.length != 0) && (bc.length != 0)){
+			if(!db.updateFirstCopyStatus(CopyStatus.onhold, callNumber)) {
+				System.out.println("Error, bookcopy not updated(2)");
+				return false;
+			}
+			Borrower borrower = db.selectBorrowerById(b.getBid());
+			//TODO: GUI sends message to borrower who made hold request
+
+		}
+		else {
+			if(!db.insertBookCopy(callNumber, 0, CopyStatus.in)) {
+				System.out.println("Insert new bookcopy failed");
+				return false;
 			}
 		}
-	*/
+		return true;
+
 	}
+
+
 
 	public Borrowing[] checkOverdueItems() {
 		return db.selectOverDueBorrowingByDate(cal.getTime());
