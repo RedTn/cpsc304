@@ -1,10 +1,9 @@
 package com.proj3.app;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.text.SimpleDateFormat;
+
+import java.sql.Timestamp;
 
 import com.proj3.database.Database;
 import com.proj3.model.Book;
@@ -36,6 +35,9 @@ public class ClerkApp {
 	}
 
 	public void addBorrower() {
+		if (currBorrower == null) {
+			return;
+		}
 
 		String password;
 		String name;
@@ -57,7 +59,7 @@ public class ClerkApp {
 	public boolean checkOutItems(int bid, Book[] books) {
 		Borrower aBorrower = db.selectBorrowerById(bid);
 
-		if ((cal.getTime()).before(aBorrower.getExpiryDate())){
+		if (currDate.after(aBorrower.getExpiryDate())){
 			System.out.println("Error, borrower is expired");
 			return false;
 		}
@@ -103,15 +105,16 @@ public class ClerkApp {
 			long bookTime = bookDate.getTime();
 			long diffTime = curTime - bookTime;
 			long diffDays = diffTime / (1000 * 60 * 60 * 24);
-			System.out.format("Differnce in days is: %d" + diffDays);
+			System.out.println("Differnce in days is:");
+			System.out.format("%d%n", diffDays);
 			float amount = diffDays * 1;
-			if (!db.insertFine(amount, cal.getTime(), borid)) {
+			if (!db.insertFine(amount, cal.getTime(), null, borid)) {
 				System.out.println("Fine not inserted");
 				return false;
 			}
 		}
 
-		BookCopy[] bc = db.selectBookCopiesByBookAndStatus(b.getBook(), "out");
+		BookCopy[] bc = db.selectBookCopiesByBookAndStatus(b.getBook(), CopyStatus.out);
 		HoldRequest[] hold = db.selectHoldRequestsByCall(b.getBook());
 		if((hold.length == 0) && (bc.length != 0)) {
 			if(!db.updateFirstCopyStatus(CopyStatus.in, callNumber)) {
@@ -133,7 +136,10 @@ public class ClerkApp {
 
 		}
 		else {
-			if(!db.insertBookCopy(callNumber, 0, CopyStatus.in)) {
+		 BookCopy[] inbooks = db.selectBookCopiesByBookAndStatus(b.getBook(), CopyStatus.in);
+		int lastindex = inbooks.length;
+		lastindex++;
+			if(!db.insertBookCopy(callNumber, lastindex, CopyStatus.in)) {
 				System.out.println("Insert new bookcopy failed");
 				return false;
 			}
