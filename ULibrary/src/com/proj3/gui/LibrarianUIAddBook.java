@@ -27,16 +27,17 @@ public class LibrarianUIAddBook extends JPanel implements ActionListener {
 
 	private MainJFrame mainFrame;
 
+	private static final String CALLNUMBER_STRING = "CALL NUMBER";
 	private static final String ISBN_STRING = "ISBN";
 	private static final String TITLE_STRING = "TITLE";
 	private static final String MAINAUTHOR_STRING = "MAIN AUTHOR";
 	private static final String PUBLISHER_STRING = "PUBLISHER";
 	private static final String YEAR_STRING = "YEAR";
 
-	private JTextField isbnField, titleField, mainAuthorField, 
+	private JTextField callNumberField, isbnField, titleField, mainAuthorField, 
 	publisherField, yearField;
 
-	private JLabel isbnFieldLabel, titleFieldLabel, mainAuthorFieldLabel,
+	private JLabel callNumberFieldLabel, isbnFieldLabel, titleFieldLabel, mainAuthorFieldLabel,
 	publisherFieldLabel, yearFieldLabel;
 
 	private JButton submitButton;
@@ -76,8 +77,24 @@ public class LibrarianUIAddBook extends JPanel implements ActionListener {
 		return yearField.getText();
 	}
 	
+	public String getCallNumber() {
+		return callNumberField.getText();
+	}
+	
 	public String getCurrentUserBID() {
 		return mainFrame.getCurrentUserBID();
+	}
+	
+	private void createCallNumberField() {
+
+		callNumberField = new JTextField(255);		
+		callNumberField.setName(CALLNUMBER_STRING);
+		callNumberField.addFocusListener(new MyFocusListener());		
+		callNumberField.addKeyListener(new MyTextFieldKeyListener());
+
+		callNumberFieldLabel = new JLabel(CALLNUMBER_STRING + ":");
+		callNumberFieldLabel.setLabelFor(callNumberField);        
+
 	}
 	
 	private void createIsbnField() {
@@ -185,6 +202,7 @@ public class LibrarianUIAddBook extends JPanel implements ActionListener {
 		this.setLayout(gridb);
 
 		//Create text fields for inputs
+		createCallNumberField();
 		createIsbnField();
 		createTitleField();
 		createmainAuthorField();
@@ -193,9 +211,9 @@ public class LibrarianUIAddBook extends JPanel implements ActionListener {
 		createSubmit();
 
 		//Group labels and text fields
-		JTextField[] textFields = {isbnField, titleField, mainAuthorField, 
+		JTextField[] textFields = {callNumberField, isbnField, titleField, mainAuthorField, 
 				publisherField, yearField};
-		JLabel[] labels = {isbnFieldLabel, titleFieldLabel, mainAuthorFieldLabel,
+		JLabel[] labels = {callNumberFieldLabel, isbnFieldLabel, titleFieldLabel, mainAuthorFieldLabel,
 				publisherFieldLabel, yearFieldLabel};
 
 		//Insert to the panel orderly

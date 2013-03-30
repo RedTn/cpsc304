@@ -1,0 +1,9 @@
+*~
+*.class
+*.classpath
+*ULibrary/.classpath
+*ULibrary/bin
+*ULibrary/bin/*
+.classpath
+passwordfile
+*TestApp.java
