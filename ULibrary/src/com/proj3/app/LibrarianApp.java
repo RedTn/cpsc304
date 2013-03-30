@@ -34,8 +34,8 @@ public class LibrarianApp {
 	public boolean addNewBookCopy(BookCopy bookCopy) {
 		Book existBook = db.selectBookByCallNumber(bookCopy.getCallNumber());
 		if (existBook == null) {
-			//throw new RuntimeException();
-			return false;
+			throw new RuntimeException("Book does not exist in system. Add new book.");
+			//return false;
 		}
 		
 		int copyNo = db.selectMaxCopyNumberForBook(existBook); 
