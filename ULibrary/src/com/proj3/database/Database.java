@@ -309,8 +309,12 @@ public class Database {
 
 			ps.setDate(4, (java.sql.Date) outDate);
 
-			// TODO, Null condition for inDate
+			if (inDate != null) {
 			ps.setDate(5, (java.sql.Date) inDate);
+			}
+			else{
+				ps.setNull(5, java.sql.Types.DATE);
+			}
 
 			ps.executeUpdate();
 

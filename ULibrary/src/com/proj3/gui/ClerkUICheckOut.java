@@ -19,6 +19,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.proj3.app.ClerkApp;
+import com.proj3.database.Database;
+
 
 @SuppressWarnings("serial")
 public class ClerkUICheckOut extends JPanel implements ActionListener {
@@ -283,8 +286,11 @@ public class ClerkUICheckOut extends JPanel implements ActionListener {
 						// BELOW IS AN EXAMPLE
 						displayOutput("Thread Started");
 						String x = getCallNumbers();
-						displayNote(x);
-						Thread.sleep(3000);						
+						Database db = mainFrame.getDB();
+						ClerkApp ca = new ClerkApp(db);
+						String message = ca.checkOutItems(Integer.parseInt(getBID()), x);
+						displayOutput(message);
+						
 						displayOutput("Thread Ended");
 
 					} catch (Exception e) {

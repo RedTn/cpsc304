@@ -1,12 +1,15 @@
 package com.proj3.app;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 import java.sql.Timestamp;
 
 import com.proj3.database.Database;
+import com.proj3.gui.ClerkUICheckOut;
 import com.proj3.model.Book;
 import com.proj3.model.BookCopy;
 import com.proj3.model.Borrower;
@@ -34,32 +37,40 @@ public class ClerkApp {
 		expCal.add(Calendar.DATE, 7);
 	}
 
-	/*
-	public boolean checkOutItems(int bid, String bookline) {
+	
+	public String checkOutItems(int bid, String bookline) {
+		List<String> books = new ArrayList<String>();
 		Scanner scan = new Scanner(bookline);
-		scan.useDelimiter(",|\\n");
+		
+		//WINDOWS
+		scan.useDelimiter(",|\\r\n");
+		
+		//UNIX
+		//scan.useDelimiter((",|\\n");
 		 while(scan.hasNext()){
-	          System.out.println(scan.next());
-
+			 books.add(scan.next());
 	 }
 		 
 		Borrower aBorrower = db.selectBorrowerById(bid);
-
+		if (aBorrower == null) {
+			return "No Borrower found";
+		}
 		if (currDate.after(aBorrower.getExpiryDate())){
-			System.out.println("Error, borrower is expired");
-			return false;
+			return "Error, borrower is expired";
 		}
 
-		for (int i=0; i<books.length; i++) {
-			HoldRequest[] hr = db.selectHoldRequestsByCall(books[i]);
+		for (int i=0; i<books.size(); i++) {
+			Book book = new Book();
+			book.setCallNumber(books.get(i));
+			HoldRequest[] hr = db.selectHoldRequestsByCall(book);
 			if(hr.length == 0) {
 				//This book is available
-				BookCopy bc = db.selectCopyByCallAndStatus(books[i].getCallNumber(), CopyStatus.in);
+				BookCopy bc = db.selectCopyByCallAndStatus(book.getCallNumber(), CopyStatus.in);
 				
-				if(!db.updateCopyStatus(CopyStatus.out, bc.getCopyNo(), books[i].getCallNumber())){
+				if(!db.updateCopyStatus(CopyStatus.out, bc.getCopyNo(), book.getCallNumber())){
 					System.out.println("Error, bookcopy not checked out");
 				}
-				if(!db.insertBorrowing(bid, books[i].getCallNumber(),  bc.getCopyNo(), 
+				if(!db.insertBorrowing(bid, book.getCallNumber(),  bc.getCopyNo(), 
 						cal.getTime(), null)){
 					System.out.println("Error, borrowing record not created");
 				}
@@ -68,14 +79,13 @@ public class ClerkApp {
 				//and expiry date: expCal.getTime();
 			}
 			else {
-				System.out.format("Book %s is on-hold", books[i].getCallNumber());
-				return false;
+				return "Book %s is on-hold" + book.getCallNumber();
 			}
 
 		}
-		return true;
+		return "Done check-out";
 	}
-*/
+
 	public boolean processReturn(int borid) {
 		Borrowing b = db.searchBorrowingsByClerk(borid);
 
