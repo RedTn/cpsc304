@@ -11,6 +11,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -253,7 +254,9 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 	}
 
 	private void createExpireField() {
-		Date date = java.util.Calendar.getInstance().getTime();
+		Calendar calendar = java.util.Calendar.getInstance();
+		calendar.add(Calendar.YEAR, 1);
+		Date date = calendar.getTime();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		expireField = new JFormattedTextField(sdf.format(date));
 		expireField.setName(EXPIREDATE_STRING);
