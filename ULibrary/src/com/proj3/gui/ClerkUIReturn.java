@@ -22,11 +22,11 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 	
 	private MainJFrame mainFrame;
 	
-	private static final String CALLNUMBER_STRING = "CALL NUMBER";
-	private static final String COPYNUMBER_STRING = "COPY NUMBER";
+	private static final String borid_STRING = "BORID";
+	//private static final String COPYNUMBER_STRING = "COPY NUMBER";
 	
-	private JTextField callNumberField, copyNumberField;	
-	private JLabel callNumberFieldLabel, copyNumberFieldLabel;
+	private JTextField boridField, copyNumberField;	
+	private JLabel boridFieldLabel, copyNumberFieldLabel;
 
 	private static final int MAX_CN = Integer.MAX_VALUE;
 	private static final int MIN_CN = 0;
@@ -48,29 +48,29 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 		mainFrame.displayOutputMessage(str);
 	}
 	
-	public String getCallNumber() {
-		return callNumberField.getText();
+	public String getborid() {
+		return boridField.getText();
 	}
-	
+	/*
 	public String getCopyNumber() {
 		return copyNumberField.getText();
 	}
-	
+	*/
 	public String getCurrentUserBID() {
 		return mainFrame.getCurrentUserBID();
 	}
 	
-	private void createCallNumberField() {
+	private void createboridField() {
 
-		callNumberField = new JTextField(255);		
-		callNumberField.setName(CALLNUMBER_STRING);
-		callNumberField.addFocusListener(new MyFocusListener());		
+		boridField = new JTextField(255);		
+		boridField.setName(borid_STRING);
+		boridField.addFocusListener(new MyFocusListener());		
 
-		callNumberFieldLabel = new JLabel(CALLNUMBER_STRING + ":");
-		callNumberFieldLabel.setLabelFor(callNumberField);        
+		boridFieldLabel = new JLabel(borid_STRING + ":");
+		boridFieldLabel.setLabelFor(boridField);        
 
 	}
-
+/*
 	private void createCopyNumberField() {
 
 		copyNumberField = new JTextField();		
@@ -101,8 +101,9 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 					throw new IllegalArgumentException("Unknown Argument Exception.");
 				}
 			}
-			
+			*/
 			//Throws exception if the bid is out of range of not a number
+	/*
 			public void copyNumberFieldListenerAction(FocusEvent e) {
 				try {					
 					int input = Integer.parseInt(((JTextField) e.getSource()).getText());
@@ -119,7 +120,7 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 		copyNumberFieldLabel = new JLabel(COPYNUMBER_STRING + ":");
 		copyNumberFieldLabel.setLabelFor(copyNumberField);        
 	}	
-
+*/
 	private void createSubmit() {
 		submitButton = new JButton();
 		submitButton.setText("Submit");
@@ -140,8 +141,8 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 		this.setLayout(gridb);
 
 		//Create fields for inputs
-		createCallNumberField();
-		createCopyNumberField();	
+		createboridField();
+		//createCopyNumberField();	
 		createSubmit();
 
 		//Insert to the panel orderly
@@ -153,7 +154,7 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 		gridc.gridy = 0;
 		gridc.weightx = 0;
 		gridc.gridwidth = GridBagConstraints.RELATIVE;
-		this.add(callNumberFieldLabel, gridc);
+		this.add(boridFieldLabel, gridc);
 
 		gridc = new GridBagConstraints();
 		gridc.anchor = GridBagConstraints.WEST;
@@ -162,7 +163,7 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 		gridc.weightx = 1;
 		gridc.gridwidth = GridBagConstraints.REMAINDER;
 		gridc.fill = GridBagConstraints.HORIZONTAL;
-		this.add(callNumberField, gridc);
+		this.add(boridField, gridc);
 
 		//Insert spacing between the fields
 		gridc = new GridBagConstraints();
@@ -175,7 +176,7 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 		gridc.gridy = 2;
 		gridc.weightx = 0;
 		gridc.gridwidth = GridBagConstraints.RELATIVE;
-		this.add(copyNumberFieldLabel, gridc);
+		//this.add(copyNumberFieldLabel, gridc);
 
 		gridc = new GridBagConstraints();
 		gridc.anchor = GridBagConstraints.WEST;
@@ -184,7 +185,7 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 		gridc.weightx = 1;
 		gridc.gridwidth = GridBagConstraints.REMAINDER;
 		gridc.fill = GridBagConstraints.HORIZONTAL;
-		this.add(copyNumberField, gridc);
+		//this.add(copyNumberField, gridc);
 
 		//Insert spacing between the fields and the submit button
 		gridc = new GridBagConstraints();
@@ -242,8 +243,8 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
 						displayOutput("Thread Started");
-						displayOutput("Call Number: "+getCallNumber());
-						displayOutput("Copy Number: "+getCopyNumber());
+						displayOutput("Borid: "+getborid());
+						//displayOutput("Copy Number: "+getCopyNumber());
 						Thread.sleep(3000);						
 						displayOutput("Thread Ended");
 
