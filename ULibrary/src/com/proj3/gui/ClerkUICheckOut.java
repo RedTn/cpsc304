@@ -55,6 +55,13 @@ public class ClerkUICheckOut extends JPanel implements ActionListener {
 		else
 			field.setBorder(BorderFactory.createEtchedBorder());
 	}
+	
+	public void setBorderRed(JTextArea field, Boolean b) {
+		if (b)
+			field.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.pink));
+		else
+			field.setBorder(BorderFactory.createEtchedBorder());
+	}
 
 	public void displayCallNumbers(String s) {
 		callNumberField.append(s + "\n");
@@ -329,10 +336,10 @@ public class ClerkUICheckOut extends JPanel implements ActionListener {
 				setBorderRed(((JTextField)e.getComponent()), false);
 			} catch (Exception ex) {
 				if (((JTextArea)e.getComponent()).getText()==null || ((JTextArea)e.getComponent()).getText().isEmpty()) {
-					//setBorderRed(((JTextArea)e.getComponent()), true);
+					setBorderRed(((JTextArea)e.getComponent()), true);
 					throw new NullPointerException(((JTextArea)e.getComponent()).getName() + " can not be null.");
 				}
-				setBorderRed(((JTextField)e.getComponent()), false);
+				setBorderRed(((JTextArea)e.getComponent()), false);
 			}
 		}
 
