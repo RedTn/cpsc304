@@ -2,6 +2,7 @@ package com.proj3.app;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Scanner;
 
 import java.sql.Timestamp;
 
@@ -16,7 +17,6 @@ import com.proj3.model.HoldRequest;
 
 public class ClerkApp {
 	private Database db;
-	private Borrower currBorrower;
 	private Calendar cal;
 	private Date currDate;
 	private Calendar expCal;
@@ -34,7 +34,15 @@ public class ClerkApp {
 		expCal.add(Calendar.DATE, 7);
 	}
 
-	public boolean checkOutItems(int bid, Book[] books) {
+	/*
+	public boolean checkOutItems(int bid, String bookline) {
+		Scanner scan = new Scanner(bookline);
+		scan.useDelimiter(",|\\n");
+		 while(scan.hasNext()){
+	          System.out.println(scan.next());
+
+	 }
+		 
 		Borrower aBorrower = db.selectBorrowerById(bid);
 
 		if (currDate.after(aBorrower.getExpiryDate())){
@@ -67,7 +75,7 @@ public class ClerkApp {
 		}
 		return true;
 	}
-
+*/
 	public boolean processReturn(int borid) {
 		Borrowing b = db.searchBorrowingsByClerk(borid);
 

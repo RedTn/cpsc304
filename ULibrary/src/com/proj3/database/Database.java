@@ -1236,13 +1236,8 @@ public class Database {
 		List<Borrowing> bs = new ArrayList<Borrowing>();
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < ?");
-
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			String formatedDate = "TO_DATE('" + sdf.format(dueDate)
-					+ "', 'YYYY-MM-DD');";
-			// String formatedDate = sdf.format(dueDate);
-			System.out.println(formatedDate);
-			ps.setString(1, formatedDate);
+			
+			ps.setDate(1, new java.sql.Date(dueDate.getTime()));
 
 			rs = ps.executeQuery();
 
