@@ -59,3 +59,16 @@ INSERT INTO Borrower VALUES(
 	'2013-09-01',
 	'stu'
 );
+
+INSERT INTO Borrower VALUES(
+	bid_counter.nextVal,
+	'blah',
+	'Expired User',
+	'meow',
+	'7789723543',
+	'testing@test.com',
+	'753453333',
+	'2012-03-29',
+	'stu'
+);
+

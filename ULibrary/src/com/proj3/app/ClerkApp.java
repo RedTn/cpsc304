@@ -64,6 +64,10 @@ public class ClerkApp {
 			HoldRequest[] hr = db.selectHoldRequestsByCall(book);
 			if(hr.length == 0) {
 				//This book is available
+				Book checkbook = db.selectBookByCallNumber(book.getCallNumber());
+				if(checkbook == null) {
+					return "Error, Book: " + book.getCallNumber() + " is not in database, please check spelling";
+				}
 				BookCopy bc = db.selectCopyByCallAndStatus(book.getCallNumber(), CopyStatus.in);
 				record.append("COPYNO: ");
 				if(bc == null) {
