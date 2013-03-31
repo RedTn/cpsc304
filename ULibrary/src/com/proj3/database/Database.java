@@ -1068,6 +1068,28 @@ public class Database {
 		return fine;
 	}
 	
+	public Fine selectFineByBorid(int borid) {
+		ResultSet rs = null;
+		Fine fine = null;
+		
+		try {
+			ps = con.prepareStatement("SELECT * FROM Fine WHERE borid = ?");
+			ps.setInt(1, borid);
+
+			rs = ps.executeQuery();
+
+			if(rs.next()) {
+				fine = Fine.getInstance(rs, null);
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return fine;
+	}
+	
 	public boolean updateFineAmountField(int fid, float amount) {
 		Fine fine = selectFineById(fid);
 		fine.decreaseAmountBy(amount);
@@ -1194,6 +1216,32 @@ public class Database {
 		}
 
 		return borrows.toArray(new Borrowing[borrows.size()]);
+	}
+	
+	public Integer[] selectAllBorrowingsByBid(int bid) {
+		ResultSet rs = null;
+		List<Integer> borrows = new ArrayList<Integer>();
+
+		//String percentage = "%" + keyword + "%";
+		
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ? ");
+			
+			ps.setInt(1, bid);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				borrows.add(rs.getInt("borid"));
+			}
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return borrows.toArray(new Integer[borrows.size()]);
 	}
 	
 	// Exclusive for Clerk

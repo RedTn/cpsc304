@@ -297,8 +297,9 @@ public class ClerkUICheckOut extends JPanel implements ActionListener {
 						ClerkApp ca = new ClerkApp(db);
 						String message = ca.checkOutItems(Integer.parseInt(getBID()), x);
 						displayOutput(message);
+						if(ca.getNote() != null) {
 						displayNote(ca.getNote());
-				
+						}
 
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());
