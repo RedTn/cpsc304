@@ -11,7 +11,7 @@ INSERT INTO Borrowing VALUES(borid_counter.nextVal, 4002, 'ROWLING HPChamber', 6
 INSERT INTO Borrowing VALUES(borid_counter.nextVal, 4003, 'ROWLING HPPrisoner', 1, '2017-10-10', '2017-10-10');
 INSERT INTO Borrowing VALUES(borid_counter.nextVal, 4004, 'ROWLING HPGoblet', 1, '2017-12-10', '2017-12-13');
 INSERT INTO Borrowing VALUES(borid_counter.nextVal, 4005, 'ROWLING HPOrder', 1, '2015-10-10', '2017-10-10');
-INSERT INTO Borrowing VALUES(borid_counter.nextVal, 4001, 'ROWLING HPHalf', 1, TO_DATE('2015-12-05','YYYY-MM-DD'), NULL);
-INSERT INTO Borrowing VALUES(borid_counter.nextVal, 4002, 'ROWLING HPDeathly', 1, TO_DATE('2014-01-25','YYYY-MM-DD'), NULL);
-INSERT INTO Borrowing VALUES(borid_counter.nextVal, 4003, 'STEWART Calculus', 3, TO_DATE('2012-08-10','YYYY-MM-DD'), NULL);
-INSERT INTO Borrowing VALUES(borid_counter.nextVal, 4002, 'DAWKINS Selfish', 10, TO_DATE('2011-10-10','YYYY-MM-DD'), NULL);
+INSERT INTO Borrowing VALUES(borid_counter.nextVal, 4001, 'ROWLING HPHalf', 1, '2015-12-05', NULL);
+INSERT INTO Borrowing VALUES(borid_counter.nextVal, 4002, 'ROWLING HPDeathly', 1, '2014-01-25', NULL);
+INSERT INTO Borrowing VALUES(borid_counter.nextVal, 4003, 'STEWART Calculus', 3, '2012-08-10', NULL);
+INSERT INTO Borrowing VALUES(borid_counter.nextVal, 4002, 'DAWKINS Selfish', 10, '2011-10-10', NULL);

@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -296,14 +298,11 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 						
 						LibrarianApp app = new LibrarianApp(mainFrame.getDB());
 						Borrowing[] bookReport = app.generateCheckedOutBooksReport();
-						System.out.println("why");
-						for (int i = 0; i < bookReport.length; i++){
-							System.out.println(bookReport[i].getBook().getTitle());
-						}
+						Calendar calendar = Calendar.getInstance();
 						for (int i = 0; i < bookReport.length; i++){
 							displayBooks(bookReport[i].getBook().getTitle());
-							displayCheckOutDate("bookReport[i].getOutDate()");
-							displayDueDate("bookReport[i].getInDate()");	
+							displayCheckOutDate((bookReport[i].getOutDate()).toString());
+							displayDueDate("screw you");	
 						}
 											
 						/*if (bookListArea.getLineCount()%2==0)
