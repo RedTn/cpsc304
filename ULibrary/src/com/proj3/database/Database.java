@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -746,14 +747,17 @@ public class Database {
 		return borrowings.toArray(new Borrowing[borrowings.size()]);
 	}
 
-	public Borrowing[] selectBooksBorrowedInAYear(Date year) {
+	public Borrowing[] selectBooksBorrowedInAYear(int year) {
 		ResultSet rs = null;
 		List<Borrowing> borrows = new ArrayList<Borrowing>();
+		Calendar cal = Calendar.getInstance();
+		cal.set(year, 12, 31);
 
 		try {
-			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE outDate = ?");
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE outDate < ?");
 
-			ps.setDate(1, new java.sql.Date(year.getTime()));
+			//ps.setDate(1, new java.sql.Date(year.getTime()));
+			//ps.setDate(1, new java.sql.Date(cal.) );
 
 			rs = ps.executeQuery();
 

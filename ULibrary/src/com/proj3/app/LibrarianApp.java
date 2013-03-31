@@ -109,7 +109,7 @@ public class LibrarianApp {
 		return sortedBooks;
 	}
 
-	public Book[] generatePopularBooksReport(Date year, int n) {
+	public Book[] generatePopularBooksReport(int year, int n) {
 
 		Borrowing[] borrows = db.selectBooksBorrowedInAYear(year);
 		Map<Book, Integer> popularBooks = new HashMap<Book, Integer>();
@@ -129,5 +129,9 @@ public class LibrarianApp {
 		return getTopNBooks(popularBooks, n);
 
 	}
+	
+	//public Borrowing[] checkOverdueItems(){
+		
+	//}
 
 }

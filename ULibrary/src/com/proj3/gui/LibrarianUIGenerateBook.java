@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -21,11 +20,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.proj3.app.ClerkApp;
 import com.proj3.app.LibrarianApp;
 import com.proj3.model.Borrowing;
 
 @SuppressWarnings("serial")
-public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
+public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 
 	private MainJFrame mainFrame;
 
@@ -38,7 +38,7 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 	private JTextField subjectField;
 
 	private JLabel subjectFieldLabel;
-	
+
 	private JTextArea bookListArea, outDateArea, dueDateArea, overDueArea;
 	private JScrollPane bookListPane, outDatePane, dueDatePane, overDuePane;
 
@@ -50,50 +50,51 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 
 	public void setBorderRed(JTextField field, Boolean b) {
 		if (b)
-			field.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.pink));
+			field.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1,
+					Color.pink));
 		else
 			field.setBorder(BorderFactory.createEtchedBorder());
 	}
-	
+
 	public void displayBooks(String str) {
-		bookListArea.append(str+"\n");
+		bookListArea.append(str + "\n");
 	}
-	
+
 	public void displayCheckOutDate(String str) {
-		outDateArea.append(str+"\n");
+		outDateArea.append(str + "\n");
 	}
-	
+
 	public void displayDueDate(String str) {
-		dueDateArea.append(str+"\n");
+		dueDateArea.append(str + "\n");
 	}
-	
+
 	public void displayOverDueFlag(Boolean isOverDue) {
 		if (isOverDue == true)
 			overDueArea.append("Overdue \n");
 		else
 			overDueArea.append("-\n");
 	}
-	
+
 	public void displayOutput(String str) {
 		mainFrame.displayOutputMessage(str);
 	}
-	
+
 	public String getSubject() {
 		return subjectField.getText();
 	}
-	
+
 	public String getCurrentUserBID() {
 		return mainFrame.getCurrentUserBID();
 	}
 
 	private void createSubjectField() {
 
-		subjectField = new JTextField(255);		
+		subjectField = new JTextField(255);
 		subjectField.setName(SUBJECT_STRING);
-		subjectField.addKeyListener(new MyTextFieldKeyListener());		
+		subjectField.addKeyListener(new MyTextFieldKeyListener());
 
 		subjectFieldLabel = new JLabel(SUBJECT_STRING + ":");
-		subjectFieldLabel.setLabelFor(subjectField);        
+		subjectFieldLabel.setLabelFor(subjectField);
 
 	}
 
@@ -105,11 +106,11 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 		bookListPane = new JScrollPane(bookListArea);
 		bookListPane.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder(BOOKLIST_STRING),
-				BorderFactory.createEmptyBorder(5,5,5,5)));	
-		bookListPane.setName(BOOKLIST_STRING);	
+				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+		bookListPane.setName(BOOKLIST_STRING);
 
 	}
-	
+
 	private void createOutDatePane() {
 
 		outDateArea = new JTextArea();
@@ -118,11 +119,11 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 		outDatePane = new JScrollPane(outDateArea);
 		outDatePane.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder(OUTDATE_STRING),
-				BorderFactory.createEmptyBorder(5,5,5,5)));	
-		outDatePane.setName(OUTDATE_STRING);	
+				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+		outDatePane.setName(OUTDATE_STRING);
 
 	}
-	
+
 	private void createDueDatePane() {
 
 		dueDateArea = new JTextArea();
@@ -131,11 +132,11 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 		dueDatePane = new JScrollPane(dueDateArea);
 		dueDatePane.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder(DUEDATE_STRING),
-				BorderFactory.createEmptyBorder(5,5,5,5)));	
-		dueDatePane.setName(DUEDATE_STRING);	
+				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+		dueDatePane.setName(DUEDATE_STRING);
 
 	}
-	
+
 	private void createOverDuePane() {
 
 		overDueArea = new JTextArea();
@@ -144,31 +145,31 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 		overDuePane = new JScrollPane(overDueArea);
 		overDuePane.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder(OVERDUE_STRING),
-				BorderFactory.createEmptyBorder(5,5,5,5)));	
-		overDuePane.setName(OVERDUE_STRING);	
+				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+		overDuePane.setName(OVERDUE_STRING);
 
 	}
-	
+
 	private void createSubmit() {
 		submitButton = new JButton();
 		submitButton.setText("Submit");
 		submitButton.addActionListener(this);
 	}
 
-	public LibrarianUIGenerateBook(MainJFrame f) {	     
+	public LibrarianUIGenerateBook(MainJFrame f) {
 
 		mainFrame = f;
 
-		//Setting the border line around the panel
-		setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder("Generate Report for Checked Out Books"),
-				BorderFactory.createEmptyBorder(10,10,10,10)));		
+		// Setting the border line around the panel
+		setBorder(BorderFactory.createCompoundBorder(BorderFactory
+				.createTitledBorder("Generate Report for Checked Out Books"),
+				BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 
-		//Grid Layout
+		// Grid Layout
 		GridBagLayout gridb = new GridBagLayout();
 		this.setLayout(gridb);
 
-		//Create text fields for inputs
+		// Create text fields for inputs
 		createSubjectField();
 		createBookListPane();
 		createOutDatePane();
@@ -177,7 +178,7 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 		createSubmit();
 
 		GridBagConstraints gridc;
-		
+
 		gridc = new GridBagConstraints();
 		gridc.anchor = GridBagConstraints.EAST;
 		gridc.gridx = 0;
@@ -194,32 +195,32 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 		gridc.gridwidth = GridBagConstraints.REMAINDER;
 		gridc.fill = GridBagConstraints.HORIZONTAL;
 		this.add(subjectField, gridc);
-		
+
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
-		
-		//Insert output panes
+
+		// Insert output panes
 		gridc = new GridBagConstraints();
 		gridc.gridx = 0;
 		gridc.weightx = 4;
 		gridc.weighty = 1;
 		gridc.fill = GridBagConstraints.BOTH;
 		panel.add(bookListPane, gridc);
-		
+
 		gridc = new GridBagConstraints();
 		gridc.gridx = 1;
 		gridc.weightx = 1;
 		gridc.weighty = 1;
 		gridc.fill = GridBagConstraints.BOTH;
 		panel.add(outDatePane, gridc);
-		
+
 		gridc = new GridBagConstraints();
 		gridc.gridx = 2;
 		gridc.weightx = 1;
 		gridc.weighty = 1;
 		gridc.fill = GridBagConstraints.BOTH;
 		panel.add(dueDatePane, gridc);
-		
+
 		gridc = new GridBagConstraints();
 		gridc.gridx = 3;
 		gridc.weightx = 1;
@@ -237,12 +238,12 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 		gridc.fill = GridBagConstraints.BOTH;
 		this.add(panel, gridc);
 
-		//Insert spacing between the fields and the submit button
+		// Insert spacing between the fields and the submit button
 		gridc = new GridBagConstraints();
 		gridc.gridy = 6;
 		this.add(Box.createVerticalStrut(10), gridc);
 
-		//Insert the submit button
+		// Insert the submit button
 		gridc.anchor = GridBagConstraints.CENTER;
 		gridc.gridx = 0;
 		gridc.gridy = 7;
@@ -254,32 +255,32 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 	}
 
 	/**
-	 * Invoked when the submit button is clicked.	 
+	 * Invoked when the submit button is clicked.
 	 */
 	public void actionPerformed(ActionEvent e) {
 		try {
 			// Re-run all listeners to make sure all format checking is valid.
-			for (Component c: this.getComponents()) {
-				for (FocusListener f: c.getFocusListeners()) {
-					f.focusLost(new FocusEvent(c, FocusEvent.FOCUS_LOST));									
+			for (Component c : this.getComponents()) {
+				for (FocusListener f : c.getFocusListeners()) {
+					f.focusLost(new FocusEvent(c, FocusEvent.FOCUS_LOST));
 				}
 			}
 
-			//Run the SQL method on a separate thread
-			Thread thread = new Thread(new Runnable(){
+			// Run the SQL method on a separate thread
+			Thread thread = new Thread(new Runnable() {
 
 				public void run() {
-					
+
 					JProgressBar progressBar = new JProgressBar();
-					
+
 					/**
-					 *  try-finally so that it is guaranteed the submit button is 
-					 *  re-enabled and progress bar is deleted at the end.
+					 * try-finally so that it is guaranteed the submit button is
+					 * re-enabled and progress bar is deleted at the end.
 					 */
 					try {
 						submitButton.setEnabled(false);
-						//Indeterminate progress bar
-						
+						// Indeterminate progress bar
+
 						progressBar.setIndeterminate(true);
 						GridBagConstraints gridc = new GridBagConstraints();
 						gridc.anchor = GridBagConstraints.CENTER;
@@ -292,27 +293,62 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 						getThisPanel().validate();
 						getThisPanel().repaint();
 
-						//TODO INSERT METHOD HERE
+						// TODO INSERT METHOD HERE
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
-						
+
 						LibrarianApp app = new LibrarianApp(mainFrame.getDB());
-						Borrowing[] bookReport = app.generateCheckedOutBooksReport();
-						Calendar calendar = Calendar.getInstance();
-						for (int i = 0; i < bookReport.length; i++){
-							displayBooks(bookReport[i].getBook().getTitle());
-							displayCheckOutDate((bookReport[i].getOutDate()).toString());
-							displayDueDate("screw you");	
+						if (getSubject().isEmpty()) {
+							Borrowing[] bookReport = app.generateCheckedOutBooksReport();
+							Calendar calendar_dueDate = Calendar.getInstance();
+							Calendar calendar_today = Calendar.getInstance();
+							for (int i = 0; i < bookReport.length; i++) {
+								displayBooks(bookReport[i].getBook().getTitle());
+								displayCheckOutDate((bookReport[i].getOutDate()).toString());
+								
+								calendar_dueDate.setTime(bookReport[i].getOutDate());
+								calendar_dueDate.add(Calendar.DAY_OF_MONTH, 7);
+								
+								displayDueDate(calendar_dueDate.getTime().toString());
+								if( calendar_today.after(calendar_dueDate) ){
+									displayOverDueFlag(true);
+								}
+								else 
+									displayOverDueFlag(false);
+							}
+
+						} 
+					else {
+
+							Borrowing[] bookReport = app.generateCheckedOutBooksReport(getSubject());
+							Calendar calendar_dueDate = Calendar.getInstance();
+							Calendar calendar_today = Calendar.getInstance();
+							for (int i = 0; i < bookReport.length; i++) {
+								displayBooks(bookReport[i].getBook().getTitle());
+								displayCheckOutDate((bookReport[i].getOutDate()).toString());
+								
+								calendar_dueDate.setTime(bookReport[i].getOutDate());
+								calendar_dueDate.add(Calendar.DAY_OF_MONTH, 7);
+								
+								displayDueDate(calendar_dueDate.getTime().toString());
+								if( calendar_today.after(calendar_dueDate) ){
+									displayOverDueFlag(true);
+								}
+								else 
+									displayOverDueFlag(false);
+							}
+
 						}
-											
-						/*if (bookListArea.getLineCount()%2==0)
-							displayOverDueFlag(true);
-						else
-							displayOverDueFlag(false);*/
-						
-						displayOutput("Subject: "+getSubject());
-						Thread.sleep(1000);						
-						//displayBooks("Thread Ended");
+
+						/*
+						 * if (bookListArea.getLineCount()%2==0)
+						 * displayOverDueFlag(true); else
+						 * displayOverDueFlag(false);
+						 */
+
+						displayOutput("Checked Out Book Report Generated.");
+						// Thread.sleep(1000);
+						// displayBooks("Thread Ended");
 
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());
@@ -323,8 +359,8 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 						getThisPanel().repaint();
 					}
 
-				}
-
+			}
+		
 			});
 
 			thread.start();
@@ -341,13 +377,17 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener{
 			// Do Nothing
 		}
 
-		public void focusLost(FocusEvent e) {	
-			if (((JTextField)e.getComponent()).getText()==null || ((JTextField)e.getComponent()).getText().isEmpty()) {
-				setBorderRed(((JTextField)e.getComponent()), true);
-				throw new NullPointerException(((JTextField)e.getComponent()).getName() + " can not be null.");
+		public void focusLost(FocusEvent e) {
+			if (((JTextField) e.getComponent()).getText() == null
+					|| ((JTextField) e.getComponent()).getText().isEmpty()) {
+				setBorderRed(((JTextField) e.getComponent()), true);
+				throw new NullPointerException(
+						((JTextField) e.getComponent()).getName()
+								+ " can not be null.");
 			}
-			setBorderRed(((JTextField)e.getComponent()), false);
+			setBorderRed(((JTextField) e.getComponent()), false);
 		}
 
 	}
+
 }
