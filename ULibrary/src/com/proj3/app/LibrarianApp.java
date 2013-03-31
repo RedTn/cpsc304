@@ -1,6 +1,6 @@
 package com.proj3.app;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -109,9 +109,9 @@ public class LibrarianApp {
 		return sortedBooks;
 	}
 
-	public Book[] generatePopularBooksReport(int year, int n) {
+	public Book[] generatePopularBooksReport(Date year, Date yearBefore, int n) {
 
-		Borrowing[] borrows = db.selectBooksBorrowedInAYear(year);
+		Borrowing[] borrows = db.selectBooksBorrowedInAYear(year, yearBefore);
 		Map<Book, Integer> popularBooks = new HashMap<Book, Integer>();
 
 		for (int i=0; i<borrows.length; i++) {

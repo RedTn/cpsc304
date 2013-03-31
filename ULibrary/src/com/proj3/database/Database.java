@@ -751,17 +751,17 @@ public class Database {
 		return borrowings.toArray(new Borrowing[borrowings.size()]);
 	}
 
-	public Borrowing[] selectBooksBorrowedInAYear(int year) {
+	public Borrowing[] selectBooksBorrowedInAYear(Date year, Date yearBefore) {
 		ResultSet rs = null;
 		List<Borrowing> borrows = new ArrayList<Borrowing>();
-		Calendar cal = Calendar.getInstance();
-		cal.set(year, 12, 31);
+		//Calendar cal = Calendar.getInstance();
+		//cal.set(year, 12, 31);
 
 		try {
-			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE outDate < ?");
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE outDate < ? and outDate > ?");
 
-			//ps.setDate(1, new java.sql.Date(year.getTime()));
-			//ps.setDate(1, new java.sql.Date(cal.) );
+			ps.setDate(1, new java.sql.Date(year.getTime()));
+			ps.setDate(2, new java.sql.Date(yearBefore.getTime()));
 
 			rs = ps.executeQuery();
 

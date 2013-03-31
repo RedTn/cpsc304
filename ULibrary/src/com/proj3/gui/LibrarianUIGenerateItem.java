@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.Calendar;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -18,6 +19,9 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import com.proj3.app.LibrarianApp;
+import com.proj3.model.Book;
 
 @SuppressWarnings("serial")
 public class LibrarianUIGenerateItem extends JPanel implements ActionListener {
@@ -234,13 +238,20 @@ public class LibrarianUIGenerateItem extends JPanel implements ActionListener {
 						//TODO INSERT METHOD HERE
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
-						displayItems("Thread Started");
-						displayItems("Year: "+getYear());
-						displayItems("Number of Items: "+getNumberOfItems());
+						
+						LibrarianApp app = new LibrarianApp(mainFrame.getDB());
+						Calendar cal = Calendar.getInstance();
+						Calendar cal2 = Calendar.getInstance();
+						int year = Integer.parseInt(getYear());
+						cal.set(year, 12, 31);
+						cal2.set(year-1, 12, 31);
+						Book[] popularBooks = app.generatePopularBooksReport(cal.getTime(), cal2.getTime(), Integer.parseInt(getNumberOfItems()));
+						for (int i = 0; i < popularBooks.length; i++){
+							displayItems(popularBooks[i].getTitle());
+						}
+						
 						displayOutput("Year: "+getYear());
 						displayOutput("Number of Items: "+getNumberOfItems());
-						Thread.sleep(3000);						
-						displayItems("Thread Ended");
 
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());
