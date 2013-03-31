@@ -33,29 +33,7 @@ public class ClerkApp {
 		cal.add(Calendar.DATE, -7);
 		expCal.add(Calendar.DATE, 7);
 	}
-/*
-	public void addBorrower() {
-		if (currBorrower == null) {
-			return;
-		}
 
-		String password;
-		String name;
-		String address;
-		String phone;
-		String email;
-		String sinOrStNo;
-		Date expiryDate;
-		BorrowerType type;
-		Boolean result;
-
-		/*
-		 * TODO: GUI inserts values for function result =
-		 * insertBorrower(password, name, address, phone, email, sinOrStNo,
-		 * expiryDate, type);
-		 
-	}
-*/
 	public boolean checkOutItems(int bid, Book[] books) {
 		Borrower aBorrower = db.selectBorrowerById(bid);
 
