@@ -17,6 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import com.proj3.app.BorrowerApp;
+import com.proj3.model.Borrower;
+
 @SuppressWarnings("serial")
 public class BorrowerUILogin extends JPanel {
 
@@ -30,6 +33,9 @@ public class BorrowerUILogin extends JPanel {
 		return this;
 	}
 
+	private BorrowerApp bApp() {
+		return mainFrame.bApp();
+	}
 	public void setBorderRed(JTextField field, Boolean b) {
 		if (b)
 			field.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.pink));
@@ -41,13 +47,21 @@ public class BorrowerUILogin extends JPanel {
 		mainFrame.displayOutputMessage(str);
 	}
 	
-	public String getBID() {
-		return bidField.getText();
+	public int getBID() {
+		String rawString = bidField.getText();
+		try {
+			Integer id = Integer.parseInt(rawString);
+			return id;
+		} catch (NumberFormatException nfe) {
+			displayOutput("The borrower ID you entered is not correct. It should be a number.");
+		}
+		
+		return -1;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public String getPassword() {
-		return passwordField.getText();
+		char[] password = passwordField.getPassword();
+		return new String(password);
 	}
 	
 	private Container createLoginPanel() {
@@ -60,16 +74,34 @@ public class BorrowerUILogin extends JPanel {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (!mainFrame.bApp().isLoggedIn()) {
-					loginButton.setText("Log Out");
-					bidField.setEnabled(false);
-					passwordField.setEnabled(false);
-					mainFrame.bApp().login(Integer.parseInt(bidField.getText()), new String(passwordField.getPassword()));
+				if (!bApp().isLoggedIn()) {
+					int bid = getBID();
+					
+					if (bid > 0) {
+						String password = getPassword();
+						Borrower borrower = bApp().login(bid, password);
+						if (borrower != null) {
+							loginButton.setText("Log Out");
+							bidField.setEnabled(false);
+							passwordField.setEnabled(false);
+
+							displayOutput("Welcome, "+borrower.getName()+".");
+						} else {
+							displayOutput("Log in failed");
+						}
+					}
+					
 				} else {
 					loginButton.setText("Log In");
 					bidField.setEnabled(true);
 					passwordField.setEnabled(true);
-					mainFrame.bApp().logout();
+					bidField.setText("");
+					passwordField.setText("");
+					
+					displayOutput("Goodbye, "+bApp().getCurrentBorrowerName());
+					bApp().logout();
+
+					displayOutput("Logged out successfully");
 				}
 			}
 

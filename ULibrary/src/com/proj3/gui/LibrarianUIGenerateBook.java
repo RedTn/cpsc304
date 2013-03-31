@@ -20,7 +20,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.proj3.app.ClerkApp;
 import com.proj3.app.LibrarianApp;
 import com.proj3.model.Borrowing;
 

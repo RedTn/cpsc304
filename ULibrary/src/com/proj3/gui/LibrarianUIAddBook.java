@@ -19,7 +19,6 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
 import com.proj3.app.LibrarianApp;
-import com.proj3.database.Database;
 import com.proj3.model.Book;
 
 @SuppressWarnings("serial")

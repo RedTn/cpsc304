@@ -80,4 +80,8 @@ public class BorrowerApp {
 		return db.getCopyCountByCallNumberAndStatus(book.getCallNumber(), in.getStatus());
 	}
 
+	public String getCurrentBorrowerName() {
+		return currBorrower.getName();
+	}
+
 }

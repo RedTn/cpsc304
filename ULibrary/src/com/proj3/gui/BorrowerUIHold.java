@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import com.proj3.model.HoldRequest;
 
 @SuppressWarnings("serial")
-public class BorrowerUIHold extends JPanel implements ActionListener{
+public class BorrowerUIHold extends JPanel implements ActionListener {
 
 	private MainJFrame mainFrame;
 
@@ -40,80 +40,82 @@ public class BorrowerUIHold extends JPanel implements ActionListener{
 
 	public void setBorderRed(JTextField field, Boolean b) {
 		if (b)
-			field.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.pink));
+			field.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1,
+					Color.pink));
 		else
 			field.setBorder(BorderFactory.createEtchedBorder());
 	}
-	
+
 	public void displayHolds(HoldRequest[] holds) {
-		//TODO
+		// TODO
 	}
-	
+
 	public void displayOutput(String str) {
 		mainFrame.displayOutputMessage(str);
 	}
-	
+
 	public String getCallNumber() {
 		return callNumberField.getText();
 	}
-	
+
 	public String getDate() {
 		return dateField.getText();
 	}
-	
+
 	public String getCurrentUserBID() {
 		return mainFrame.getCurrentUserBID();
 	}
-	
+
 	private void createcallNumberField() {
 
-		callNumberField = new JTextField(255);		
+		callNumberField = new JTextField(255);
 		callNumberField.setName(CALLNUMBER_STRING);
 		callNumberField.addFocusListener(new MyFocusListener());
-		callNumberField.addKeyListener(new MyTextFieldKeyListener());		
+		callNumberField.addKeyListener(new MyTextFieldKeyListener());
 
 		callNumberFieldLabel = new JLabel(CALLNUMBER_STRING + ":");
-		callNumberFieldLabel.setLabelFor(callNumberField);        
+		callNumberFieldLabel.setLabelFor(callNumberField);
 
 	}
 
 	private void createDateField() {
 
-		dateField = new JFormattedTextField(java.util.Calendar.getInstance().getTime());
+		dateField = new JFormattedTextField(java.util.Calendar.getInstance()
+				.getTime());
 		dateField.setName(DATE_STRING);
 		dateField.addFocusListener(new MyFocusListener());
-		
+
 		dateFieldLabel = new JLabel(DATE_STRING + ":");
 		dateFieldLabel.setLabelFor(dateField);
 
 	}
-	
+
 	private void createSubmit() {
 		submitButton = new JButton();
 		submitButton.setText("Submit");
 		submitButton.addActionListener(this);
 	}
 
-	public BorrowerUIHold(MainJFrame f) {	     
+	public BorrowerUIHold(MainJFrame f) {
 
 		mainFrame = f;
 
-		//Setting the border line around the panel
+		// Setting the border line around the panel
 		setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder("Place Hold Request"),
-				BorderFactory.createEmptyBorder(10,10,10,10)));		
+				BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 
-		//Grid Layout
+		// Grid Layout
 		GridBagLayout gridb = new GridBagLayout();
 		this.setLayout(gridb);
 
-		//Create text fields for inputs
+		// Create text fields for inputs
 		createcallNumberField();
 		createDateField();
 		createSubmit();
-		
+
 		GridBagConstraints gridc;
-		
+
 		gridc = new GridBagConstraints();
 		gridc.anchor = GridBagConstraints.EAST;
 		gridc.gridx = 0;
@@ -130,7 +132,7 @@ public class BorrowerUIHold extends JPanel implements ActionListener{
 		gridc.gridwidth = GridBagConstraints.REMAINDER;
 		gridc.fill = GridBagConstraints.HORIZONTAL;
 		this.add(callNumberField, gridc);
-		
+
 		gridc = new GridBagConstraints();
 		gridc.anchor = GridBagConstraints.EAST;
 		gridc.gridx = 0;
@@ -147,13 +149,13 @@ public class BorrowerUIHold extends JPanel implements ActionListener{
 		gridc.gridwidth = GridBagConstraints.REMAINDER;
 		gridc.fill = GridBagConstraints.HORIZONTAL;
 		this.add(dateField, gridc);
-				
-		//Insert spacing between the fields and the submit button
+
+		// Insert spacing between the fields and the submit button
 		gridc = new GridBagConstraints();
 		gridc.gridy = 2;
 		this.add(Box.createVerticalStrut(10), gridc);
 
-		//Insert the submit button
+		// Insert the submit button
 		gridc.anchor = GridBagConstraints.CENTER;
 		gridc.gridwidth = 2;
 		gridc.gridy = 3;
@@ -163,32 +165,32 @@ public class BorrowerUIHold extends JPanel implements ActionListener{
 	}
 
 	/**
-	 * Invoked when the submit button is clicked.	 
+	 * Invoked when the submit button is clicked.
 	 */
 	public void actionPerformed(ActionEvent e) {
 		try {
 			// Re-run all listeners to make sure all format checking is valid.
-			for (Component c: this.getComponents()) {
-				for (FocusListener f: c.getFocusListeners()) {
-					f.focusLost(new FocusEvent(c, FocusEvent.FOCUS_LOST));									
+			for (Component c : this.getComponents()) {
+				for (FocusListener f : c.getFocusListeners()) {
+					f.focusLost(new FocusEvent(c, FocusEvent.FOCUS_LOST));
 				}
 			}
 
-			//Run the SQL method on a separate thread
-			Thread thread = new Thread(new Runnable(){
+			// Run the SQL method on a separate thread
+			Thread thread = new Thread(new Runnable() {
 
 				public void run() {
-					
+
 					JProgressBar progressBar = new JProgressBar();
-					
+
 					/**
-					 *  try-finally so that it is guaranteed the submit button is 
-					 *  re-enabled and progress bar is deleted at the end.
+					 * try-finally so that it is guaranteed the submit button is
+					 * re-enabled and progress bar is deleted at the end.
 					 */
 					try {
 						submitButton.setEnabled(false);
-						//Indeterminate progress bar
-						
+						// Indeterminate progress bar
+
 						progressBar.setIndeterminate(true);
 						GridBagConstraints gridc = new GridBagConstraints();
 						gridc.anchor = GridBagConstraints.CENTER;
@@ -205,7 +207,7 @@ public class BorrowerUIHold extends JPanel implements ActionListener{
 						if (mainFrame.bApp().placeHold(getCallNumber())) {
 							msg = "Successfully placed the hold request";
 						}
-						
+
 						displayOutput(msg);
 						displayHolds(mainFrame.bApp().getHolds());
 
@@ -236,12 +238,15 @@ public class BorrowerUIHold extends JPanel implements ActionListener{
 			// Do Nothing
 		}
 
-		public void focusLost(FocusEvent e) {	
-			if (((JTextField)e.getComponent()).getText()==null || ((JTextField)e.getComponent()).getText().isEmpty()) {
-				setBorderRed(((JTextField)e.getComponent()), true);
-				throw new NullPointerException(((JTextField)e.getComponent()).getName() + " can not be null.");
+		public void focusLost(FocusEvent e) {
+			if (((JTextField) e.getComponent()).getText() == null
+					|| ((JTextField) e.getComponent()).getText().isEmpty()) {
+				setBorderRed(((JTextField) e.getComponent()), true);
+				throw new NullPointerException(
+						((JTextField) e.getComponent()).getName()
+								+ " can not be null.");
 			}
-			setBorderRed(((JTextField)e.getComponent()), false);
+			setBorderRed(((JTextField) e.getComponent()), false);
 		}
 
 	}

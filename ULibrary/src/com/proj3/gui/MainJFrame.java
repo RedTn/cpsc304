@@ -43,36 +43,40 @@ public class MainJFrame extends JFrame {
 	public final static int LOG_HEIGHT = 4;
 
 	private BorrowerUILogin borrowerUILogin;
-	
+
 	private JFrame frame;
-	
+
 	private JTextArea errorLog, outputLog;
-	
+
 	private Container defaultPane;
-	
+
 	private Boolean isConnected = false;
-	
+
 	private BorrowerApp bApp;
 	private LibrarianApp lApp;
 	private ClerkApp cApp;
 	private Database db;
-	
+
 	public MainJFrame(BorrowerApp b, LibrarianApp l, ClerkApp c, Database d) {
 		bApp = b;
 		lApp = l;
 		cApp = c;
 		db = d;
 	}
-	
+
 	public Database getDB() {
 		return db;
 	}
-	
+
 	public String getCurrentUserBID() {
-		return borrowerUILogin.getBID();
+		int bid = borrowerUILogin.getBID();
+		if (bid < 0) {
+			return "Anonymous";
+		}
+		return String.valueOf(bid);
 	}
-	
-	private ImageIcon createImageIcon(String imagePath) {		
+
+	private ImageIcon createImageIcon(String imagePath) {
 
 		if (imagePath == null)
 			return null;
@@ -84,14 +88,17 @@ public class MainJFrame extends JFrame {
 
 		ImageIcon icon = new ImageIcon(imageURL);
 		Image img = icon.getImage();
-		Image scaledImg = img.getScaledInstance(ICON_WIDTH, ICON_HEIGHT, java.awt.Image.SCALE_SMOOTH);
+		Image scaledImg = img.getScaledInstance(ICON_WIDTH, ICON_HEIGHT,
+				java.awt.Image.SCALE_SMOOTH);
 		return new ImageIcon(scaledImg);
 
 	}
 
 	/**
 	 * Adds help menu to the menu bar
-	 * @param jMenuBar Menu bar to contain the menu
+	 * 
+	 * @param jMenuBar
+	 *            Menu bar to contain the menu
 	 */
 	private JMenu addHelpMenu() {
 
@@ -102,40 +109,42 @@ public class MainJFrame extends JFrame {
 		icon = createImageIcon("/help.png");
 		menu = new JMenu("");
 		menu.setIcon(icon);
-		
+
 		icon = createImageIcon("/connect.png");
 		menuItem = new JMenuItem("Connection");
 		menuItem.setIcon(icon);
-		
-		menuItem.addActionListener(new ActionListener(){
-			
+
+		menuItem.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
-				
+
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(defaultPane, BorderLayout.CENTER);
+				getFrame().getContentPane().add(defaultPane,
+						BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
 			}
-			
+
 		});
 
 		menu.add(menuItem);
-		
+
 		icon = createImageIcon("/helpbook.png");
 		menuItem = new JMenuItem("Manual");
 		menuItem.setIcon(icon);
 		menu.add(menuItem);
-		
+
 		return menu;
 
 	}
 
-
 	/**
 	 * Adds librarian menu and menu items to the menu bar
-	 * @param jMenuBar Menu bar to contain the menu
+	 * 
+	 * @param jMenuBar
+	 *            Menu bar to contain the menu
 	 */
 	private JMenu addLibrarianMenu() {
 
@@ -153,13 +162,15 @@ public class MainJFrame extends JFrame {
 
 		icon = createImageIcon("/newbook.png");
 		menuItem = new JMenuItem("New Book", icon);
-		menuItem.addActionListener(new ActionListener(){
+		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(new LibrarianUIAddBook(getMainFrame()), BorderLayout.CENTER);
+				getFrame().getContentPane().add(
+						new LibrarianUIAddBook(getMainFrame()),
+						BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
 			}
@@ -169,13 +180,15 @@ public class MainJFrame extends JFrame {
 
 		icon = createImageIcon("/newcopy.png");
 		menuItem = new JMenuItem("New Copy", icon);
-		menuItem.addActionListener(new ActionListener(){
+		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(new LibrarianUIAddCopy(getMainFrame()), BorderLayout.CENTER);
+				getFrame().getContentPane().add(
+						new LibrarianUIAddCopy(getMainFrame()),
+						BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
 			}
@@ -191,13 +204,15 @@ public class MainJFrame extends JFrame {
 
 		icon = createImageIcon("/checkedoutbooks.png");
 		menuItem = new JMenuItem("Checked-Out Books", icon);
-		menuItem.addActionListener(new ActionListener(){
+		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(new LibrarianUIGenerateBook(getMainFrame()), BorderLayout.CENTER);
+				getFrame().getContentPane().add(
+						new LibrarianUIGenerateBook(getMainFrame()),
+						BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
 			}
@@ -207,13 +222,15 @@ public class MainJFrame extends JFrame {
 
 		icon = createImageIcon("/mostpopularitems.png");
 		menuItem = new JMenuItem("Most Popular Items", icon);
-		menuItem.addActionListener(new ActionListener(){
+		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(new LibrarianUIGenerateItem(getMainFrame()), BorderLayout.CENTER);
+				getFrame().getContentPane().add(
+						new LibrarianUIGenerateItem(getMainFrame()),
+						BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
 			}
@@ -228,6 +245,7 @@ public class MainJFrame extends JFrame {
 
 	/**
 	 * Adds borrower menu and menu items to the menu bar
+	 * 
 	 * @param menuBar
 	 */
 	private JMenu addBorrowerMenu() {
@@ -239,16 +257,17 @@ public class MainJFrame extends JFrame {
 		icon = createImageIcon("/borrowerFace.png");
 		menu = new JMenu("Borrower");
 		menu.setIcon(icon);
-		
+
 		icon = createImageIcon("/login.png");
-		menuItem = new JMenuItem("Log In", icon);	
-		menuItem.addActionListener(new ActionListener(){
-			
+		menuItem = new JMenuItem("Log In", icon);
+		menuItem.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(borrowerUILogin, BorderLayout.CENTER);
+				getFrame().getContentPane().add(borrowerUILogin,
+						BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
 			}
@@ -258,13 +277,15 @@ public class MainJFrame extends JFrame {
 
 		icon = createImageIcon("/search.png");
 		menuItem = new JMenuItem("Search Books", icon);
-		menuItem.addActionListener(new ActionListener(){
+		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(new BorrowerUISearch(getMainFrame()), BorderLayout.CENTER);
+				getFrame().getContentPane().add(
+						new BorrowerUISearch(getMainFrame()),
+						BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
 			}
@@ -273,14 +294,16 @@ public class MainJFrame extends JFrame {
 		menu.add(menuItem);
 
 		icon = createImageIcon("/account.png");
-		menuItem = new JMenuItem("Check Account", icon);	
-		menuItem.addActionListener(new ActionListener(){
+		menuItem = new JMenuItem("Check Account", icon);
+		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(new BorrowerUICheck(getMainFrame()), BorderLayout.CENTER);
+				getFrame().getContentPane().add(
+						new BorrowerUICheck(getMainFrame()),
+						BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
 			}
@@ -290,13 +313,15 @@ public class MainJFrame extends JFrame {
 
 		icon = createImageIcon("/hold.png");
 		menuItem = new JMenuItem("Place Hold Request", icon);
-		menuItem.addActionListener(new ActionListener(){
+		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(new BorrowerUIHold(getMainFrame()), BorderLayout.CENTER);
+				getFrame().getContentPane()
+						.add(new BorrowerUIHold(getMainFrame()),
+								BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
 			}
@@ -306,13 +331,15 @@ public class MainJFrame extends JFrame {
 
 		icon = createImageIcon("/fine.png");
 		menuItem = new JMenuItem("Pay Fine", icon);
-		menuItem.addActionListener(new ActionListener(){
+		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(new BorrowerUIFine(getMainFrame()), BorderLayout.CENTER);
+				getFrame().getContentPane()
+						.add(new BorrowerUIFine(getMainFrame()),
+								BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
 			}
@@ -326,7 +353,9 @@ public class MainJFrame extends JFrame {
 
 	/**
 	 * Adds clerk menu and menu items to the menu bar
-	 * @param jMenuBar Menu bar to contain the menu
+	 * 
+	 * @param jMenuBar
+	 *            Menu bar to contain the menu
 	 */
 	private JMenu addClerkMenu() {
 
@@ -340,14 +369,16 @@ public class MainJFrame extends JFrame {
 		menu.setMnemonic(KeyEvent.VK_ALT);
 
 		icon = createImageIcon("/borrower.png");
-		menuItem = new JMenuItem("Add New Borrower", icon);	
-		menuItem.addActionListener(new ActionListener(){
+		menuItem = new JMenuItem("Add New Borrower", icon);
+		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(new ClerkUIAddBorrower(getMainFrame()), BorderLayout.CENTER);
+				getFrame().getContentPane().add(
+						new ClerkUIAddBorrower(getMainFrame()),
+						BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
 			}
@@ -357,14 +388,16 @@ public class MainJFrame extends JFrame {
 
 		icon = createImageIcon("/checkout.png");
 		menuItem = new JMenuItem("Check-Out Item", icon);
-		menuItem.addActionListener(new ActionListener(){
+		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(new ClerkUICheckOut(getMainFrame()), BorderLayout.CENTER);
-				getFrame().validate();			
+				getFrame().getContentPane().add(
+						new ClerkUICheckOut(getMainFrame()),
+						BorderLayout.CENTER);
+				getFrame().validate();
 				getFrame().repaint();
 			}
 
@@ -373,14 +406,15 @@ public class MainJFrame extends JFrame {
 
 		icon = createImageIcon("/return.png");
 		menuItem = new JMenuItem("Process Return", icon);
-		menuItem.addActionListener(new ActionListener(){
+		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(new ClerkUIReturn(getMainFrame()), BorderLayout.CENTER);
-				getFrame().validate();			
+				getFrame().getContentPane().add(
+						new ClerkUIReturn(getMainFrame()), BorderLayout.CENTER);
+				getFrame().validate();
 				getFrame().repaint();
 			}
 
@@ -389,14 +423,16 @@ public class MainJFrame extends JFrame {
 
 		icon = createImageIcon("/overdue.png");
 		menuItem = new JMenuItem("Check Overdue Items", icon);
-		menuItem.addActionListener(new ActionListener(){
+		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i=1; i<cnt; i++)
+				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(new ClerkUIOverdue(getMainFrame()), BorderLayout.CENTER);
-				getFrame().validate();			
+				getFrame().getContentPane()
+						.add(new ClerkUIOverdue(getMainFrame()),
+								BorderLayout.CENTER);
+				getFrame().validate();
 				getFrame().repaint();
 			}
 
@@ -404,7 +440,7 @@ public class MainJFrame extends JFrame {
 		menu.add(menuItem);
 
 		return menu;
-	}	
+	}
 
 	private JMenuBar createMenuBar() {
 		JMenuBar menuBar;
@@ -423,41 +459,41 @@ public class MainJFrame extends JFrame {
 	private JPanel createLogPane() {
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		
+
 		GridBagConstraints gridc;
-		
+
 		gridc = new GridBagConstraints();
 		gridc.anchor = GridBagConstraints.CENTER;
 		gridc.gridx = 0;
-		gridc.gridy = 0;		
+		gridc.gridy = 0;
 		gridc.weightx = 1;
 		gridc.weighty = 1;
 		gridc.fill = GridBagConstraints.HORIZONTAL;
 		panel.add(createErrorScrollPane(), gridc);
-		
+
 		gridc = new GridBagConstraints();
 		gridc.anchor = GridBagConstraints.CENTER;
 		gridc.gridx = 1;
-		gridc.gridy = 0;		
+		gridc.gridy = 0;
 		gridc.weightx = 1;
 		gridc.weighty = 1;
 		gridc.fill = GridBagConstraints.HORIZONTAL;
 		panel.add(createOutputScrollPane(), gridc);
-		
+
 		return panel;
 	}
-	
+
 	private JScrollPane createErrorScrollPane() {
-		errorLog = new JTextArea(LOG_HEIGHT,LOG_WIDTH);
+		errorLog = new JTextArea(LOG_HEIGHT, LOG_WIDTH);
 		errorLog.setEditable(false);
 		errorLog.setLineWrap(true);
 		JScrollPane scrollPane = new JScrollPane(errorLog);
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Error Log"));
 		return scrollPane;
-	} 
-	
+	}
+
 	private JScrollPane createOutputScrollPane() {
-		outputLog = new JTextArea(LOG_HEIGHT,LOG_WIDTH);
+		outputLog = new JTextArea(LOG_HEIGHT, LOG_WIDTH);
 		outputLog.setEditable(false);
 		outputLog.setLineWrap(true);
 		JScrollPane scrollPane = new JScrollPane(outputLog);
@@ -466,67 +502,65 @@ public class MainJFrame extends JFrame {
 	}
 
 	private Container createDefaultPanel() {
-		
+
 		JButton button = new JButton();
-		button.setText("Welcome to [ULibrary DBMS]  " +
-					   "Click To Connect");
+		button.setText("Welcome to [ULibrary DBMS]  " + "Click To Connect");
 		button.setFont(new Font("SansSerif", Font.BOLD, 20));
 		button.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-		button.addActionListener(new ActionListener(){
+		button.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				if (isConnected == false) {
 					try {
 						isConnected = db.connect();
 						if (isConnected == true)
-							((JButton)e.getSource()).setText("Connected!!  " +
-								"Click to Disconnect");
+							((JButton) e.getSource()).setText("Connected!!  "
+									+ "Click to Disconnect");
 						else
 							throw new RuntimeException("Failed Connection");
 					} catch (Exception ex) {
-						((JButton)e.getSource()).setText("Connection Unsuccessful.  " +
-								"Try Again by Clicking this Button");
-					}				
+						((JButton) e.getSource())
+								.setText("Connection Unsuccessful.  "
+										+ "Try Again by Clicking this Button");
+					}
 				}
 			}
-			
+
 		});
 		JPanel panel = new JPanel();
-		panel.add( Box.createVerticalStrut(FRAME_HEIGHT/2) );
+		panel.add(Box.createVerticalStrut(FRAME_HEIGHT / 2));
 		panel.add(button, new BorderLayout());
-		
+
 		return panel;
 	}
-	
-	
 
 	private JFrame getFrame() {
 		return frame;
 	}
-	
+
 	private MainJFrame getMainFrame() {
 		return this;
 	}
 
 	void displayErrorMessage(String s) {
-		
-		errorLog.append(s+"\n");
+
+		errorLog.append(s + "\n");
 		errorLog.validate();
 		errorLog.repaint();
-		
+
 	}
-	
+
 	public void displayOutputMessage(String s) {
-		
-		outputLog.append(s+"\n");
+
+		outputLog.append(s + "\n");
 		outputLog.validate();
 		outputLog.repaint();
-		
+
 	}
-	
+
 	public void createAndShowGUI() {
-		
-		frame = new JFrame("UBC CPSC 304 LIBRARY");		
+
+		frame = new JFrame("UBC CPSC 304 LIBRARY");
 		frame.setIconImage(createImageIcon("/library.png").getImage());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -538,27 +572,27 @@ public class MainJFrame extends JFrame {
 		menuBar.add(addHelpMenu());
 
 		borrowerUILogin = new BorrowerUILogin(getMainFrame());
-		
+
 		Container contentPane = this.createContentPane();
 		defaultPane = createDefaultPanel();
 		contentPane.add(createLogPane(), BorderLayout.PAGE_END);
 		contentPane.add(defaultPane, BorderLayout.CENTER);
-		
+
 		frame.setJMenuBar(menuBar);
 		frame.setContentPane(contentPane);
 		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		frame.setResizable(true);
 		frame.setVisible(true);
-		
-		EventQueue systemEventQueue = Toolkit.getDefaultToolkit().getSystemEventQueue();
+
+		EventQueue systemEventQueue = Toolkit.getDefaultToolkit()
+				.getSystemEventQueue();
 		systemEventQueue.push(new MyEventQueue());
-		
+
 	}
-	
+
 	public BorrowerApp bApp() {
 		return bApp;
 	}
-
 
 	public LibrarianApp lApp() {
 		return lApp;
@@ -572,12 +606,12 @@ public class MainJFrame extends JFrame {
 	class MyEventQueue extends EventQueue {
 
 		@Override
-		protected void dispatchEvent (AWTEvent newEvent) {
-			try {            
-				super.dispatchEvent(newEvent);  
+		protected void dispatchEvent(AWTEvent newEvent) {
+			try {
+				super.dispatchEvent(newEvent);
 			} catch (Throwable t) {
 				displayErrorMessage(t.getMessage());
-			}    
+			}
 		}
 	}
 
