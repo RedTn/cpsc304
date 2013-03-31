@@ -420,14 +420,18 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 						//TODO INSERT METHOD HERE
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
-						displayOutput("Thread Started");
+						
 
 						Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(getExpireDate());
 						Database db = mainFrame.getDB();
-						db.insertBorrower(getPassword(), getName(), getAddress(), getPhoneNumber(), getEmailAddress(), getSinOrStNo(),
-								date, BorrowerType.get(getType()));		
+						if(!db.insertBorrower(getPassword(), getName(), getAddress(), getPhoneNumber(), getEmailAddress(), getSinOrStNo(),
+								date, BorrowerType.get(getType()))){
+							displayOutput("Borrower not added");
+						}
+						else{
+							displayOutput("Borrower added sucessfully");
+						}
 
-						displayOutput("Thread Ended");
 
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());

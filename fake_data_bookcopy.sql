@@ -38,8 +38,8 @@ INSERT INTO BookCopy VALUES('ROWLING HPDeathly', 1, 'on-hold');
 INSERT INTO BookCopy VALUES('ROWLING HPDeathly', 2, 'in');
 
 INSERT INTO BookCopy VALUES('STEWART Calculus', 3, 'out');
+INSERT INTO BookCopy VALUES('STEWART Calculus', 4, 'in');
 INSERT INTO BookCopy VALUES('STEWART Calculus', 5, 'in');
 INSERT INTO BookCopy VALUES('STEWART Calculus', 6, 'in');
-INSERT INTO BookCopy VALUES('STEWART Calculus', 8, 'in');
 
-INSERT INTO BookCopy VALUES('DAWKINS Selfish', 10, 'out');
+INSERT INTO BookCopy VALUES('DAWKINS Selfish', 1, 'out');

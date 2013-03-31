@@ -284,14 +284,14 @@ public class ClerkUICheckOut extends JPanel implements ActionListener {
 						//TODO INSERT METHOD HERE
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
-						displayOutput("Thread Started");
+						
 						String x = getCallNumbers();
 						Database db = mainFrame.getDB();
 						ClerkApp ca = new ClerkApp(db);
 						String message = ca.checkOutItems(Integer.parseInt(getBID()), x);
 						displayOutput(message);
-						
-						displayOutput("Thread Ended");
+						displayNote(ca.getNote());
+				
 
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());

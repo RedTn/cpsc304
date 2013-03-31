@@ -6,14 +6,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
-import java.sql.Timestamp;
-
 import com.proj3.database.Database;
-import com.proj3.gui.ClerkUICheckOut;
 import com.proj3.model.Book;
 import com.proj3.model.BookCopy;
 import com.proj3.model.Borrower;
-import com.proj3.model.BorrowerType;
 import com.proj3.model.Borrowing;
 import com.proj3.model.CopyStatus;
 import com.proj3.model.HoldRequest;
@@ -23,9 +19,11 @@ public class ClerkApp {
 	private Calendar cal;
 	private Date currDate;
 	private Calendar expCal;
+	private String note;
 
 	public ClerkApp(Database db) {
 		this.db = db;
+		this.note = null;
 
 		// Automatically initialized to current date
 		cal = Calendar.getInstance();
@@ -59,6 +57,9 @@ public class ClerkApp {
 			return "Error, borrower is expired";
 		}
 
+		StringBuilder record = new StringBuilder();
+		record.append("Borrower: ");
+		record.append(bid);
 		for (int i=0; i<books.size(); i++) {
 			Book book = new Book();
 			book.setCallNumber(books.get(i));
@@ -68,21 +69,26 @@ public class ClerkApp {
 				BookCopy bc = db.selectCopyByCallAndStatus(book.getCallNumber(), CopyStatus.in);
 				
 				if(!db.updateCopyStatus(CopyStatus.out, bc.getCopyNo(), book.getCallNumber())){
-					System.out.println("Error, bookcopy not checked out");
+					return "Error, bookcopy not checked out";
 				}
 				if(!db.insertBorrowing(bid, book.getCallNumber(),  bc.getCopyNo(), 
 						cal.getTime(), null)){
-					System.out.println("Error, borrowing record not created");
+					return "Error, borrowing record not created";
 				}
 				
-				//TODO: Gui prints THIS borrowing record
-				//and expiry date: expCal.getTime();
+				record.append(" callNumber: ");
+				record.append(book.getCallNumber());
+				record.append(" checkedout, due: ");
+				Date formatedDate = expCal.getTime();
+				record.append(formatedDate.getTime());
+				record.append("\n");
 			}
 			else {
 				return "Book %s is on-hold" + book.getCallNumber();
 			}
 
 		}
+		setNote(record.toString());
 		return "Done check-out";
 	}
 
@@ -149,5 +155,11 @@ public class ClerkApp {
 	public Borrowing[] checkOverdueItems() {
 		return db.selectOverDueBorrowingByDate(cal.getTime());
 
+	}
+	private void setNote(String note) {
+		this.note = note;
+	}
+	public String getNote() {
+		return note;
 	}
 }
