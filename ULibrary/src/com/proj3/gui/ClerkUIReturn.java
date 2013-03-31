@@ -28,11 +28,11 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 	private static final String borid_STRING = "BORID";
 	//private static final String COPYNUMBER_STRING = "COPY NUMBER";
 	
-	private JTextField boridField, copyNumberField;	
-	private JLabel boridFieldLabel, copyNumberFieldLabel;
+	private JTextField boridField;
+	private JLabel boridFieldLabel;
 
-	private static final int MAX_CN = Integer.MAX_VALUE;
-	private static final int MIN_CN = 0;
+//	private static final int MAX_CN = Integer.MAX_VALUE;
+	//private static final int MIN_CN = 0;
 	
 	private JButton submitButton;
 
@@ -242,13 +242,17 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 						getThisPanel().validate();
 						getThisPanel().repaint();
 
-						//TODO INSERT METHOD HERE
-						// USE displayItems(String str)
-						// BELOW IS AN EXAMPLE
+		
 						Database db = mainFrame.getDB();
 						ClerkApp ca = new ClerkApp(db);	
 						String message = ca.processReturn(Integer.parseInt(getborid()));
 						displayOutput(message);
+						
+						//TODO: GUI sends email to user who has a hold
+						//Test with DB reset, then BORID = 3014
+						if (ca.getEmail() != null) {
+							System.out.println(ca.getEmail());
+						}
 
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());

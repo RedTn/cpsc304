@@ -30,7 +30,7 @@ public class Borrowing {
 
 		int borid = rs.getInt("borid");
 		int bid = rs.getInt("bid");
-		String callNumber = rs.getString("callNumber");
+		//String callNumber = rs.getString("callNumber");
 		
 		Date outDate = rs.getDate("outDate");
 		Date inDate = rs.getDate("inDate");
@@ -112,4 +112,5 @@ public class Borrowing {
 	public CopyStatus getStatus() {
 		return copy.getStatus();
 	}
+
 }

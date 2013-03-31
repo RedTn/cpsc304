@@ -33,7 +33,7 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 
 	private MainJFrame mainFrame;
 	
-	private static final String BID_STRING = "ID";
+//	private static final String BID_STRING = "ID";
 	private static final String PASSWORD_STRING = "PASSWORD";
 	private static final String PASSWORDCONFIRMATION_STRING = "CONFIRM PASSWORD";
 	private static final String NAME_STRING = "NAME";
@@ -44,8 +44,8 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 	private static final String EXPIREDATE_STRING = "EXPIRE DATE";
 	private static final String TYPE_STRING = "TYPE";
 
-	private static final int MAX_BID = Integer.MAX_VALUE;
-	private static final int MIN_BID = 0;
+	//private static final int MAX_BID = Integer.MAX_VALUE;
+	//private static final int MIN_BID = 0;
 
 	private JTextField passwordField, passwordConfirmationField,
 	nameField, addressField, phoneField, emailField, sinField,
@@ -417,11 +417,7 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 						getThisPanel().validate();
 						getThisPanel().repaint();
 
-						//TODO INSERT METHOD HERE
-						// USE displayItems(String str)
-						// BELOW IS AN EXAMPLE
-						
-
+						//ClerkApp
 						Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(getExpireDate());
 						Database db = mainFrame.getDB();
 						if(!db.insertBorrower(getPassword(), getName(), getAddress(), getPhoneNumber(), getEmailAddress(), getSinOrStNo(),

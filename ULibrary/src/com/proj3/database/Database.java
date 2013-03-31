@@ -1071,7 +1071,7 @@ public class Database {
 		Fine fine = null;
 		
 		try {
-			ps = con.prepareStatement("SELECT * FROM Fine WHERE borid = ?");
+			ps = con.prepareStatement("SELECT * FROM Fine WHERE borid = ? AND paidDate IS NULL");
 			ps.setInt(1, borid);
 
 			rs = ps.executeQuery();

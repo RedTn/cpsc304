@@ -288,10 +288,7 @@ public class ClerkUICheckOut extends JPanel implements ActionListener {
 						getThisPanel().validate();
 						getThisPanel().repaint();
 
-						//TODO INSERT METHOD HERE
-						// USE displayItems(String str)
-						// BELOW IS AN EXAMPLE
-						
+						//ClerkApp
 						String x = getCallNumbers();
 						Database db = mainFrame.getDB();
 						ClerkApp ca = new ClerkApp(db);

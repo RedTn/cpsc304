@@ -16,6 +16,10 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.proj3.app.ClerkApp;
+import com.proj3.database.Database;
+import com.proj3.model.Borrowing;
+
 
 @SuppressWarnings("serial")
 public class ClerkUIOverdue extends JPanel implements ActionListener {
@@ -176,14 +180,30 @@ public class ClerkUIOverdue extends JPanel implements ActionListener {
 						getThisPanel().validate();
 						getThisPanel().repaint();
 
-						//TODO INSERT METHOD HERE
-						// USE displayItems(String str)
-						// BELOW IS AN EXAMPLE
-						displayOutput("Thread Started");
-						displayItems("Items ");
-						displayBorrowers("Borrowers");
-						Thread.sleep(3000);						
-						displayOutput("Thread Ended");
+						
+						Database db = mainFrame.getDB();
+						ClerkApp ca = new ClerkApp(db);	
+						Borrowing[] borrowing = ca.checkOverdueItems();
+						StringBuilder items = new StringBuilder();
+						StringBuilder borrowers =  new StringBuilder();
+						StringBuilder emails = new StringBuilder();
+						
+						if (borrowing.length == 0) {
+							displayOutput("There are no overdue items.");
+						}
+						else {
+							for(int i = 0; i < borrowing.length; i++){
+								items.append(borrowing[i].getCallNumber() + "\n");
+								borrowers.append(borrowing[i].getBorrower().getName() + ", Bid:" + borrowing[i].getBid() + "\n");
+								emails.append(borrowing[i].getBorrower().getEmail() + "\n");
+							}
+						}
+						
+						displayItems(items.toString());
+						displayBorrowers(borrowers.toString());
+						
+						//TODO GUI: sends emails to everyone who has overdue item
+						System.out.println(emails.toString());
 
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());

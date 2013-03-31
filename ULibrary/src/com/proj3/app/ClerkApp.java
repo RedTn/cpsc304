@@ -21,10 +21,12 @@ public class ClerkApp {
 	private Date currDate;
 	private Calendar expCal;
 	private String note;
+	private String email;
 
 	public ClerkApp(Database db) {
 		this.db = db;
 		this.note = null;
+		this.email = null;
 
 		// Automatically initialized to current date
 		cal = Calendar.getInstance();
@@ -36,39 +38,43 @@ public class ClerkApp {
 		expCal.add(Calendar.DATE, 7);
 	}
 
-	
+
 	public String checkOutItems(int bid, String bookline) {
 		if(("").equals(bookline)) {
 			return "Please enter callNumbers";
 		}
 		List<String> books = new ArrayList<String>();
 		Scanner scan = new Scanner(bookline);
-		
+
 		//WINDOWS
 		//scan.useDelimiter(",|\\r\n");
-		
+
 		//UNIX
 		scan.useDelimiter(",|\\n");
-		 while(scan.hasNext()){
-			 books.add(scan.next());
-	 }
-		 
-		Borrower aBorrower = db.selectBorrowerById(bid);
-		if (aBorrower == null) {
-			return "No Borrower found";
-		}
-		if (currDate.after(aBorrower.getExpiryDate())){
-			return "Error, borrower is expired";
+		try {
+			while(scan.hasNext()){
+				books.add(scan.next());
+			}
+		}finally {
+			scan.close();
 		}
 		
+		Borrower aBorrower = db.selectBorrowerById(bid);
+		if (aBorrower == null) {
+			return "No Borrower found.";
+		}
+		if (currDate.after(aBorrower.getExpiryDate())){
+			return "Borrower is expired.";
+		}
+
 		Integer[] checkborrows = db.selectAllBorrowingsByBid(bid);
 		for(int j = 0; j<checkborrows.length; j++) {
 			Fine fine = db.selectFineByBorid(checkborrows[j].intValue());
 			if (fine != null) {
-				return "Borrower must pay fine of : $" + fine.getAmount();
+				return "Borrower must pay fine of : $" + String.format("%.2f", fine.getAmount());
 			}
 		}
-		
+
 		StringBuilder record = new StringBuilder();
 		for (int i=0; i<books.size(); i++) {
 			Book book = new Book();
@@ -78,7 +84,7 @@ public class ClerkApp {
 				//This book is available
 				Book checkbook = db.selectBookByCallNumber(book.getCallNumber());
 				if(checkbook == null) {
-					return "Error, Book: " + book.getCallNumber() + " is not in database, please check spelling";
+					return "Error, Book: " + book.getCallNumber() + " is not in database, please check spelling.";
 				}
 				BookCopy bc = db.selectCopyByCallAndStatus(book.getCallNumber(), CopyStatus.in);
 				record.append("COPYNO: ");
@@ -86,26 +92,26 @@ public class ClerkApp {
 					int count = db.getCopyCountByCallNumber(book.getCallNumber());
 					count++;
 					if(!db.insertBookCopy(book.getCallNumber(), count, CopyStatus.out)){
-						return "Error, new bookcopy not inserted";
+						return "Error, new bookcopy not inserted.";
 					}
 					if(!db.insertBorrowing(bid, book.getCallNumber(),  count, 
 							currDate, null)){
-						return "Error, borrowing record not created(1)";
+						return "Error, borrowing record not created(1).";
 					}
 					record.append(count);
 				}
 				else {
-				if(!db.updateCopyStatus(CopyStatus.out, bc.getCopyNo(), book.getCallNumber())){
-					return "Error, bookcopy not checked out";
+					if(!db.updateCopyStatus(CopyStatus.out, bc.getCopyNo(), book.getCallNumber())){
+						return "Error, bookcopy not checked out.";
+					}
+
+					if(!db.insertBorrowing(bid, book.getCallNumber(),  bc.getCopyNo(), 
+							currDate, null)){
+						return "Error, borrowing record not created(2).";
+					}
+					record.append(bc.getCopyNo());
 				}
-				
-				if(!db.insertBorrowing(bid, book.getCallNumber(),  bc.getCopyNo(), 
-						currDate, null)){
-					return "Error, borrowing record not created(2)";
-				}
-				record.append(bc.getCopyNo());
-				}
-				
+
 				record.append("; CALLNUMBER: ");
 				record.append(book.getCallNumber());
 				record.append("; CHECKEDOUT, DUE: ");
@@ -116,7 +122,7 @@ public class ClerkApp {
 			else {
 				record.append("BOOK: ");
 				record.append(book.getCallNumber());
-				record.append(", is currently on-hold\n");
+				record.append(", is currently on-hold.");
 			}
 
 		}
@@ -127,15 +133,16 @@ public class ClerkApp {
 	public String processReturn(int borid) {
 		Borrowing b = db.searchBorrowingsByClerk(borid);
 		if (b == null) {
-			return "Error, borid invalid, or already returned";
+			return "Borid is invalid, or book is already returned.";
 		}
 
+		Borrower borrower = db.selectBorrowerById(b.getBid());
 		String callNumber = b.getCallNumber();
 		Date borrowDate = new Date();
 		borrowDate = b.getOutDate();
-		
+
 		StringBuilder sb = new StringBuilder();
-		
+
 		if (borrowDate.before(cal.getTime())) {
 
 			Date curDate = cal.getTime();
@@ -146,7 +153,7 @@ public class ClerkApp {
 			long diffDays = diffTime / (1000 * 60 * 60 * 24);
 			float amount = diffDays * 1;
 			if (!db.insertFine(amount, cal.getTime(), null, borid)) {
-				return "Fine not inserted";
+				return "Fine not inserted.";
 			}
 			sb.append("Overdue, Fine of $");
 			sb.append(String.format("%.2f", amount));
@@ -157,45 +164,58 @@ public class ClerkApp {
 		HoldRequest[] hold = db.selectHoldRequestsByCall(b.getBook());
 		if((hold.length == 0) && (bc != null)) {
 			if(!db.updateCopyStatus(CopyStatus.in, b.getCopy().getCopyNo(), callNumber)) {
-				return "Error, bookcopy not updated(1)";
+				return "Error, bookcopy not updated(1).";
 			}
 			if(!db.updateBorrowingByIndate(borid,currDate)){
-				return "Error, borrowing record not inserted(1)";
+				return "Error, borrowing record not inserted(1).";
 			}
 			sb.append("Book returned.");
 		}else if ((hold.length != 0) && (bc != null)){
 			if(!db.updateCopyStatus(CopyStatus.onhold, b.getCopy().getCopyNo(), callNumber)) {
-				return "Error, bookcopy not updated(2)";
+				return "Error, bookcopy not updated(2).";
 			}
 			if(!db.updateBorrowingByIndate(borid,currDate)){
-				return "Error, borrowing record not inserted(2)";
+				return "Error, borrowing record not inserted(2).";
 			}
-			sb.append("Returned,\nBOOK: " + callNumber + ", is available for holder, BID:" + b.getBid());
+			sb.append("Returned.\nBOOK: " + callNumber + "\nis available for holder\nBID:" + b.getBid());
+			if(borrower == null){
+				return "Error, borrower BID not found.";
+			}
+			else{
+				setEmail(borrower.getEmail());
+			}
 		}
 		else if ((hold.length == 0) && (bc == null)){
-		int inbooks = db.getCopyCountByCallNumber(callNumber);
-		inbooks++;
+			int inbooks = db.getCopyCountByCallNumber(callNumber);
+			inbooks++;
 			if(!db.insertBookCopy(callNumber, inbooks, CopyStatus.in)) {
-				return "Insert new bookcopy failed";
+				return "Insert new bookcopy failed.";
 			}
 			if(!db.updateBorrowingByIndate(borid,currDate)){
-				return "Error, borrowing record not inserted(2)";
+				return "Error, borrowing record not inserted(2).";
 			}
-			sb.append("New bookcopy inserted, copyNo: " + inbooks);
+			sb.append("New bookcopy inserted\ncopyNo: " + inbooks);
 		}
 		else {
 			int inbooks = db.getCopyCountByCallNumber(callNumber);
 			inbooks++;
-				if(!db.insertBookCopy(callNumber, inbooks, CopyStatus.onhold)) {
-					return "Insert new bookcopy failed";
-				}
-				if(!db.updateBorrowingByIndate(borid,currDate)){
-					return "Error, borrowing record not inserted(2)";
-				}
-				sb.append("New bookcopy inserted, copyNo: " + inbooks + " ,\n BOOK: "+ callNumber + ", is available for holder, BID:" + b.getBid());
+			if(!db.insertBookCopy(callNumber, inbooks, CopyStatus.onhold)) {
+				return "Insert new bookcopy failed.";
 			}
-		return sb.toString();
+			if(!db.updateBorrowingByIndate(borid,currDate)){
+				return "Error, borrowing record not inserted(2).";
+			}
+			sb.append("New bookcopy inserted\ncopyNo: " + inbooks + "\nBOOK: "+ callNumber + "\nis available for holder\nBID:" + b.getBid());
+			if(borrower == null){
+				return "Error, borrower BID not found.";
+			}
+			else{
+				setEmail(borrower.getEmail());
+			}
 		}
+		sb.append("\nEND");
+		return sb.toString();
+	}
 
 	public Borrowing[] checkOverdueItems() {
 		return db.selectOverDueBorrowingByDate(cal.getTime());
@@ -206,5 +226,11 @@ public class ClerkApp {
 	}
 	public String getNote() {
 		return note;
+	}
+	private void setEmail(String email) {
+		this.email = email;
+	}
+	public String getEmail() {
+		return email;
 	}
 }
