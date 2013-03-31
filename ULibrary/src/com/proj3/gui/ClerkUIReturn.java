@@ -17,6 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
+import com.proj3.app.ClerkApp;
+import com.proj3.database.Database;
+
 @SuppressWarnings("serial")
 public class ClerkUIReturn extends JPanel implements ActionListener {
 	
@@ -242,11 +245,10 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 						//TODO INSERT METHOD HERE
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
-						displayOutput("Thread Started");
-						displayOutput("Borid: "+getborid());
-						//displayOutput("Copy Number: "+getCopyNumber());
-						Thread.sleep(3000);						
-						displayOutput("Thread Ended");
+						Database db = mainFrame.getDB();
+						ClerkApp ca = new ClerkApp(db);	
+						String message = ca.processReturn(Integer.parseInt(getborid()));
+						displayOutput(message);
 
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());

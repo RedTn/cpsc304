@@ -126,18 +126,21 @@ public class ClerkApp {
 
 	public String processReturn(int borid) {
 		Borrowing b = db.searchBorrowingsByClerk(borid);
-		
+		if (b == null) {
+			return "Error, borid invalid, or already returned";
+		}
 
 		String callNumber = b.getCallNumber();
-		Calendar borrowDate = Calendar.getInstance();
-		borrowDate.setTime(b.getOutDate());
+		Date borrowDate = new Date();
+		borrowDate = b.getOutDate();
 
+		System.out.println(borrowDate);
 		StringBuilder record = new StringBuilder();
 		
-		if (borrowDate.getTime().before(cal.getTime())) {
-			System.out.println("Expired");
+		if (borrowDate.before(cal.getTime())) {
+			System.out.println("OverDue");
 			Date curDate = cal.getTime();
-			Date bookDate = borrowDate.getTime();
+			Date bookDate = borrowDate;
 			long curTime = curDate.getTime();
 			long bookTime = bookDate.getTime();
 			long diffTime = curTime - bookTime;
