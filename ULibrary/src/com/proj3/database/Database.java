@@ -726,7 +726,7 @@ public class Database {
 		List<Borrowing> borrowings = new ArrayList<Borrowing>();
 
 		try {
-			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ? AND inDate IS NULL");
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ?");
 
 			ps.setInt(1, borrower.getId());
 
@@ -738,7 +738,9 @@ public class Database {
 
 				BookCopy copy = selectCopyByCallAndCopyNumber(callNumber,
 						copyNo);
-				borrowings.add(Borrowing.getInstance(rs, borrower, copy));
+				if (copy.getStatus() == CopyStatus.out) {
+					borrowings.add(Borrowing.getInstance(rs, borrower, copy));
+				}
 			}
 			ps.close();
 
@@ -1031,7 +1033,7 @@ public class Database {
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-				Borrowing borrow = searchBorrowingsByClerk(rs.getInt("borid"));
+				Borrowing borrow = selectBorrowingById(rs.getInt("borid"));
 				fines.add(Fine.getInstance(rs, borrow));
 			}
 
@@ -1145,11 +1147,11 @@ public class Database {
 		return false;
 	}
 
-	public Borrowing searchBorrowingsByClerk(int borid) {
+	public Borrowing selectBorrowingById(int borid) {
 		ResultSet rs = null;
 		Borrowing b = null;
 		try {
-			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE borid = ? AND inDate IS NULL");
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE borid = ?");
 			ps.setInt(1, borid);
 
 			rs = ps.executeQuery();

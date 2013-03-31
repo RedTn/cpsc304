@@ -1,14 +1,11 @@
 package com.proj3.gui;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -17,43 +14,25 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import com.proj3.app.BorrowerApp;
 import com.proj3.model.Borrower;
 
 @SuppressWarnings("serial")
-public class BorrowerUILogin extends JPanel {
-
-	MainJFrame mainFrame;
+public class BorrowerUILogin extends BorrowerPanel {
 
 	private JTextField bidField;
 	private JPasswordField passwordField;
 	private JButton loginButton;
 
-	public JPanel getThisPanel() {
-		return this;
-	}
 
-	private BorrowerApp bApp() {
-		return mainFrame.bApp();
-	}
-	public void setBorderRed(JTextField field, Boolean b) {
-		if (b)
-			field.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.pink));
-		else
-			field.setBorder(BorderFactory.createEtchedBorder());
-	}
-	
-	public void displayOutput(String str) {
-		mainFrame.displayOutputMessage(str);
-	}
-	
 	public int getBID() {
 		String rawString = bidField.getText();
 		try {
+			setBorderRed(bidField, false);
 			Integer id = Integer.parseInt(rawString);
 			return id;
 		} catch (NumberFormatException nfe) {
-			displayOutput("The borrower ID you entered is not correct. It should be a number.");
+			setBorderRed(bidField, true);
+			displayErrorMessage("The borrower ID you entered is not correct. It should be a number.");
 		}
 		
 		return -1;
@@ -87,11 +66,12 @@ public class BorrowerUILogin extends JPanel {
 
 							displayOutput("Welcome, "+borrower.getName()+".");
 						} else {
-							displayOutput("Log in failed");
+							displayOutput("Log in failed. Check your ID and password.");
 						}
 					}
 					
 				} else {
+					setBorderRed(bidField, false);
 					loginButton.setText("Log In");
 					bidField.setEnabled(true);
 					passwordField.setEnabled(true);
@@ -150,7 +130,7 @@ public class BorrowerUILogin extends JPanel {
 	}
 
 	public BorrowerUILogin(MainJFrame f) {
-		mainFrame = f;
+		setMainFrame(f);
 
 		//Setting the border line around the panel
 		this.setBorder(BorderFactory.createCompoundBorder(
@@ -158,23 +138,6 @@ public class BorrowerUILogin extends JPanel {
 				BorderFactory.createEmptyBorder(10,10,10,10)));		
 
 		this.add(createLoginPanel());
-	}
-
-	// ActionListener for enforcing not null constraint
-	class MyFocusListener implements FocusListener {
-
-		public void focusGained(FocusEvent e) {
-			// Do Nothing
-		}
-
-		public void focusLost(FocusEvent e) {	
-			if (((JTextField)e.getComponent()).getText()==null || ((JTextField)e.getComponent()).getText().isEmpty()) {
-				setBorderRed(((JTextField)e.getComponent()), true);
-				throw new NullPointerException(((JTextField)e.getComponent()).getName() + " can not be null.");
-			}
-			setBorderRed(((JTextField)e.getComponent()), false);
-		}
-
 	}
 
 }

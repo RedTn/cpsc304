@@ -1,6 +1,5 @@
 package com.proj3.gui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -12,7 +11,6 @@ import java.awt.event.FocusListener;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -23,9 +21,7 @@ import com.proj3.model.Fine;
 import com.proj3.model.HoldRequest;
 
 @SuppressWarnings("serial")
-public class BorrowerUICheck extends JPanel implements ActionListener{
-
-	private MainJFrame mainFrame;
+public class BorrowerUICheck extends BorrowerPanel implements ActionListener{
 
 	private static final String BORROWEDBOOKS_STRING = "BORROWED BOOKS";
 	private static final String FINES_STRING = "FINES";
@@ -36,36 +32,37 @@ public class BorrowerUICheck extends JPanel implements ActionListener{
 
 	private JButton submitButton;
 
-	public JPanel getThisPanel() {
-		return this;
-	}
+	private void displayBorrowedBooks(Borrowing[] borrows) {
+		borrowedBookArea.setText("");
+		for (int i=0; i<borrows.length; i++) {
 
-	public void setBorderRed(JTextField field, Boolean b) {
-		if (b)
-			field.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.pink));
-		else
-			field.setBorder(BorderFactory.createEtchedBorder());
-	}	
-	
-	public void displayBorrowedBooks(Borrowing[] books) {
-		borrowedBookArea.append("Overdue \n");
+			borrowedBookArea.append(borrows[i].toStringForBorrower());
+			borrowedBookArea.append("\n");
+			
+		}
+		
 	}
 	
-	public void displayFine(Fine[] fines) {
-		fineArea.append("Overdue \n");
+	private void displayFine(Fine[] fines) {
+		fineArea.setText("");
+		for (int i=0; i<fines.length; i++) {
+			fineArea.append(fines[i].toStringForBorrower());
+			fineArea.append("\n");
+		}
+		
 	}
 	
-	public void displayHoldRequests(HoldRequest[] holds) {
-		holdRequestArea.append("Overdue \n");
+	private void displayHoldRequests(HoldRequest[] holds) {
+		holdRequestArea.setText("");
+		
+		for (int i=0; i<holds.length; i++) {
+			holdRequestArea.append(holds[i].toStringForBorrower());
+			holdRequestArea.append("\n");
+		}
+		
 	}
-	
-	public void displayOutput(String str) {
-		mainFrame.displayOutputMessage(str);
-	}
-	
-	public String getCurrentUserBID() {
-		return mainFrame.getCurrentUserBID();
-	}	
+		
+		
 
 	private void createBorrowedBookPane() {
 
@@ -114,7 +111,7 @@ public class BorrowerUICheck extends JPanel implements ActionListener{
 
 	public BorrowerUICheck(MainJFrame f) {	     
 
-		mainFrame = f;
+		setMainFrame(f);
 
 		//Setting the border line around the panel
 		setBorder(BorderFactory.createCompoundBorder(
@@ -193,6 +190,10 @@ public class BorrowerUICheck extends JPanel implements ActionListener{
 			Thread thread = new Thread(new Runnable(){
 
 				public void run() {
+					if (!bApp().isLoggedIn()) {
+						displayOutput("Please log in first.");
+						return;
+					}
 					
 					JProgressBar progressBar = new JProgressBar();
 					
@@ -216,17 +217,12 @@ public class BorrowerUICheck extends JPanel implements ActionListener{
 						getThisPanel().validate();
 						getThisPanel().repaint();
 
-						//TODO INSERT METHOD HERE
-						// USE displayItems(String str)
-						// BELOW IS AN EXAMPLE
-						displayBorrowedBooks(mainFrame.bApp().getBorrowings());
-						displayFine(mainFrame.bApp().getFines());
-						displayHoldRequests(mainFrame.bApp().getHolds());						
-						Thread.sleep(3000);						
-						displayOutput("Thread Ended");
+						displayBorrowedBooks(bApp().getBorrowings());
+						displayFine(bApp().getFines());
+						displayHoldRequests(bApp().getHolds());
 
 					} catch (Exception e) {
-						mainFrame.displayErrorMessage(e.getMessage());
+						displayErrorMessage(e.getMessage());
 					} finally {
 						submitButton.setEnabled(true);
 						getThisPanel().remove(progressBar);

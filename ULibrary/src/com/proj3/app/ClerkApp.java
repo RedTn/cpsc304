@@ -131,7 +131,7 @@ public class ClerkApp {
 	}
 
 	public String processReturn(int borid) {
-		Borrowing b = db.searchBorrowingsByClerk(borid);
+		Borrowing b = db.selectBorrowingById(borid);
 		if (b == null) {
 			return "Borid is invalid, or book is already returned.";
 		}

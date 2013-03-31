@@ -3,6 +3,7 @@ package com.proj3.model;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
 public class HoldRequest {
 
@@ -11,16 +12,17 @@ public class HoldRequest {
 	private Book book;
 	private Date issuedDate;
 
-	public static HoldRequest getInstance(ResultSet rs, Book book, Borrower borrower) throws SQLException {
+	public static HoldRequest getInstance(ResultSet rs, Book book,
+			Borrower borrower) throws SQLException {
 		HoldRequest h = new HoldRequest();
 		h.setBorrower(borrower);
 		h.setBook(book);
 		h.setHid(rs.getInt("hid"));
 		h.setIssuedDate(rs.getDate("issuedDate"));
-	
+
 		return h;
 	}
-	
+
 	public int getHid() {
 		return hid;
 	}
@@ -51,5 +53,11 @@ public class HoldRequest {
 
 	public void setIssuedDate(Date issuedDate) {
 		this.issuedDate = issuedDate;
+	}
+
+	public String toStringForBorrower() {
+		return "issued: "
+				+ new SimpleDateFormat("yyyy-MM-dd").format(issuedDate) + " "
+				+ book.getTitle() + " (" + book.getCallNumber() + ")";
 	}
 }

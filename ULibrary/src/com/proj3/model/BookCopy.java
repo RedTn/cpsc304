@@ -53,4 +53,8 @@ public class BookCopy {
 	public int hashcode() {
 		return book.hashCode()*51859+copyNo;
 	}
+
+	public String getIdentifier() {
+		return book.getCallNumber()+" "+copyNo;
+	}
 }
