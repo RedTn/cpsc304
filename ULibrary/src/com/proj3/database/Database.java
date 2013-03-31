@@ -8,9 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -1353,6 +1351,31 @@ public class Database {
 
 		return copy;
 	}
+	public BookCopy selectCopy(
+			String callNumber, CopyStatus status, int copyNo) {
+		ResultSet rs = null;
+		BookCopy copy = null;
+		try {
+			ps = con.prepareStatement("SELECT * FROM BookCopy WHERE callNumber = ? AND status = ? AND copyNo = ?");
+
+			ps.setString(1, callNumber);
+			ps.setString(2, status.getStatus());
+			ps.setInt(3, copyNo);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				copy = BookCopy.getInstance(rs, null);
+			}
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return copy;
+	}
 	public boolean updateCopyStatus(CopyStatus status, int copyNo, String callNumber) {
 		try {
 			ps = con.prepareStatement("UPDATE BookCopy SET status=? WHERE callNumber=? AND copyNo = ?");
@@ -1407,7 +1430,7 @@ public class Database {
 	
 	public boolean updateFirstCopyStatus(CopyStatus status, String callNumber) {
 		try {
-			ps = con.prepareStatement("UPDATE TOP (1) BookCopy SET status=? WHERE callNumber=?");
+			ps = con.prepareStatement("UPDATE TOP (1) BookCopy SET status=? WHERE callNumber=?)");
 
 			ps.setString(1, status.getStatus());
 			ps.setString(2, callNumber);
@@ -1437,8 +1460,8 @@ public class Database {
 		try {
 			ps = con.prepareStatement("UPDATE Borrowing SET inDate=? WHERE borid=?");
 
-			ps.setInt(1, borid);
-			ps.setDate(2, (java.sql.Date)formatedDate);
+			ps.setDate(1, (java.sql.Date)formatedDate);
+			ps.setInt(2, borid);
 
 			ps.executeUpdate();
 			con.commit();

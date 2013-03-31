@@ -133,58 +133,69 @@ public class ClerkApp {
 		String callNumber = b.getCallNumber();
 		Date borrowDate = new Date();
 		borrowDate = b.getOutDate();
-
-		System.out.println(borrowDate);
-		StringBuilder record = new StringBuilder();
+		
+		StringBuilder sb = new StringBuilder();
 		
 		if (borrowDate.before(cal.getTime())) {
-			System.out.println("OverDue");
+
 			Date curDate = cal.getTime();
 			Date bookDate = borrowDate;
 			long curTime = curDate.getTime();
 			long bookTime = bookDate.getTime();
 			long diffTime = curTime - bookTime;
 			long diffDays = diffTime / (1000 * 60 * 60 * 24);
-			System.out.println("Differnce in days is:");
-			System.out.format("%d%n", diffDays);
 			float amount = diffDays * 1;
 			if (!db.insertFine(amount, cal.getTime(), null, borid)) {
 				return "Fine not inserted";
 			}
+			sb.append("Overdue, Fine of $");
+			sb.append(String.format("%.2f", amount));
+			sb.append(".\n");
 		}
 
-		BookCopy[] bc = db.selectBookCopiesByBookAndStatus(b.getBook(), CopyStatus.out);
+		BookCopy bc = db.selectCopy(callNumber, CopyStatus.out,  b.getCopy().getCopyNo());
 		HoldRequest[] hold = db.selectHoldRequestsByCall(b.getBook());
-		if((hold.length == 0) && (bc.length != 0)) {
-			if(!db.updateFirstCopyStatus(CopyStatus.in, callNumber)) {
+		if((hold.length == 0) && (bc != null)) {
+			if(!db.updateCopyStatus(CopyStatus.in, b.getCopy().getCopyNo(), callNumber)) {
 				return "Error, bookcopy not updated(1)";
 			}
 			if(!db.updateBorrowingByIndate(borid,currDate)){
-				return "Error, borrowing record not inserted";
+				return "Error, borrowing record not inserted(1)";
 			}
-			
-		}else if ((hold.length != 0) && (bc.length != 0)){
-			if(!db.updateFirstCopyStatus(CopyStatus.onhold, callNumber)) {
+			sb.append("Book returned.");
+		}else if ((hold.length != 0) && (bc != null)){
+			if(!db.updateCopyStatus(CopyStatus.onhold, b.getCopy().getCopyNo(), callNumber)) {
 				return "Error, bookcopy not updated(2)";
 			}
-			Borrower borrower = db.selectBorrowerById(b.getBid());
-			//TODO: GUI sends message to borrower who made hold request
-
+			if(!db.updateBorrowingByIndate(borid,currDate)){
+				return "Error, borrowing record not inserted(2)";
+			}
+			sb.append("Returned,\nBOOK: " + callNumber + ", is available for holder, BID:" + b.getBid());
 		}
-		else {
-		Book book = b.getBook();
-		 BookCopy[] inbooks = db.selectBookCopiesByBookAndStatus(b.getBook(), CopyStatus.in);
-		int lastindex = inbooks.length;
-		lastindex++;
-			if(!db.insertBookCopy(callNumber, lastindex, CopyStatus.in)) {
+		else if ((hold.length == 0) && (bc == null)){
+		int inbooks = db.getCopyCountByCallNumber(callNumber);
+		inbooks++;
+			if(!db.insertBookCopy(callNumber, inbooks, CopyStatus.in)) {
 				return "Insert new bookcopy failed";
 			}
+			if(!db.updateBorrowingByIndate(borid,currDate)){
+				return "Error, borrowing record not inserted(2)";
+			}
+			sb.append("New bookcopy inserted, copyNo: " + inbooks);
 		}
-		return "Done processing returns";
-
-	}
-
-
+		else {
+			int inbooks = db.getCopyCountByCallNumber(callNumber);
+			inbooks++;
+				if(!db.insertBookCopy(callNumber, inbooks, CopyStatus.onhold)) {
+					return "Insert new bookcopy failed";
+				}
+				if(!db.updateBorrowingByIndate(borid,currDate)){
+					return "Error, borrowing record not inserted(2)";
+				}
+				sb.append("New bookcopy inserted, copyNo: " + inbooks + " ,\n BOOK: "+ callNumber + ", is available for holder, BID:" + b.getBid());
+			}
+		return sb.toString();
+		}
 
 	public Borrowing[] checkOverdueItems() {
 		return db.selectOverDueBorrowingByDate(cal.getTime());
