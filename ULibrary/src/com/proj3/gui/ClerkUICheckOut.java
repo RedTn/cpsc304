@@ -314,12 +314,20 @@ public class ClerkUICheckOut extends JPanel implements ActionListener {
 			// Do Nothing
 		}
 
-		public void focusLost(FocusEvent e) {	
-			if (((JTextField)e.getComponent()).getText()==null || ((JTextField)e.getComponent()).getText().isEmpty()) {
-				setBorderRed(((JTextField)e.getComponent()), true);
-				throw new NullPointerException(((JTextField)e.getComponent()).getName() + " can not be null.");
+		public void focusLost(FocusEvent e) {
+			try {
+				if (((JTextField)e.getComponent()).getText()==null || ((JTextField)e.getComponent()).getText().isEmpty()) {
+					setBorderRed(((JTextField)e.getComponent()), true);
+					throw new NullPointerException(((JTextField)e.getComponent()).getName() + " can not be null.");
+				}
+				setBorderRed(((JTextField)e.getComponent()), false);
+			} catch (Exception ex) {
+				if (((JTextArea)e.getComponent()).getText()==null || ((JTextArea)e.getComponent()).getText().isEmpty()) {
+					//setBorderRed(((JTextArea)e.getComponent()), true);
+					throw new NullPointerException(((JTextArea)e.getComponent()).getName() + " can not be null.");
+				}
+				setBorderRed(((JTextField)e.getComponent()), false);
 			}
-			setBorderRed(((JTextField)e.getComponent()), false);
 		}
 
 	}
