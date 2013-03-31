@@ -307,8 +307,9 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 	}
 
 	private void createExpireField() {
-
-		expireField = new JFormattedTextField(java.util.Calendar.getInstance().getTime());
+		Date date = java.util.Calendar.getInstance().getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		expireField = new JFormattedTextField(sdf.format(date));
 		expireField.setName(EXPIREDATE_STRING);
 		expireField.addFocusListener(new MyFocusListener());
 		expireFieldLabel = new JLabel(EXPIREDATE_STRING + ":");
@@ -475,7 +476,7 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 						Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(getExpireDate());
 						Database db = mainFrame.getDB();
 						db.insertBorrower(getPassword(), getName(), getAddress(), getPhoneNumber(), getEmailAddress(), getSinOrStNo(),
-								date, BorrowerType.valueOf(getType()));		
+								date, BorrowerType.get(getType()));		
 						displayOutput("Thread Ended");
 
 					} catch (Exception e) {
