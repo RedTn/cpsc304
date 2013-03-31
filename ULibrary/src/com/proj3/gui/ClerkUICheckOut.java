@@ -68,6 +68,10 @@ public class ClerkUICheckOut extends JPanel implements ActionListener {
 	public String getBID() {
 		return bidField.getText();
 	}
+	
+	public String getCallNumbers() {
+		return callNumberField.getText();
+	}
 		
 	public String getCurrentUserBID() {
 		return mainFrame.getCurrentUserBID();
@@ -278,8 +282,8 @@ public class ClerkUICheckOut extends JPanel implements ActionListener {
 						// USE displayItems(String str)
 						// BELOW IS AN EXAMPLE
 						displayOutput("Thread Started");
-						displayCallNumbers("BID: "+ getBID());
-						displayNote("Note");
+						String x = getCallNumbers();
+						displayNote(x);
 						Thread.sleep(3000);						
 						displayOutput("Thread Ended");
 
