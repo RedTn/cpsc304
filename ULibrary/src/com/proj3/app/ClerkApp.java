@@ -41,10 +41,10 @@ public class ClerkApp {
 		Scanner scan = new Scanner(bookline);
 		
 		//WINDOWS
-		scan.useDelimiter(",|\\r\n");
+		//scan.useDelimiter(",|\\r\n");
 		
 		//UNIX
-		//scan.useDelimiter((",|\\n");
+		scan.useDelimiter(",|\\n");
 		 while(scan.hasNext()){
 			 books.add(scan.next());
 	 }
@@ -58,8 +58,6 @@ public class ClerkApp {
 		}
 
 		StringBuilder record = new StringBuilder();
-		record.append("Borrower: ");
-		record.append(bid);
 		for (int i=0; i<books.size(); i++) {
 			Book book = new Book();
 			book.setCallNumber(books.get(i));
@@ -67,24 +65,42 @@ public class ClerkApp {
 			if(hr.length == 0) {
 				//This book is available
 				BookCopy bc = db.selectCopyByCallAndStatus(book.getCallNumber(), CopyStatus.in);
-				
+				record.append("COPYNO: ");
+				if(bc == null) {
+					int count = db.getCopyCountByCallNumber(book.getCallNumber());
+					count++;
+					if(!db.insertBookCopy(book.getCallNumber(), count, CopyStatus.out)){
+						return "Error, new bookcopy not inserted";
+					}
+					if(!db.insertBorrowing(bid, book.getCallNumber(),  count, 
+							currDate, null)){
+						return "Error, borrowing record not created(1)";
+					}
+					record.append(count);
+				}
+				else {
 				if(!db.updateCopyStatus(CopyStatus.out, bc.getCopyNo(), book.getCallNumber())){
 					return "Error, bookcopy not checked out";
 				}
+				
 				if(!db.insertBorrowing(bid, book.getCallNumber(),  bc.getCopyNo(), 
-						cal.getTime(), null)){
-					return "Error, borrowing record not created";
+						currDate, null)){
+					return "Error, borrowing record not created(2)";
+				}
+				record.append(bc.getCopyNo());
 				}
 				
-				record.append(" callNumber: ");
+				record.append("; CALLNUMBER: ");
 				record.append(book.getCallNumber());
-				record.append(" checkedout, due: ");
+				record.append("; CHECKEDOUT, DUE: ");
 				Date formatedDate = expCal.getTime();
-				record.append(formatedDate.getTime());
+				record.append(formatedDate);
 				record.append("\n");
 			}
 			else {
-				return "Book %s is on-hold" + book.getCallNumber();
+				record.append("BOOK: ");
+				record.append(book.getCallNumber());
+				record.append(" is currently on-hold\n");
 			}
 
 		}

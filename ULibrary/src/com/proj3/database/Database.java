@@ -307,10 +307,10 @@ public class Database {
 
 			ps.setInt(3, copyNo);
 
-			ps.setDate(4, (java.sql.Date) outDate);
+			ps.setDate(4, new java.sql.Date(outDate.getTime()));
 
 			if (inDate != null) {
-			ps.setDate(5, (java.sql.Date) inDate);
+			ps.setDate(5, new java.sql.Date (inDate.getTime()));
 			}
 			else{
 				ps.setNull(5, java.sql.Types.DATE);
@@ -1421,6 +1421,29 @@ public class Database {
 			ps = con.prepareStatement("SELECT COUNT(copyNo) FROM BookCopy WHERE callnumber = ? and status=?");			
 			ps.setString(1, callNumber);
 			ps.setString(2, status);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				count = rs.getInt("Count(copyNo)");
+
+			}
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return count;
+	}
+	public int getCopyCountByCallNumber(String callNumber) {
+		ResultSet rs = null;
+		int count = 0;
+
+		try {
+			ps = con.prepareStatement("SELECT COUNT(copyNo) FROM BookCopy WHERE callnumber = ?");			
+			ps.setString(1, callNumber);
 
 			rs = ps.executeQuery();
 

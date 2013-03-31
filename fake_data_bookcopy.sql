@@ -43,3 +43,8 @@ INSERT INTO BookCopy VALUES('STEWART Calculus', 5, 'in');
 INSERT INTO BookCopy VALUES('STEWART Calculus', 6, 'in');
 
 INSERT INTO BookCopy VALUES('DAWKINS Selfish', 1, 'out');
+
+INSERT INTO BookCopy VALUES('BIBLE', 1, 'in');
+INSERT INTO BookCopy VALUES('BIBLE', 2, 'in');
+INSERT INTO BookCopy VALUES('BIBLE', 3, 'in');
+
