@@ -9,3 +9,4 @@
 passwordfile
 *TestApp.java
 *.metadata
+*ULibrary/passwordfile
