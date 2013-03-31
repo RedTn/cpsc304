@@ -114,6 +114,10 @@ public class LibrarianApp {
 		Borrowing[] borrows = db.selectBooksBorrowedInAYear(year, yearBefore);
 		Map<Book, Integer> popularBooks = new HashMap<Book, Integer>();
 
+		for (int i = 0; i < borrows.length; i++){
+			System.out.println(borrows[i].getBook().getTitle() + " " + borrows[i].getCopy().getCopyNo() + " " + borrows[i].getOutDate().toString());
+		}
+		System.out.println("WHATTT");
 		for (int i=0; i<borrows.length; i++) {
 			Book book = borrows[i].getBook();
 			if (popularBooks.containsKey(book)) {
