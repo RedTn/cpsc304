@@ -45,7 +45,7 @@ public class Borrowing {
 			inDate = cal.getTime();
 		}
 
-		b.setBid(borid);
+		b.setBorid(borid);
 		b.setBid(bid);
 		b.setBorrower(borrower);
 		b.setCopy(copy);
