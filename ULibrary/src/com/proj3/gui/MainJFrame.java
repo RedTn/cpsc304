@@ -152,7 +152,7 @@ public class MainJFrame extends JFrame {
 		JMenuItem menuItem;
 		ImageIcon icon;
 
-		icon = createImageIcon("/laks.jpg");
+		icon = createImageIcon("/laks.png");
 		menu = new JMenu("Librarian");
 		menu.setIcon(icon);
 
