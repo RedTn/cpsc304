@@ -131,10 +131,10 @@ public class MainJFrame extends JFrame {
 
 		menu.add(menuItem);
 
-		icon = createImageIcon("/helpbook.png");
+		/*icon = createImageIcon("/helpbook.png");
 		menuItem = new JMenuItem("Manual");
 		menuItem.setIcon(icon);
-		menu.add(menuItem);
+		menu.add(menuItem);*/
 
 		return menu;
 
@@ -152,7 +152,7 @@ public class MainJFrame extends JFrame {
 		JMenuItem menuItem;
 		ImageIcon icon;
 
-		icon = createImageIcon("/librarianFace.png");
+		icon = createImageIcon("/laks.jpg");
 		menu = new JMenu("Librarian");
 		menu.setIcon(icon);
 
