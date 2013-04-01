@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import com.proj3.database.Database;
 import com.proj3.model.Book;
@@ -136,9 +135,4 @@ public class LibrarianApp {
 		return getTopNBooks(popularBooks, n);
 
 	}
-	
-	//public Borrowing[] checkOverdueItems(){
-		
-	//}
-
 }

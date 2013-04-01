@@ -550,7 +550,7 @@ public class MainJFrame extends JFrame {
 
 	void displayErrorMessage(String s) {
 
-		errorLog.append(s + "\n");
+		errorLog.setText(s);
 		errorLog.validate();
 		errorLog.repaint();
 

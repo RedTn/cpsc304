@@ -55,6 +55,13 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 			field.setBorder(BorderFactory.createEtchedBorder());
 	}
 
+	private void clearAll() {
+		bookListArea.setText("");
+		outDateArea.setText("");
+		dueDateArea.setText("");
+		overDueArea.setText("");
+	}
+	
 	public void displayBooks(String str) {
 		bookListArea.append(str + "\n");
 	}
@@ -269,7 +276,7 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 			Thread thread = new Thread(new Runnable() {
 
 				public void run() {
-
+					clearAll();
 					JProgressBar progressBar = new JProgressBar();
 
 					/**
@@ -298,42 +305,47 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 
 						LibrarianApp app = new LibrarianApp(mainFrame.getDB());
 						if (getSubject().isEmpty()) {
-							Borrowing[] bookReport = app.generateCheckedOutBooksReport();
+							Borrowing[] bookReport = app
+									.generateCheckedOutBooksReport();
 							Calendar calendar_dueDate = Calendar.getInstance();
 							Calendar calendar_today = Calendar.getInstance();
 							for (int i = 0; i < bookReport.length; i++) {
 								displayBooks(bookReport[i].getBook().getTitle());
-								displayCheckOutDate((bookReport[i].getOutDate()).toString());
-								
-								calendar_dueDate.setTime(bookReport[i].getOutDate());
+								displayCheckOutDate((bookReport[i].getOutDate())
+										.toString());
+
+								calendar_dueDate.setTime(bookReport[i]
+										.getOutDate());
 								calendar_dueDate.add(Calendar.DAY_OF_MONTH, 7);
-								
-								displayDueDate(calendar_dueDate.getTime().toString());
-								if( calendar_today.after(calendar_dueDate) ){
+
+								displayDueDate(calendar_dueDate.getTime()
+										.toString());
+								if (calendar_today.after(calendar_dueDate)) {
 									displayOverDueFlag(true);
-								}
-								else 
+								} else
 									displayOverDueFlag(false);
 							}
 
-						} 
-					else {
+						} else {
 
-							Borrowing[] bookReport = app.generateCheckedOutBooksReport(getSubject());
+							Borrowing[] bookReport = app
+									.generateCheckedOutBooksReport(getSubject());
 							Calendar calendar_dueDate = Calendar.getInstance();
 							Calendar calendar_today = Calendar.getInstance();
 							for (int i = 0; i < bookReport.length; i++) {
 								displayBooks(bookReport[i].getBook().getTitle());
-								displayCheckOutDate((bookReport[i].getOutDate()).toString());
-								
-								calendar_dueDate.setTime(bookReport[i].getOutDate());
+								displayCheckOutDate((bookReport[i].getOutDate())
+										.toString());
+
+								calendar_dueDate.setTime(bookReport[i]
+										.getOutDate());
 								calendar_dueDate.add(Calendar.DAY_OF_MONTH, 7);
-								
-								displayDueDate(calendar_dueDate.getTime().toString());
-								if( calendar_today.after(calendar_dueDate) ){
+
+								displayDueDate(calendar_dueDate.getTime()
+										.toString());
+								if (calendar_today.after(calendar_dueDate)) {
 									displayOverDueFlag(true);
-								}
-								else 
+								} else
 									displayOverDueFlag(false);
 							}
 
@@ -358,8 +370,8 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 						getThisPanel().repaint();
 					}
 
-			}
-		
+				}
+
 			});
 
 			thread.start();

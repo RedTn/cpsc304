@@ -51,6 +51,10 @@ public class LibrarianUIGenerateItem extends JPanel implements ActionListener {
 			field.setBorder(BorderFactory.createEtchedBorder());
 	}
 
+	private void clearAll() {
+		bookListArea.setText("");
+	}
+	
 	public void displayItems(String str) {
 		bookListArea.append(str+"\n");
 	}
@@ -207,7 +211,7 @@ public class LibrarianUIGenerateItem extends JPanel implements ActionListener {
 			Thread thread = new Thread(new Runnable(){
 
 				public void run() {
-					
+					clearAll();
 					JProgressBar progressBar = new JProgressBar();
 					
 					/**
