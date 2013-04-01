@@ -117,7 +117,7 @@ public class Book {
 		subjects.add(subject);
 	}
 	
-	public int hashcode() {
+	public int hashCode() {
 		return callNumber.hashCode();
 	}
 	
@@ -138,7 +138,7 @@ public class Book {
 			return false;
 		}
 		
-		return ((Book)o).getCallNumber() == callNumber;
+		return callNumber.equals(((Book)o).getCallNumber());
 	}
 	
 	public String toString() {

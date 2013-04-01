@@ -1,10 +1,13 @@
 package com.proj3.app;
 
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import com.proj3.database.Database;
 import com.proj3.model.Book;
@@ -74,7 +77,7 @@ public class LibrarianApp {
 	}
 
 	private Book[] getTopNBooks(Map<Book, Integer> popularBooks, int n) {
-		Map<Integer, ArrayList<Book>> sorted = new HashMap<Integer, ArrayList<Book>>();
+		Map<Integer, HashSet<Book>> sorted = new HashMap<Integer, HashSet<Book>>();
 
 		int max = 0;
 		for (Book b : popularBooks.keySet()) {
@@ -84,9 +87,9 @@ public class LibrarianApp {
 				max = times;
 			}
 
-			ArrayList<Book> listOfBooks = sorted.get(times);
+			HashSet<Book> listOfBooks = sorted.get(times);
 			if (listOfBooks == null) {
-				listOfBooks = new ArrayList<Book>();
+				listOfBooks = new HashSet<Book>();
 				sorted.put(times, listOfBooks);
 			}
 			listOfBooks.add(b);
@@ -95,7 +98,7 @@ public class LibrarianApp {
 		Book[] sortedBooks = new Book[n];
 		int j = 0;
 		for (int i = max; i >= 0; i--) {
-			ArrayList<Book> list = sorted.get(i);
+			Set<Book> list = sorted.get(i);
 			if (list != null) {
 				for (Book b : list) {
 					sortedBooks[j++] = b;

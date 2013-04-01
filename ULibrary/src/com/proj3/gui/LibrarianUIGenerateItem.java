@@ -20,7 +20,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.proj3.app.LibrarianApp;
 import com.proj3.model.Book;
 
 @SuppressWarnings("serial")
@@ -66,10 +65,6 @@ public class LibrarianUIGenerateItem extends JPanel implements ActionListener {
 	
 	public String getNumberOfItems() {
 		return numberField.getText();
-	}
-	
-	public String getCurrentUserBID() {
-		return mainFrame.getCurrentUserBID();
 	}
 
 	private void createYearField() {
@@ -235,17 +230,12 @@ public class LibrarianUIGenerateItem extends JPanel implements ActionListener {
 						getThisPanel().validate();
 						getThisPanel().repaint();
 
-						//TODO INSERT METHOD HERE
-						// USE displayItems(String str)
-						// BELOW IS AN EXAMPLE
-						
-						LibrarianApp app = new LibrarianApp(mainFrame.getDB());
 						Calendar cal = Calendar.getInstance();
 						Calendar cal2 = Calendar.getInstance();
 						int year = Integer.parseInt(getYear());
 						cal.set(year, 12, 31);
 						cal2.set(year-1, 12, 31);
-						Book[] popularBooks = app.generatePopularBooksReport(cal.getTime(), cal2.getTime(), Integer.parseInt(getNumberOfItems()));
+						Book[] popularBooks = mainFrame.lApp().generatePopularBooksReport(cal.getTime(), cal2.getTime(), Integer.parseInt(getNumberOfItems()));
 						for (int i = 0; i < popularBooks.length; i++){
 							displayItems(popularBooks[i].getTitle());
 						}

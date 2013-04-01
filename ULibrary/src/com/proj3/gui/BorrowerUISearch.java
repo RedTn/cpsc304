@@ -290,7 +290,7 @@ public class BorrowerUISearch extends BorrowerPanel implements ActionListener {
 						copyOutArea.setText("");
 						
 						Book[] books = bApp().searchBooksByKeywords(getTitle(), getAuthor(), getSubject());
-						displayOutput(books.length + "items found");
+						displayOutput(books.length + " items found");
 						
 						for (int i=0; i<books.length; i++) {
 							displayItem(books[i]);
