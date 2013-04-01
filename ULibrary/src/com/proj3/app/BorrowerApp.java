@@ -84,4 +84,12 @@ public class BorrowerApp {
 		return currBorrower.getName();
 	}
 
+	public int getBID() {
+		if (currBorrower == null) {
+			return -1;
+		}
+		
+		return currBorrower.getId();
+	}
+
 }

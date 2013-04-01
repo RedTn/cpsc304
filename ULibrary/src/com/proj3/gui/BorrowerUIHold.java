@@ -127,17 +127,7 @@ public class BorrowerUIHold extends BorrowerPanel implements ActionListener {
 						submitButton.setEnabled(false);
 						// Indeterminate progress bar
 
-						progressBar.setIndeterminate(true);
-						GridBagConstraints gridc = new GridBagConstraints();
-						gridc.anchor = GridBagConstraints.CENTER;
-						gridc.gridx = 0;
-						gridc.gridy = GridBagConstraints.PAGE_END;
-						gridc.weightx = 1;
-						gridc.gridwidth = GridBagConstraints.REMAINDER;
-						gridc.fill = GridBagConstraints.HORIZONTAL;
-						getThisPanel().add(progressBar, gridc);
-						getThisPanel().validate();
-						getThisPanel().repaint();
+						addProgressBar(progressBar);
 
 						String msg = "Failed to place the hold request. Check the callnumber.";
 						if (bApp().placeHold(getCallNumber())) {

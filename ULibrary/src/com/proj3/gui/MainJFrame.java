@@ -69,7 +69,7 @@ public class MainJFrame extends JFrame {
 	}
 
 	public String getCurrentUserBID() {
-		int bid = borrowerUILogin.getBID();
+		int bid = bApp.getBID();
 		if (bid < 0) {
 			return "Anonymous";
 		}
@@ -270,6 +270,7 @@ public class MainJFrame extends JFrame {
 						BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
+				
 			}
 
 		});
@@ -301,11 +302,14 @@ public class MainJFrame extends JFrame {
 				int cnt = getFrame().getContentPane().getComponentCount();
 				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
+				BorrowerUICheck checkPanel = new BorrowerUICheck(getMainFrame());
 				getFrame().getContentPane().add(
-						new BorrowerUICheck(getMainFrame()),
+						checkPanel,
 						BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
+				
+				checkPanel.populateInfo();
 			}
 
 		});
@@ -337,11 +341,13 @@ public class MainJFrame extends JFrame {
 				int cnt = getFrame().getContentPane().getComponentCount();
 				for (int i = 1; i < cnt; i++)
 					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane()
-						.add(new BorrowerUIFine(getMainFrame()),
-								BorderLayout.CENTER);
+				
+				BorrowerUIFine finePanel = new BorrowerUIFine(getMainFrame());
+				getFrame().getContentPane().add(finePanel,BorderLayout.CENTER);
 				getFrame().validate();
 				getFrame().repaint();
+
+				finePanel.populateInfo();
 			}
 
 		});

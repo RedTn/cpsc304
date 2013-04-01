@@ -1,11 +1,13 @@
 package com.proj3.gui;
 
 import java.awt.Color;
+import java.awt.GridBagConstraints;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
 import com.proj3.app.BorrowerApp;
@@ -45,6 +47,21 @@ public class BorrowerPanel extends JPanel {
 	public void displayErrorMessage(String str) {
 		mainFrame.displayErrorMessage(str);
 	}
+	
+	protected void addProgressBar(JProgressBar progressBar) {
+		progressBar.setIndeterminate(true);
+		GridBagConstraints gridc = new GridBagConstraints();
+		gridc.anchor = GridBagConstraints.CENTER;
+		gridc.gridx = 0;
+		gridc.gridy = GridBagConstraints.PAGE_END;
+		gridc.weightx = 1;
+		gridc.gridwidth = GridBagConstraints.REMAINDER;
+		gridc.fill = GridBagConstraints.HORIZONTAL;
+		getThisPanel().add(progressBar, gridc);
+		getThisPanel().validate();
+		getThisPanel().repaint();
+	}
+	
 	// ActionListener for enforcing not null constraint
 	class MyFocusListener implements FocusListener {
 
@@ -61,5 +78,4 @@ public class BorrowerPanel extends JPanel {
 		}
 
 	}
-
 }
