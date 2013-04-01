@@ -1,6 +1,5 @@
 package com.proj3.gui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
@@ -24,9 +23,7 @@ import com.proj3.model.Book;
 import com.proj3.model.CopyStatus;
 
 @SuppressWarnings("serial")
-public class BorrowerUISearch extends JPanel implements ActionListener {
-
-	private MainJFrame mainFrame;
+public class BorrowerUISearch extends BorrowerPanel implements ActionListener {
 
 	private static final String TITLE_STRING = "TITLE";
 	private static final String AUTHOR_STRING = "AUTHOR";
@@ -44,31 +41,20 @@ public class BorrowerUISearch extends JPanel implements ActionListener {
 	
 	private JButton submitButton;
 
-	public JPanel getThisPanel() {
-		return this;
-	}
-
-	public void setBorderRed(JTextField field, Boolean b) {
-		if (b)
-			field.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.pink));
-		else
-			field.setBorder(BorderFactory.createEtchedBorder());
-	}
 
 	public void displayItem(Book book) {
-		//TODO
+		itemListArea.append(book.toString());
+		itemListArea.append("\n");
 	}
 	
 	public void displayNumberOfIn(int numIn) {
-		//TODO
+		copyInArea.append(String.valueOf(numIn));
+		copyInArea.append("\n");
 	}
 	
 	public void displayNumberOfOut(int numOut) {
-		//TODO
-	}
-	
-	public void displayOutput(String str) {
-		mainFrame.displayOutputMessage(str);
+		copyOutArea.append(String.valueOf(numOut));
+		copyOutArea.append("\n");
 	}
 	
 	public String getTitle() {
@@ -82,11 +68,7 @@ public class BorrowerUISearch extends JPanel implements ActionListener {
 	public String getSubject() {
 		return subjectField.getText();
 	}
-	
-	public String getCurrentUserBID() {
-		return mainFrame.getCurrentUserBID();
-	}
-	
+		
 	private void createTitleField() {
 
 		titleField = new JTextField(255);		
@@ -192,8 +174,8 @@ public class BorrowerUISearch extends JPanel implements ActionListener {
 
 	public BorrowerUISearch(MainJFrame f) {	     
 
-		mainFrame = f;
-
+		setMainFrame(f);
+		
 		//Setting the border line around the panel
 		setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder("Search Books"),
@@ -301,34 +283,25 @@ public class BorrowerUISearch extends JPanel implements ActionListener {
 					try {
 						submitButton.setEnabled(false);
 						//Indeterminate progress bar
+						addProgressBar(progressBar);
 						
-						progressBar.setIndeterminate(true);
-						GridBagConstraints gridc = new GridBagConstraints();
-						gridc.anchor = GridBagConstraints.CENTER;
-						gridc.gridx = 0;
-						gridc.gridy = GridBagConstraints.PAGE_END;
-						gridc.weightx = 1;
-						gridc.gridwidth = GridBagConstraints.REMAINDER;
-						gridc.fill = GridBagConstraints.HORIZONTAL;
-						getThisPanel().add(progressBar, gridc);
-						getThisPanel().validate();
-						getThisPanel().repaint();
-
-						//TODO separate search by author, title or subject 
-					
-						Book[] books = mainFrame.bApp().searchBooksByKeyword(getTitle());
+						itemListArea.setText("");
+						copyInArea.setText("");
+						copyOutArea.setText("");
+						
+						Book[] books = bApp().searchBooksByKeywords(getTitle(), getAuthor(), getSubject());
 						displayOutput(books.length + "items found");
 						
 						for (int i=0; i<books.length; i++) {
 							displayItem(books[i]);
-							int numIn = mainFrame.bApp().getNumCopiesByStatus(books[i],CopyStatus.in);
-							int numOut = mainFrame.bApp().getNumCopiesByStatus(books[i], CopyStatus.out);
+							int numIn = bApp().getNumCopiesByStatus(books[i],CopyStatus.in);
+							int numOut = bApp().getNumCopiesByStatus(books[i], CopyStatus.out);
 							displayNumberOfIn(numIn);
 							displayNumberOfOut(numOut);
 						}
 
 					} catch (Exception e) {
-						mainFrame.displayErrorMessage(e.getMessage());
+						displayErrorMessage(e.getMessage());
 					} finally {
 						submitButton.setEnabled(true);
 						getThisPanel().remove(progressBar);

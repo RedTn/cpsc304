@@ -72,6 +72,24 @@ public class BorrowerApp {
 		return db.selectBooksByKeyword(keyword);
 	}
 
+	public Book[] searchBooksByKeywords(String inTitle, String inAuthor, String inSubject) {
+		Set<Book> books = new HashSet<Book>();
+		
+		if (inTitle.length() > 0) {
+			books.addAll(db.selectBookByTitle(inTitle));
+		}
+		
+		if (inAuthor.length()> 0) {
+			books.addAll(db.selectBooksByAuthor(inAuthor));
+		}
+		
+		if (inSubject.length()>0) {
+			books.addAll(db.selectBookBySubject(inSubject));
+		}
+		
+		return books.toArray(new Book[books.size()]);
+	}
+	
 	public void logout() {
 		currBorrower = null;
 	}

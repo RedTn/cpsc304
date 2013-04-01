@@ -627,6 +627,115 @@ public class Database {
 		}
 	}
 
+	public Set<Book> selectBooksByAuthor(String keyword) {
+		ResultSet rs = null;
+
+		Set<Book> books = new HashSet<Book>();
+
+		String kwRegex = "%" + keyword + "%";
+		try {
+			ps = con.prepareStatement("SELECT * FROM Book, HasAuthor WHERE Book.callNumber=HasAuthor.callNumber AND name LIKE ? ");
+
+			ps.setString(1, kwRegex);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				Book book = Book.getInstance(rs);
+
+				if (!books.contains(book)) {
+					book = constructBook(rs);
+					books.add(book);
+				}
+			}
+
+			ps.close();
+			
+			ps = con.prepareStatement("SELECT * FROM Book WHERE mainAuthor LIKE ? ");
+
+			ps.setString(1, kwRegex);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				Book book = Book.getInstance(rs);
+
+				if (!books.contains(book)) {
+					book = constructBook(rs);
+					books.add(book);
+				}
+			}
+
+			ps.close();
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+		
+		return books;
+	}
+
+	public Set<Book> selectBookBySubject(String subject) {
+		ResultSet rs = null;
+
+		Set<Book> books = new HashSet<Book>();
+
+		String kwRegex = "%" + subject + "%";
+		try {
+			ps = con.prepareStatement("SELECT * FROM Book, HasSubject WHERE Book.callNumber=HasSubject.callNumber AND subject LIKE ?");
+
+			ps.setString(1, kwRegex);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				Book book = Book.getInstance(rs);
+
+				if (!books.contains(book)) {
+					book = constructBook(rs);
+					books.add(book);
+				}
+			}
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+		
+		return books;
+	}
+	
+	public Set<Book> selectBookByTitle(String subject) {
+		ResultSet rs = null;
+
+		Set<Book> books = new HashSet<Book>();
+
+		String kwRegex = "%" + subject + "%";
+		try {
+			ps = con.prepareStatement("SELECT * FROM Book WHERE title LIKE ?");
+
+			ps.setString(1, kwRegex);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				Book book = Book.getInstance(rs);
+
+				if (!books.contains(book)) {
+					book = constructBook(rs);
+					books.add(book);
+				}
+			}
+
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+		
+		return books;		
+	}
+	
 	public Book[] selectBooksByKeyword(String keyword) {
 		ResultSet rs = null;
 
@@ -685,13 +794,6 @@ public class Database {
 
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
-			try {
-				// undo the insert
-				con.rollback();
-			} catch (SQLException ex2) {
-				System.out.println("Message: " + ex2.getMessage());
-				System.exit(-1);
-			}
 		}
 
 		return books.toArray(new Book[books.size()]);

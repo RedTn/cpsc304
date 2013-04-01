@@ -141,4 +141,12 @@ public class Book {
 		return ((Book)o).getCallNumber() == callNumber;
 	}
 	
+	public String toString() {
+		String output = title+" ("+callNumber+") by "+mainAuthor;
+		for (String author: authors) {
+			output += ", "+author;
+		}
+		
+		return output + " "+ year;
+	}
 }
