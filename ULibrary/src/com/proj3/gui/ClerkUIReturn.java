@@ -19,6 +19,9 @@ import javax.swing.JTextField;
 
 import com.proj3.app.ClerkApp;
 import com.proj3.database.Database;
+import com.proj3.model.BookCopy;
+import com.proj3.model.Borrowing;
+import com.proj3.model.Fine;
 
 @SuppressWarnings("serial")
 public class ClerkUIReturn extends JPanel implements ActionListener {
@@ -245,8 +248,32 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 		
 						Database db = mainFrame.getDB();
 						ClerkApp ca = new ClerkApp(db);	
+						
+						//FOR DEMO
+						//Borid: before1 3016(on hold),show tables 3013 (new book copy), before2 3015(in + fine)
+						Borrowing before1 = db.searchBorrowingsByClerk(3016);
+						//Borrowing before2 = db.searchBorrowingsByClerk(3015);
+						BookCopy bc1 = db.selectCopyByCallAndCopyNumber(before1.getCallNumber(), before1.getCopy().getCopyNo());
+						//BookCopy bc2 = db.selectCopyByCallAndCopyNumber(before2.getCallNumber(), before2.getCopy().getCopyNo());
+						System.out.println(before1.toStringForClerk() + "\n" + bc1.toStringForClerk()); 
+						//System.out.println(before2.toStringForClerk() + "\n" + bc2.toStringForClerk());
+						
 						String message = ca.processReturn(Integer.parseInt(getborid()));
 						displayOutput(message);
+						
+
+						//FOR DEMO
+						//Borid: 3015(fine + in)
+						Borrowing after1 = db.searchBorrowingsByClerk(3016);
+					    //Borrowing after2 = db.searchBorrowingsByClerk(3015);
+						BookCopy ac1 = db.selectCopyByCallAndCopyNumber(after1.getCallNumber(), after1.getCopy().getCopyNo());
+						//BookCopy ac2 = db.selectCopyByCallAndCopyNumber(after2.getCallNumber(), after2.getCopy().getCopyNo());
+						System.out.println(after1.toStringForClerk() + "\n" + ac1.toStringForClerk());
+						//System.out.println(after2.toStringForClerk() + "\n" + ac2.toStringForClerk());
+						
+						//WIll throw null if not correct, make sure uncomment ONLY for demo
+						//Fine fine = db.selectFineByBorid(3015);	
+						//System.out.println(fine.toStringForClerk());
 						
 						//TODO: GUI sends email to user who has a hold
 						//Test with DB reset, then BORID = 3014

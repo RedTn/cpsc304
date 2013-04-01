@@ -1079,7 +1079,7 @@ public class Database {
 			rs = ps.executeQuery();
 
 			if(rs.next()) {
-				fine = Fine.getInstance(rs, null);
+				fine = Fine.getInstance(rs);
 			}
 			ps.close();
 

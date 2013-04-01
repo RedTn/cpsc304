@@ -430,6 +430,7 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 						}
 
 						//FOR DEMO, choose bid
+						//Current bid ends on 4006
 						
 						int bid = 4007;
 						Borrower b = db.selectBorrowerById(bid);

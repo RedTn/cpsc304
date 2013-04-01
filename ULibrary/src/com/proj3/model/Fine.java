@@ -12,6 +12,7 @@ public class Fine {
 	private Date issuedDate;
 	private Date paidDate;
 	private Borrowing borrow;
+	private int borid;
 
 	public static Fine getInstance(ResultSet rs, Borrower borrower,
 			BookCopy copy) throws SQLException {
@@ -29,6 +30,18 @@ public class Fine {
 		fine.setIssuedDate(rs.getDate("issuedDate"));
 		fine.setPaidDate(rs.getDate("paidDate"));
 		fine.setBorrowing(borrow);
+		return fine;
+	}
+	
+	public static Fine getInstance(ResultSet rs)
+			throws SQLException {
+		Fine fine = new Fine();
+
+		fine.setFid(rs.getInt("fid"));
+		fine.setAmount(rs.getFloat("amount"));
+		fine.setIssuedDate(rs.getDate("issuedDate"));
+		fine.setPaidDate(rs.getDate("paidDate"));
+		fine.setBorid(rs.getInt("borid"));
 		return fine;
 	}
 
@@ -80,6 +93,14 @@ public class Fine {
 		}
 	}
 
+	public void setBorid(int borid) {
+		this.borid = borid;
+	}
+	
+	public int getBorid() {
+		return borid;
+	}
+	
 	public String toStringForBorrower() {
 
 		StringBuilder sb = new StringBuilder();
@@ -88,5 +109,10 @@ public class Fine {
 				borrow.toStringForBorrower());
 		formatter.close();
 		return sb.toString();
+	}
+	
+	public String toStringForClerk() {
+		return "\nFid: " + getFid() + "\nAmount: " + 
+	String.format("%.2f",getAmount()) + "\nBorid: " + getBorid();
 	}
 }

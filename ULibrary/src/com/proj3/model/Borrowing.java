@@ -123,4 +123,9 @@ public class Borrowing {
 	public String toStringForBorrower() {
 		 return "out: "+dateString(outDate)+ " due: "+dateString(inDate)+" "+copy.getBook().getTitle()+ "("+copy.getIdentifier()+")";
 	}
+	
+	public String toStringForClerk() {
+		return "\nBorid: " + getBorid() + "\nCallNumber: " + getCallNumber() + "\nCopyNo: " +
+	getCopy().getCopyNo() + "\nInDate: " + getInDate();
+	}
 }
