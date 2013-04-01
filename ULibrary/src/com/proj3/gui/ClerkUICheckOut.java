@@ -21,6 +21,10 @@ import javax.swing.JTextField;
 
 import com.proj3.app.ClerkApp;
 import com.proj3.database.Database;
+import com.proj3.model.Book;
+import com.proj3.model.BookCopy;
+import com.proj3.model.Borrower;
+import com.proj3.model.HoldRequest;
 
 
 @SuppressWarnings("serial")
@@ -289,15 +293,36 @@ public class ClerkUICheckOut extends JPanel implements ActionListener {
 						getThisPanel().repaint();
 
 						//ClerkApp
-						String x = getCallNumbers();
+						String callNumbers = getCallNumbers();
 						Database db = mainFrame.getDB();
+						
+						//FOR DEMO
+						//BID 4005: Legit
+						//BID 4006: Expired
+						//BID 4002: Fine
+						//BID 6969: No borrower
+						//TEST: Bible (on-hold), Dawkins (new copy), real (legit process)
+						BookCopy before = db.selectCopyByCallAndCopyNumber("BIBLE", 1);
+						BookCopy before2 = db.selectCopyByCallAndCopyNumber("DAWKINS Selfish", 1);
+						BookCopy before3 = db.selectCopyByCallAndCopyNumber("REAL Ultimate", 1);
+						Book book = db.selectBookByCallNumber("BIBLE");
+						Borrower borrower = db.selectBorrowerById(4001);
+						HoldRequest hr = db.selectHoldRequestsByHid(10019,book,borrower);
+						System.out.println(before.toStringForClerk() + "\n" + before2.toStringForClerk() + "\n" + before3.toStringForClerk() + hr.toStringForClerk());
+						
 						ClerkApp ca = new ClerkApp(db);
-						String message = ca.checkOutItems(Integer.parseInt(getBID()), x);
+						String message = ca.checkOutItems(Integer.parseInt(getBID()), callNumbers);
 						displayOutput(message);
 						if(ca.getNote() != null) {
 						displayNote(ca.getNote());
 						}
 
+						//FOR DEMO
+						BookCopy after = db.selectCopyByCallAndCopyNumber("BIBLE", 1);
+						BookCopy after2 = db.selectCopyByCallAndCopyNumber("DAWKINS Selfish", 2);
+						BookCopy after3 = db.selectCopyByCallAndCopyNumber("REAL Ultimate", 1);
+						System.out.println(after.toStringForClerk() + "\n" + after2.toStringForClerk() + "\n" + after3.toStringForClerk());
+						
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());
 					} finally {

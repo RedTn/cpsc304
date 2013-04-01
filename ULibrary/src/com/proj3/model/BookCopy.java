@@ -57,4 +57,9 @@ public class BookCopy {
 	public String getIdentifier() {
 		return book.getCallNumber()+" "+copyNo;
 	}
+	
+	public String toStringForClerk() {
+		return "CallNumber: " + getCallNumber() + "\nCopyNo: " + getCopyNo() + "\nStatus: " + getStatus().getStatus();
+	}
+
 }

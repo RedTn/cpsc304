@@ -60,4 +60,10 @@ public class HoldRequest {
 				+ new SimpleDateFormat("yyyy-MM-dd").format(issuedDate) + " "
 				+ book.getTitle() + " (" + book.getCallNumber() + ")";
 	}
+	
+	public String toStringForClerk() {
+		return "\nHid: " + getHid() + "\nBid: " + getBorrower().getId() + "\nCallNumber: "
+	+ getBook().getCallNumber() + "\nIssuedDate: " + getIssuedDate();
+	}
+
 }

@@ -122,7 +122,7 @@ public class ClerkApp {
 			else {
 				record.append("BOOK: ");
 				record.append(book.getCallNumber());
-				record.append(", is currently on-hold.");
+				record.append(", is currently on-hold.\n");
 			}
 
 		}
@@ -131,7 +131,7 @@ public class ClerkApp {
 	}
 
 	public String processReturn(int borid) {
-		Borrowing b = db.selectBorrowingById(borid);
+		Borrowing b = db.searchBorrowingsByClerk(borid);
 		if (b == null) {
 			return "Borid is invalid, or book is already returned.";
 		}

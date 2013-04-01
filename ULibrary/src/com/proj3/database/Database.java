@@ -1533,4 +1533,47 @@ public class Database {
 
 		return count;
 	}
+	public Borrowing searchBorrowingsByClerk(int borid) {
+		ResultSet rs = null;
+		Borrowing b = null;
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE borid = ? AND inDate IS NULL");
+			ps.setInt(1, borid);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				b = constructBorrowing(rs);
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return b;
+	}
+	
+	public HoldRequest selectHoldRequestsByHid(int hid, Book book, Borrower borrower) {
+		ResultSet rs = null;
+		HoldRequest hold = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM HoldRequest WHERE hid = ?");
+			ps.setInt(1, hid);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				hold = HoldRequest.getInstance(rs,book,borrower);
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return hold;
+	}
+
 }

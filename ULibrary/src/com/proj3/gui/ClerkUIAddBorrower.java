@@ -26,6 +26,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
 import com.proj3.database.Database;
+import com.proj3.model.Borrower;	//Do not remove
 import com.proj3.model.BorrowerType;
 
 @SuppressWarnings("serial")
@@ -428,7 +429,13 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 							displayOutput("Borrower added sucessfully");
 						}
 
-
+						//FOR DEMO, choose bid
+						
+						int bid = 4007;
+						Borrower b = db.selectBorrowerById(bid);
+						System.out.println(b.toStringForClerk());
+						
+						
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());
 					} finally {

@@ -6,13 +6,14 @@ import java.util.Date;
 
 public class Borrower {
 	private int bid;
-	private String name, address, phone, email, sinOrStNo;
+	private String name, address, phone, email, sinOrStNo, password;
 	private Date expiryDate;
 	private BorrowerType type;
 	
-	public Borrower(int bid, String name, String address, String phone, 
+	public Borrower(int bid, String password, String name, String address, String phone, 
 			String email, String sinOrStNo, Date expiryDate, BorrowerType type) {
 		this.setName(name);
+		this.setPassword(password);
 		this.setAddress(address);
 		this.setPhone(phone);
 		this.setEmail(email);
@@ -29,6 +30,7 @@ public class Borrower {
 		Borrower currBorrower = new Borrower();
 		currBorrower.setId(rs.getInt("bid"));
 		currBorrower.setName(rs.getString("name"));
+		currBorrower.setPassword(rs.getString("password"));
 		currBorrower.setAddress(rs.getString("address"));
 		currBorrower.setPhone(rs.getString("phone"));
 		currBorrower.setEmail(rs.getString("emailAddress"));
@@ -52,6 +54,14 @@ public class Borrower {
 		return type;
 	}
 
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -104,4 +114,9 @@ public class Borrower {
 		return expiryDate;
 	}
 
+	public String toStringForClerk() {
+		return "Bid: " + getId() + "\nPassword: " + getPassword() + "\nName: " + getName() + 
+				"\nAddress: " + getAddress() + "\nPhone: " + getPhone() + "\nEmail: " + getEmail() + "\nSin: " +
+				getSinOrStNo() + "\nExpiry: " + getExpiryDate() + "\nType: " + getType().getType();
+	}
 }
