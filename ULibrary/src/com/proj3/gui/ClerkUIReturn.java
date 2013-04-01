@@ -251,12 +251,17 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 						
 						//FOR DEMO
 						//Borid: before1 3016(on hold),show tables 3013 (new book copy), before2 3015(in + fine)
-						Borrowing before1 = db.searchBorrowingsByClerk(3016);
-						//Borrowing before2 = db.searchBorrowingsByClerk(3015);
+						/*
+						Borrowing before1 = db.searchBorrowingsByClerkNull(3016);
 						BookCopy bc1 = db.selectCopyByCallAndCopyNumber(before1.getCallNumber(), before1.getCopy().getCopyNo());
-						//BookCopy bc2 = db.selectCopyByCallAndCopyNumber(before2.getCallNumber(), before2.getCopy().getCopyNo());
 						System.out.println(before1.toStringForClerk() + "\n" + bc1.toStringForClerk()); 
-						//System.out.println(before2.toStringForClerk() + "\n" + bc2.toStringForClerk());
+						*/
+						
+						/*
+						Borrowing before2 = db.searchBorrowingsByClerkNull(3015);
+						BookCopy bc2 = db.selectCopyByCallAndCopyNumber(before2.getCallNumber(), before2.getCopy().getCopyNo());
+						System.out.println(before2.toStringForClerk() + "\n" + bc2.toStringForClerk());
+						*/
 						
 						String message = ca.processReturn(Integer.parseInt(getborid()));
 						displayOutput(message);
@@ -264,16 +269,20 @@ public class ClerkUIReturn extends JPanel implements ActionListener {
 
 						//FOR DEMO
 						//Borid: 3015(fine + in)
+						/*
 						Borrowing after1 = db.searchBorrowingsByClerk(3016);
-					    //Borrowing after2 = db.searchBorrowingsByClerk(3015);
 						BookCopy ac1 = db.selectCopyByCallAndCopyNumber(after1.getCallNumber(), after1.getCopy().getCopyNo());
-						//BookCopy ac2 = db.selectCopyByCallAndCopyNumber(after2.getCallNumber(), after2.getCopy().getCopyNo());
 						System.out.println(after1.toStringForClerk() + "\n" + ac1.toStringForClerk());
-						//System.out.println(after2.toStringForClerk() + "\n" + ac2.toStringForClerk());
+						*/
 						
+						/*
+					    Borrowing after2 = db.searchBorrowingsByClerk(3015);
+						BookCopy ac2 = db.selectCopyByCallAndCopyNumber(after2.getCallNumber(), after2.getCopy().getCopyNo());
+						System.out.println(after2.toStringForClerk() + "\n" + ac2.toStringForClerk());
 						//WIll throw null if not correct, make sure uncomment ONLY for demo
-						//Fine fine = db.selectFineByBorid(3015);	
-						//System.out.println(fine.toStringForClerk());
+						Fine fine = db.selectFineByBorid(3015);	
+						System.out.println(fine.toStringForClerk());
+						*/
 						
 						//TODO: GUI sends email to user who has a hold
 						//Test with DB reset, then BORID = 3014

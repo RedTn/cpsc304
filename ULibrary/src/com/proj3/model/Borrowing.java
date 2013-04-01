@@ -54,6 +54,26 @@ public class Borrowing {
 
 		return b;
 	}
+	
+	public static Borrowing getInstanceForClerk(ResultSet rs, Borrower borrower,
+			BookCopy copy) throws SQLException {
+		Borrowing b = new Borrowing();
+
+		int borid = rs.getInt("borid");
+		int bid = rs.getInt("bid");
+
+		Date outDate = rs.getDate("outDate");
+		Date inDate = rs.getDate("inDate");
+
+		b.setBorid(borid);
+		b.setBid(bid);
+		b.setBorrower(borrower);
+		b.setCopy(copy);
+		b.setOutDate(outDate);
+		b.setInDate(inDate);
+
+		return b;
+	}
 
 	public int getBid() {
 		return bid;
@@ -125,7 +145,7 @@ public class Borrowing {
 	}
 	
 	public String toStringForClerk() {
-		return "\nBorid: " + getBorid() + "\nCallNumber: " + getCallNumber() + "\nCopyNo: " +
-	getCopy().getCopyNo() + "\nInDate: " + getInDate();
+		return "\nBorid: " + getBorid() + "\nCallNumber: " + getCopy().getCallNumber() + "\nCopyNo: " +
+	getCopy().getCopyNo() + "\nOutDate:" + getOutDate() + "\nInDate: " + getInDate();
 	}
 }

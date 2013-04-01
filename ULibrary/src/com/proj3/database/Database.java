@@ -782,6 +782,13 @@ public class Database {
 				rs.getString("callNumber"), rs.getInt("copyNo"));
 		return Borrowing.getInstance(rs, borrower, copy);
 	}
+	
+	private Borrowing constructBorrowingForClerk(ResultSet rs) throws SQLException {
+		Borrower borrower = selectBorrowerById(rs.getInt("bid"));
+		BookCopy copy = selectCopyByCallAndCopyNumber(
+				rs.getString("callNumber"), rs.getInt("copyNo"));
+		return Borrowing.getInstanceForClerk(rs, borrower, copy);
+	}
 
 	// Display all books
 	public Book[] selectAllBooks() {
@@ -1533,7 +1540,7 @@ public class Database {
 
 		return count;
 	}
-	public Borrowing searchBorrowingsByClerk(int borid) {
+	public Borrowing searchBorrowingsByClerkNull(int borid) {
 		ResultSet rs = null;
 		Borrowing b = null;
 		try {
@@ -1543,7 +1550,28 @@ public class Database {
 			rs = ps.executeQuery();
 
 			if (rs.next()) {
-				b = constructBorrowing(rs);
+				b = constructBorrowingForClerk(rs);
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return b;
+	}
+	
+	public Borrowing searchBorrowingsByClerk(int borid) {
+		ResultSet rs = null;
+		Borrowing b = null;
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE borid = ?");
+			ps.setInt(1, borid);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				b = constructBorrowingForClerk(rs);
 			}
 			ps.close();
 
