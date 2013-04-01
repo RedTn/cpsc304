@@ -1,6 +1,5 @@
 package com.proj3.gui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -12,58 +11,23 @@ import java.awt.event.FocusListener;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
-import com.proj3.model.HoldRequest;
-
 @SuppressWarnings("serial")
-public class BorrowerUIHold extends JPanel implements ActionListener {
-
-	private MainJFrame mainFrame;
+public class BorrowerUIHold extends BorrowerPanel implements ActionListener {
 
 	private static final String CALLNUMBER_STRING = "CALL NUMBER";
-	private static final String DATE_STRING = "DATE";
 
-	private JTextField callNumberField, dateField;
+	private JTextField callNumberField;
 
-	private JLabel callNumberFieldLabel, dateFieldLabel;
+	private JLabel callNumberFieldLabel;
 
 	JButton submitButton;
 
-	public JPanel getThisPanel() {
-		return this;
-	}
-
-	public void setBorderRed(JTextField field, Boolean b) {
-		if (b)
-			field.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1,
-					Color.pink));
-		else
-			field.setBorder(BorderFactory.createEtchedBorder());
-	}
-
-	public void displayHolds(HoldRequest[] holds) {
-		// TODO
-	}
-
-	public void displayOutput(String str) {
-		mainFrame.displayOutputMessage(str);
-	}
-
 	public String getCallNumber() {
 		return callNumberField.getText();
-	}
-
-	public String getDate() {
-		return dateField.getText();
-	}
-
-	public String getCurrentUserBID() {
-		return mainFrame.getCurrentUserBID();
 	}
 
 	private void createcallNumberField() {
@@ -78,18 +42,6 @@ public class BorrowerUIHold extends JPanel implements ActionListener {
 
 	}
 
-	private void createDateField() {
-
-		dateField = new JFormattedTextField(java.util.Calendar.getInstance()
-				.getTime());
-		dateField.setName(DATE_STRING);
-		dateField.addFocusListener(new MyFocusListener());
-
-		dateFieldLabel = new JLabel(DATE_STRING + ":");
-		dateFieldLabel.setLabelFor(dateField);
-
-	}
-
 	private void createSubmit() {
 		submitButton = new JButton();
 		submitButton.setText("Submit");
@@ -98,8 +50,7 @@ public class BorrowerUIHold extends JPanel implements ActionListener {
 
 	public BorrowerUIHold(MainJFrame f) {
 
-		mainFrame = f;
-
+		setMainFrame(f);
 		// Setting the border line around the panel
 		setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder("Place Hold Request"),
@@ -111,7 +62,6 @@ public class BorrowerUIHold extends JPanel implements ActionListener {
 
 		// Create text fields for inputs
 		createcallNumberField();
-		createDateField();
 		createSubmit();
 
 		GridBagConstraints gridc;
@@ -132,23 +82,6 @@ public class BorrowerUIHold extends JPanel implements ActionListener {
 		gridc.gridwidth = GridBagConstraints.REMAINDER;
 		gridc.fill = GridBagConstraints.HORIZONTAL;
 		this.add(callNumberField, gridc);
-
-		gridc = new GridBagConstraints();
-		gridc.anchor = GridBagConstraints.EAST;
-		gridc.gridx = 0;
-		gridc.gridy = 1;
-		gridc.weightx = 0;
-		gridc.gridwidth = GridBagConstraints.RELATIVE;
-		this.add(dateFieldLabel, gridc);
-
-		gridc = new GridBagConstraints();
-		gridc.anchor = GridBagConstraints.WEST;
-		gridc.gridx = 1;
-		gridc.gridy = 1;
-		gridc.weightx = 1;
-		gridc.gridwidth = GridBagConstraints.REMAINDER;
-		gridc.fill = GridBagConstraints.HORIZONTAL;
-		this.add(dateField, gridc);
 
 		// Insert spacing between the fields and the submit button
 		gridc = new GridBagConstraints();
@@ -181,6 +114,9 @@ public class BorrowerUIHold extends JPanel implements ActionListener {
 
 				public void run() {
 
+					if (!bApp().isLoggedIn()) {
+						displayOutput("Please log in first.");
+					}
 					JProgressBar progressBar = new JProgressBar();
 
 					/**
@@ -203,16 +139,15 @@ public class BorrowerUIHold extends JPanel implements ActionListener {
 						getThisPanel().validate();
 						getThisPanel().repaint();
 
-						String msg = "Failed to place the hold request";
-						if (mainFrame.bApp().placeHold(getCallNumber())) {
+						String msg = "Failed to place the hold request. Check the callnumber.";
+						if (bApp().placeHold(getCallNumber())) {
 							msg = "Successfully placed the hold request";
 						}
 
 						displayOutput(msg);
-						displayHolds(mainFrame.bApp().getHolds());
 
 					} catch (Exception e) {
-						mainFrame.displayErrorMessage(e.getMessage());
+						displayErrorMessage(e.getMessage());
 					} finally {
 						submitButton.setEnabled(true);
 						getThisPanel().remove(progressBar);
