@@ -180,7 +180,8 @@ public class ClerkUIOverdue extends JPanel implements ActionListener {
 						getThisPanel().validate();
 						getThisPanel().repaint();
 
-						
+						//ClerkApp
+						//FOR DEMO, show borrowing table
 						Database db = mainFrame.getDB();
 						ClerkApp ca = new ClerkApp(db);	
 						Borrowing[] borrowing = ca.checkOverdueItems();
