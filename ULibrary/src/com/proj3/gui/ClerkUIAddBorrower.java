@@ -434,8 +434,9 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 						
 						int bid = 4007;
 						Borrower b = db.selectBorrowerById(bid);
+						if (b != null) {
 						System.out.println(b.toStringForClerk());
-						
+						}
 						
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());
