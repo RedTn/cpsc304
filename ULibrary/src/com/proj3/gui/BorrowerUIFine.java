@@ -181,7 +181,7 @@ public class BorrowerUIFine extends BorrowerPanel implements ActionListener {
 			public void focusLost(FocusEvent e) {
 				try {
 					if (!((JTextField) e.getComponent()).getText().isEmpty()) {
-						bidFieldListenerAction(e);
+						amountFieldListenerAction(e);
 						setBorderRed(amountField, false);
 					} else
 						throw new NullPointerException("Amount can not be null");
@@ -199,9 +199,9 @@ public class BorrowerUIFine extends BorrowerPanel implements ActionListener {
 			}
 
 			// Throws exception if the bid is out of range of not a number
-			public void bidFieldListenerAction(FocusEvent e) {
+			public void amountFieldListenerAction(FocusEvent e) {
 				try {
-					int input = Integer.parseInt(((JTextField) e.getSource())
+					float input = Float.parseFloat(((JTextField) e.getSource())
 							.getText());
 					if (input < MIN_BID || input > MAX_BID) {
 						throw new IllegalArgumentException(
