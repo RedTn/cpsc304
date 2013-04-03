@@ -99,7 +99,9 @@ public class ClerkApp {
 				Date formatedDate = expirycal.getTime();
 				record.append(formatedDate);
 				record.append("\n");
-
+				if(!db.deleteHoldRequest(bidHR.getHid())) {
+					return "Error, hold request not deleted";
+				}
 			}
 			else {
 				HoldRequest[] hr = db.selectHoldRequestsByCall(book);
