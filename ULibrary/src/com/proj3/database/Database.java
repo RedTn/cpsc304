@@ -90,7 +90,7 @@ public class Database {
 
 	// Clerk Transaction
 	public boolean insertBorrower(String password, String name, String address,
-			String phone, String email, String sinOrStNo, Date expiryDate,
+			String phone, String email, int sinOrStNo, Date expiryDate,
 			BorrowerType type) {
 		try {
 			ps = con.prepareStatement("INSERT INTO Borrower VALUES (bid_counter.nextval,?,?,?,?,?,?,?,?)");
@@ -105,7 +105,7 @@ public class Database {
 
 			ps.setString(5, email);
 
-			ps.setString(6, sinOrStNo);
+			ps.setInt(6, sinOrStNo);
 
 			ps.setDate(7, new java.sql.Date(expiryDate.getTime()));
 
@@ -1079,6 +1079,27 @@ public class Database {
 		return borrower;
 	}
 
+	public Borrower selectBorrowerBySin(int sin) {
+		ResultSet rs = null;
+		Borrower borrower = null;
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrower WHERE sinOrStNo = ?");
+
+			ps.setInt(1, sin);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				borrower = Borrower.getInstance(rs);
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return borrower;
+	}
 	public HoldRequest[] selectHoldRequestsByBorrower(Borrower borrower) {
 		ResultSet rs = null;
 

@@ -93,8 +93,15 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 		return emailField.getText();
 	}
 	
-	public String getSinOrStNo() {
-		return sinField.getText();
+	public int getSinOrStNo() {
+		try {
+		int temp = Integer.parseInt(sinField.getText());
+		return temp;
+		}
+		catch(NumberFormatException nfe){
+			mainFrame.displayErrorMessage("Sin needs to be a number");
+		}
+		return -1;
 	}
 	
 	public String getExpireDate() {
@@ -417,10 +424,13 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 						getThisPanel().add(progressBar, gridc);
 						getThisPanel().validate();
 						getThisPanel().repaint();
-
+						if(getSinOrStNo() < 0) {
+							return;
+						}
 						//ClerkApp
 						Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(getExpireDate());
 						Database db = mainFrame.getDB();
+						
 						if(!db.insertBorrower(getPassword(), getName(), getAddress(), getPhoneNumber(), getEmailAddress(), getSinOrStNo(),
 								date, BorrowerType.get(getType()))){
 							displayOutput("Borrower not added");
@@ -432,10 +442,13 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 						//FOR DEMO, choose bid
 						//Current bid ends on 4006
 						
-						int bid = 4007;
-						Borrower b = db.selectBorrowerById(bid);
-						if (b != null) {
-						System.out.println(b.toStringForClerk());
+						//
+					
+						Borrower temp = db.selectBorrowerBySin(getSinOrStNo());
+						//int bid = 4007;
+						//Borrower b = db.selectBorrowerById(bid);
+						if (temp != null) {
+						displayOutput(temp.toStringForClerk());
 						}
 						
 					} catch (Exception e) {
