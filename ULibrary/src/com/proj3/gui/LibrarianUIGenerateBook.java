@@ -332,7 +332,7 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 									
 
 								displayDueDate(calendar_dueDate.getTime().toString());
-								if (calendar_today.after(calendar_dueDate) ) {
+								if (calendar_today.after(calendar_dueDate)) {
 									displayOverDueFlag(true);
 								} else
 									displayOverDueFlag(false);
