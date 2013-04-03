@@ -58,7 +58,7 @@ public class ClerkApp {
 		}finally {
 			scan.close();
 		}
-		
+
 		Borrower aBorrower = db.selectBorrowerById(bid);
 		if (aBorrower == null) {
 			return "No Borrower found.";
@@ -137,22 +137,30 @@ public class ClerkApp {
 		}
 
 		Borrower borrower = db.selectBorrowerById(b.getBid());
+		if(borrower == null){
+			return "Error, borrower BID not found.";
+		}
 		String callNumber = b.getCallNumber();
 		Date borrowDate = new Date();
 		borrowDate = b.getOutDate();
 
 		StringBuilder sb = new StringBuilder();
 
-		if (borrowDate.before(cal.getTime())) {
 
-			Date curDate = cal.getTime();
+		Calendar checkFine = Calendar.getInstance();
+
+		checkFine.add(Calendar.DATE, -(borrower.getType().getBorrowingLimit()));
+
+		if (borrowDate.before(checkFine.getTime())) {
+
+			Date curDate = checkFine.getTime();
 			Date bookDate = borrowDate;
 			long curTime = curDate.getTime();
 			long bookTime = bookDate.getTime();
 			long diffTime = curTime - bookTime;
 			long diffDays = diffTime / (1000 * 60 * 60 * 24);
 			float amount = diffDays * 1;
-			if (!db.insertFine(amount, cal.getTime(), null, borid)) {
+			if (!db.insertFine(amount, checkFine.getTime(), null, borid)) {
 				return "Fine not inserted.";
 			}
 			sb.append("Overdue, Fine of $");
@@ -178,12 +186,9 @@ public class ClerkApp {
 				return "Error, borrowing record not inserted(2).";
 			}
 			sb.append("Returned.\nBOOK: " + callNumber + "\nis available for holder\nBID:" + b.getBid());
-			if(borrower == null){
-				return "Error, borrower BID not found.";
-			}
-			else{
-				setEmail(borrower.getEmail());
-			}
+
+			setEmail(borrower.getEmail());
+
 		}
 		else if ((hold.length == 0) && (bc == null)){
 			int inbooks = db.getCopyCountByCallNumber(callNumber);
@@ -206,19 +211,17 @@ public class ClerkApp {
 				return "Error, borrowing record not inserted(2).";
 			}
 			sb.append("New bookcopy inserted\ncopyNo: " + inbooks + "\nBOOK: "+ callNumber + "\nis available for holder\nBID:" + b.getBid());
-			if(borrower == null){
-				return "Error, borrower BID not found.";
-			}
-			else{
-				setEmail(borrower.getEmail());
-			}
+
+
+			setEmail(borrower.getEmail());
+
 		}
 		sb.append("\nEND");
 		return sb.toString();
 	}
 
 	public Borrowing[] checkOverdueItems() {
-		return db.selectOverDueBorrowingByDate(cal.getTime());
+		return db.selectOverDueBorrowingByDateByClerk(db);
 
 	}
 	private void setNote(String note) {

@@ -85,10 +85,21 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 		return addressField.getText();
 	}
 	
+	/*
 	public String getPhoneNumber() {
 		return phoneField.getText();
 	}
-	
+	*/
+	public int getPhoneNumber() {
+		try {
+		int temp = Integer.parseInt(phoneField.getText());
+		return temp;
+		}
+		catch(NumberFormatException nfe){
+			mainFrame.displayErrorMessage("Phone needs to be a number");
+		}
+		return -1;
+	}
 	public String getEmailAddress() {
 		return emailField.getText();
 	}
@@ -425,6 +436,9 @@ public class ClerkUIAddBorrower extends JPanel implements ActionListener {
 						getThisPanel().validate();
 						getThisPanel().repaint();
 						if(getSinOrStNo() < 0) {
+							return;
+						}
+						if(getPhoneNumber() < 0) {
 							return;
 						}
 						//ClerkApp

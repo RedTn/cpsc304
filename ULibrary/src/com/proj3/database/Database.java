@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -90,7 +91,7 @@ public class Database {
 
 	// Clerk Transaction
 	public boolean insertBorrower(String password, String name, String address,
-			String phone, String email, int sinOrStNo, Date expiryDate,
+			int phone, String email, int sinOrStNo, Date expiryDate,
 			BorrowerType type) {
 		try {
 			ps = con.prepareStatement("INSERT INTO Borrower VALUES (bid_counter.nextval,?,?,?,?,?,?,?,?)");
@@ -101,7 +102,7 @@ public class Database {
 
 			ps.setString(3, address);
 
-			ps.setString(4, phone);
+			ps.setInt(4, phone);
 
 			ps.setString(5, email);
 
@@ -308,7 +309,7 @@ public class Database {
 			ps.setDate(4, new java.sql.Date(outDate.getTime()));
 
 			if (inDate != null) {
-			ps.setDate(5, new java.sql.Date (inDate.getTime()));
+				ps.setDate(5, new java.sql.Date (inDate.getTime()));
 			}
 			else{
 				ps.setNull(5, java.sql.Types.DATE);
@@ -344,7 +345,7 @@ public class Database {
 			ps.setDate(2, new java.sql.Date(issuedDate.getTime()));
 
 			if(paidDate != null){
-			ps.setDate(3, new java.sql.Date(paidDate.getTime()));
+				ps.setDate(3, new java.sql.Date(paidDate.getTime()));
 			}
 			else{
 				ps.setNull(3, java.sql.Types.DATE);
@@ -650,7 +651,7 @@ public class Database {
 			}
 
 			ps.close();
-			
+
 			ps = con.prepareStatement("SELECT * FROM Book WHERE mainAuthor LIKE ? ");
 
 			ps.setString(1, kwRegex);
@@ -670,7 +671,7 @@ public class Database {
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
-		
+
 		return books;
 	}
 
@@ -701,10 +702,10 @@ public class Database {
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
-		
+
 		return books;
 	}
-	
+
 	public Set<Book> selectBookByTitle(String subject) {
 		ResultSet rs = null;
 
@@ -732,10 +733,10 @@ public class Database {
 		} catch (SQLException ex) {
 			System.out.println("Message: " + ex.getMessage());
 		}
-		
+
 		return books;		
 	}
-	
+
 	public Book[] selectBooksByKeyword(String keyword) {
 		ResultSet rs = null;
 
@@ -884,7 +885,7 @@ public class Database {
 				rs.getString("callNumber"), rs.getInt("copyNo"));
 		return Borrowing.getInstance(rs, borrower, copy);
 	}
-	
+
 	private Borrowing constructBorrowingForClerk(ResultSet rs) throws SQLException {
 		Borrower borrower = selectBorrowerById(rs.getInt("bid"));
 		BookCopy copy = selectCopyByCallAndCopyNumber(
@@ -1179,7 +1180,7 @@ public class Database {
 	private Fine selectFineById(int fid) {
 		ResultSet rs = null;
 		Fine fine = null;
-		
+
 		try {
 			ps = con.prepareStatement("SELECT * FROM Fine WHERE fid = ?");
 			ps.setInt(1, fid);
@@ -1197,11 +1198,11 @@ public class Database {
 
 		return fine;
 	}
-	
+
 	public Fine selectFineByBorid(int borid) {
 		ResultSet rs = null;
 		Fine fine = null;
-		
+
 		try {
 			ps = con.prepareStatement("SELECT * FROM Fine WHERE borid = ? AND paidDate IS NULL");
 			ps.setInt(1, borid);
@@ -1219,11 +1220,11 @@ public class Database {
 
 		return fine;
 	}
-	
+
 	public boolean updateFineAmountField(int fid, float amount) {
 		Fine fine = selectFineById(fid);
 		fine.decreaseAmountBy(amount);
-		
+
 		try {
 			ps = con.prepareStatement("UPDATE Fine SET amount=? WHERE fid=?");
 
@@ -1326,10 +1327,10 @@ public class Database {
 		List<Borrowing> borrows = new ArrayList<Borrowing>();
 
 		//String percentage = "%" + keyword + "%";
-		
+
 		try {
 			ps = con.prepareStatement("SELECT * FROM Book, Borrowing, HasSubject WHERE borrowing.callnumber = book.callnumber and book.callnumber = hassubject.callnumber and hassubject.subject = ? ");
-			
+
 			ps.setString(1, keyword);
 
 			rs = ps.executeQuery();
@@ -1347,16 +1348,16 @@ public class Database {
 
 		return borrows.toArray(new Borrowing[borrows.size()]);
 	}
-	
+
 	public Integer[] selectAllBorrowingsByBid(int bid) {
 		ResultSet rs = null;
 		List<Integer> borrows = new ArrayList<Integer>();
 
 		//String percentage = "%" + keyword + "%";
-		
+
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE bid = ? ");
-			
+
 			ps.setInt(1, bid);
 
 			rs = ps.executeQuery();
@@ -1373,7 +1374,7 @@ public class Database {
 
 		return borrows.toArray(new Integer[borrows.size()]);
 	}
-	
+
 	// Exclusive for Clerk
 	public Borrower selectBorrowerById(int bid) {
 		ResultSet rs = null;
@@ -1421,7 +1422,7 @@ public class Database {
 		List<Borrowing> bs = new ArrayList<Borrowing>();
 		try {
 			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < ?");
-			
+
 			ps.setDate(1, new java.sql.Date(dueDate.getTime()));
 
 			rs = ps.executeQuery();
@@ -1435,6 +1436,43 @@ public class Database {
 			System.out.println("Message: " + ex.getMessage());
 		}
 
+		return bs.toArray(new Borrowing[bs.size()]);
+	}
+
+	public Borrowing[] selectOverDueBorrowingByDateByClerk(Database db) {
+		ResultSet rs = null;
+		Borrower[] borrowers;
+		List<Borrowing> bs = new ArrayList<Borrowing>();
+		
+		for(BorrowerType bt : BorrowerType.values()) {
+			
+	    borrowers = db.selectAllBorrowersByType(bt);
+		
+		for (int i = 0; i < borrowers.length; i++) {
+			Calendar duedate = Calendar.getInstance();
+			int typelimit = borrowers[i].getType().getBorrowingLimit();
+			duedate.add(Calendar.DATE, -(typelimit));
+			Date dueDate = duedate.getTime();
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate IS NULL AND outDate < ? AND bid = ?");
+
+			ps.setDate(1, new java.sql.Date(dueDate.getTime()));
+			ps.setInt(2, borrowers[i].getId());
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				bs.add(constructBorrowing(rs));
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+		
+		}
+
+		}
 		return bs.toArray(new Borrowing[bs.size()]);
 	}
 
@@ -1459,6 +1497,29 @@ public class Database {
 		return borrowers.toArray(new Borrower[borrowers.size()]);
 	}
 
+	public Borrower[] selectAllBorrowersByType(BorrowerType bt) {
+		ResultSet rs = null;
+		List<Borrower> borrowers = new ArrayList<Borrower>();
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM Borrower where type = ?");
+			
+			ps.setString(1, bt.getType());
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				borrowers.add(Borrower.getInstance(rs));
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return borrowers.toArray(new Borrower[borrowers.size()]);
+	}
+	
 	public BookCopy selectCopyByCallAndStatus(
 			String callNumber, CopyStatus status) {
 		ResultSet rs = null;
@@ -1559,7 +1620,7 @@ public class Database {
 
 		return copies.toArray(new BookCopy[copies.size()]);
 	}
-	
+
 	public boolean updateFirstCopyStatus(CopyStatus status, String callNumber) {
 		try {
 			ps = con.prepareStatement("UPDATE TOP (1) BookCopy SET status=? WHERE callNumber=?)");
@@ -1586,7 +1647,7 @@ public class Database {
 
 		return false;
 	}
-	
+
 	public boolean updateBorrowingByIndate(int borid, Date inDate) {
 		Date formatedDate = new java.sql.Date(inDate.getTime());
 		try {
@@ -1683,7 +1744,7 @@ public class Database {
 
 		return b;
 	}
-	
+
 	public Borrowing searchBorrowingsByClerk(int borid) {
 		ResultSet rs = null;
 		Borrowing b = null;
@@ -1704,7 +1765,7 @@ public class Database {
 
 		return b;
 	}
-	
+
 	public HoldRequest selectHoldRequestsByHid(int hid, Book book, Borrower borrower) {
 		ResultSet rs = null;
 		HoldRequest hold = null;
