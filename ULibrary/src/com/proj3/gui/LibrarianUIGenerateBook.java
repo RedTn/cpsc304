@@ -22,6 +22,7 @@ import javax.swing.JTextField;
 
 import com.proj3.app.LibrarianApp;
 import com.proj3.model.Borrowing;
+import com.proj3.model.CopyStatus;
 
 @SuppressWarnings("serial")
 public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
@@ -320,7 +321,7 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 
 								displayDueDate(calendar_dueDate.getTime()
 										.toString());
-								if (calendar_today.after(calendar_dueDate)) {
+								if (calendar_today.after(calendar_dueDate) && bookReport[i].getCopy().getStatus() == CopyStatus.out) {
 									displayOverDueFlag(true);
 								} else
 									displayOverDueFlag(false);
@@ -343,7 +344,7 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 
 								displayDueDate(calendar_dueDate.getTime()
 										.toString());
-								if (calendar_today.after(calendar_dueDate)) {
+								if (calendar_today.after(calendar_dueDate) && bookReport[i].getCopy().getStatus() == CopyStatus.out) {
 									displayOverDueFlag(true);
 								} else
 									displayOverDueFlag(false);
