@@ -1,5 +1,6 @@
 package com.proj3.app;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -96,24 +97,30 @@ public class ClerkApp {
 				record.append("; CALLNUMBER: ");
 				record.append(book.getCallNumber());
 				record.append("; CHECKEDOUT, DUE: ");
-				Date formatedDate = expirycal.getTime();
+				SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd");
+				String formatedDate = sdf.format(expirycal.getTime());
 				record.append(formatedDate);
 				record.append("\n");
 				if(!db.deleteHoldRequest(bidHR.getHid())) {
 					return "Error, hold request not deleted";
 				}
+				else {
+					record.append("Hold Request deleted");
+				}
 			}
 			else {
-				HoldRequest[] hr = db.selectHoldRequestsByCall(book);
-				if(hr.length == 0) {
+				//HoldRequest[] hr = db.selectHoldRequestsByCall(book);
+			
+					
 					//This book is available
 					Book checkbook = db.selectBookByCallNumber(book.getCallNumber());
 					if(checkbook == null) {
 						return "Error, Book: " + book.getCallNumber() + " is not in database, please check spelling.";
 					}
 					BookCopy bc = db.selectCopyByCallAndStatus(book.getCallNumber(), CopyStatus.in);
-					record.append("COPYNO: ");
+				
 					if(bc == null) {
+						/*
 						int count = db.getCopyCountByCallNumber(book.getCallNumber());
 						count++;
 						if(!db.insertBookCopy(book.getCallNumber(), count, CopyStatus.out)){
@@ -123,9 +130,11 @@ public class ClerkApp {
 								currDate, null)){
 							return "Error, borrowing record not created(1).";
 						}
-						record.append(count);
+						*/
+						record.append("There are no available copies of: " + book.getCallNumber() + ", left");
 					}
 					else {
+						
 						if(!db.updateCopyStatus(CopyStatus.out, bc.getCopyNo(), book.getCallNumber())){
 							return "Error, bookcopy not checked out.";
 						}
@@ -134,21 +143,18 @@ public class ClerkApp {
 								currDate, null)){
 							return "Error, borrowing record not created(2).";
 						}
+						
+						record.append("BORID: ");
+						record.append((db.getBorrowingCount() + 3000));
+						record.append("; COPYNO: ");
 						record.append(bc.getCopyNo());
+						record.append("; CALLNUMBER: ");
+						record.append(book.getCallNumber());
+						record.append("; CHECKEDOUT, DUE: ");
+						SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd");
+						String formatedDate = sdf.format(expirycal.getTime());
+						record.append(formatedDate);
 					}
-
-					record.append("; CALLNUMBER: ");
-					record.append(book.getCallNumber());
-					record.append("; CHECKEDOUT, DUE: ");
-					Date formatedDate = expirycal.getTime();
-					record.append(formatedDate);
-					record.append("\n");
-				}
-				else {
-					record.append("BOOK: ");
-					record.append(book.getCallNumber());
-					record.append(", is currently on-hold.\n");
-				}
 			}
 		}
 		setNote(record.toString());
@@ -194,28 +200,28 @@ public class ClerkApp {
 		}
 
 		BookCopy bc = db.selectCopy(callNumber, CopyStatus.out,  b.getCopy().getCopyNo());
-		HoldRequest[] hold = db.selectHoldRequestsByCall(b.getBook());
-		if((hold.length == 0) && (bc != null)) {
+		HoldRequest hold = db.selectHoldRequestByCall(b.getBook());
+		if((hold == null) && (bc != null)) {
 			if(!db.updateCopyStatus(CopyStatus.in, b.getCopy().getCopyNo(), callNumber)) {
 				return "Error, bookcopy not updated(1).";
 			}
 			if(!db.updateBorrowingByIndate(borid,currDate)){
 				return "Error, borrowing record not inserted(1).";
 			}
-			sb.append("Book returned.");
-		}else if ((hold.length != 0) && (bc != null)){
+			sb.append("Book " + callNumber + " returned.");
+		}else if ((hold != null) && (bc != null)){
 			if(!db.updateCopyStatus(CopyStatus.onhold, b.getCopy().getCopyNo(), callNumber)) {
 				return "Error, bookcopy not updated(2).";
 			}
 			if(!db.updateBorrowingByIndate(borid,currDate)){
 				return "Error, borrowing record not inserted(2).";
 			}
-			sb.append("Returned.\nBOOK: " + callNumber + "\nis available for holder\nBID:" + b.getBid());
+			sb.append("Returned.\nBOOK: " + callNumber + "\nis available for holder\nBID:" + hold.getBid());
 
 			setEmail(borrower.getEmail());
 
 		}
-		else if ((hold.length == 0) && (bc == null)){
+		else if ((hold == null) && (bc == null)){
 			int inbooks = db.getCopyCountByCallNumber(callNumber);
 			inbooks++;
 			if(!db.insertBookCopy(callNumber, inbooks, CopyStatus.in)) {
@@ -235,7 +241,7 @@ public class ClerkApp {
 			if(!db.updateBorrowingByIndate(borid,currDate)){
 				return "Error, borrowing record not inserted(2).";
 			}
-			sb.append("New bookcopy inserted\ncopyNo: " + inbooks + "\nBOOK: "+ callNumber + "\nis available for holder\nBID:" + b.getBid());
+			sb.append("New bookcopy inserted\ncopyNo: " + inbooks + "\nBOOK: "+ callNumber + "\nis available for holder\nBID:" + hold.getBid());
 
 
 			setEmail(borrower.getEmail());

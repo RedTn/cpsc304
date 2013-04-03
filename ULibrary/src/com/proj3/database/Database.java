@@ -1151,6 +1151,27 @@ public class Database {
 
 		return holds.toArray(new HoldRequest[holds.size()]);
 	}
+	
+	public HoldRequest selectHoldRequestByCall(Book book) {
+		ResultSet rs = null;
+		HoldRequest hr = null;
+		try {
+			ps = con.prepareStatement("SELECT * FROM HoldRequest WHERE callNumber = ?");
+			ps.setString(1, book.getCallNumber());
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				hr = HoldRequest.getInstanceByClerk(rs);
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return hr;
+	}
 
 	public Fine[] selectOutstandingFineByBorrower(Borrower borrower) {
 		ResultSet rs = null;
@@ -1810,4 +1831,24 @@ public class Database {
 		return hold;
 	}
 
+	public int getBorrowingCount() {
+		ResultSet rs = null;
+		int count = 0;
+		
+		try {
+			ps = con.prepareStatement("SELECT COUNT(borid) FROM borrowing");
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				count = rs.getInt("Count(borid)");
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return count;
+	}
 }

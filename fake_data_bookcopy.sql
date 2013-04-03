@@ -43,7 +43,7 @@ INSERT INTO BookCopy VALUES('ROWLING HPHalf', 5, 'on-hold');
 INSERT INTO BookCopy VALUES('ROWLING HPDeathly', 1, 'out');
 INSERT INTO BookCopy VALUES('ROWLING HPDeathly', 2, 'on-hold');
 INSERT INTO BookCopy VALUES('ROWLING HPDeathly', 3, 'in');
-INSERT INTO BookCopy VALUES('ROWLING HPDeathly', 3, 'on-hold');
+INSERT INTO BookCopy VALUES('ROWLING HPDeathly', 4, 'on-hold');
 
 
 INSERT INTO BookCopy VALUES('STEWART Calculus', 1, 'in');
