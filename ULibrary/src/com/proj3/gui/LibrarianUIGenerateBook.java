@@ -261,6 +261,8 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 		this.add(submitButton, gridc);
 
 	}
+	
+	
 
 	/**
 	 * Invoked when the submit button is clicked.
@@ -330,7 +332,7 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 									
 
 								displayDueDate(calendar_dueDate.getTime().toString());
-								if (calendar_today.after(calendar_dueDate) && bookReport[i].getCopy().getStatus() == CopyStatus.out) {
+								if (calendar_today.after(calendar_dueDate) && bookReport[i].getCopy().getStatus() == CopyStatus.out && bookReport[i].getInDate() == null) {
 									displayOverDueFlag(true);
 								} else
 									displayOverDueFlag(false);
@@ -362,7 +364,7 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 
 								displayDueDate(calendar_dueDate.getTime()
 										.toString());
-								if (calendar_today.after(calendar_dueDate) && bookReport[i].getCopy().getStatus() == CopyStatus.out) {
+								if (calendar_today.after(calendar_dueDate) && bookReport[i].getCopy().getStatus() == CopyStatus.out && bookReport[i].getInDate() == null) {
 									displayOverDueFlag(true);
 								} else
 									displayOverDueFlag(false);
