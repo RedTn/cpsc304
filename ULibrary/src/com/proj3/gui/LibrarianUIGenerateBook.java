@@ -21,6 +21,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.proj3.app.LibrarianApp;
+import com.proj3.model.BorrowerType;
 import com.proj3.model.Borrowing;
 import com.proj3.model.CopyStatus;
 
@@ -312,15 +313,23 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 							Calendar calendar_today = Calendar.getInstance();
 							for (int i = 0; i < bookReport.length; i++) {
 								displayBooks(bookReport[i].getBook().getTitle());
-								displayCheckOutDate((bookReport[i].getOutDate())
-										.toString());
+								displayCheckOutDate((bookReport[i].getOutDate()).toString());
 
-								calendar_dueDate.setTime(bookReport[i]
-										.getOutDate());
-								calendar_dueDate.add(Calendar.DAY_OF_MONTH, 7);
+								if(bookReport[i].getBorrower().getType() == BorrowerType.faculty){
+									calendar_dueDate.setTime(bookReport[i].getOutDate());
+									calendar_dueDate.add(Calendar.DAY_OF_MONTH, 84);
+								}
+								else if (bookReport[i].getBorrower().getType() == BorrowerType.staff){
+									calendar_dueDate.setTime(bookReport[i].getOutDate());
+									calendar_dueDate.add(Calendar.DAY_OF_MONTH, 42);
+								}
+								else {
+									calendar_dueDate.setTime(bookReport[i].getOutDate());
+									calendar_dueDate.add(Calendar.DAY_OF_MONTH, 14);
+								}
+									
 
-								displayDueDate(calendar_dueDate.getTime()
-										.toString());
+								displayDueDate(calendar_dueDate.getTime().toString());
 								if (calendar_today.after(calendar_dueDate) && bookReport[i].getCopy().getStatus() == CopyStatus.out) {
 									displayOverDueFlag(true);
 								} else
@@ -338,9 +347,18 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 								displayCheckOutDate((bookReport[i].getOutDate())
 										.toString());
 
-								calendar_dueDate.setTime(bookReport[i]
-										.getOutDate());
-								calendar_dueDate.add(Calendar.DAY_OF_MONTH, 7);
+								if(bookReport[i].getBorrower().getType() == BorrowerType.faculty){
+									calendar_dueDate.setTime(bookReport[i].getOutDate());
+									calendar_dueDate.add(Calendar.DAY_OF_MONTH, 84);
+								}
+								else if (bookReport[i].getBorrower().getType() == BorrowerType.staff){
+									calendar_dueDate.setTime(bookReport[i].getOutDate());
+									calendar_dueDate.add(Calendar.DAY_OF_MONTH, 42);
+								}
+								else {
+									calendar_dueDate.setTime(bookReport[i].getOutDate());
+									calendar_dueDate.add(Calendar.DAY_OF_MONTH, 14);
+								}
 
 								displayDueDate(calendar_dueDate.getTime()
 										.toString());
