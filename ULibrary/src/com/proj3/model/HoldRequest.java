@@ -7,7 +7,8 @@ import java.text.SimpleDateFormat;
 
 public class HoldRequest {
 
-	private int hid;
+	private int hid, bid;
+	private String callNumber;
 	private Borrower borrower;
 	private Book book;
 	private Date issuedDate;
@@ -20,6 +21,17 @@ public class HoldRequest {
 		h.setHid(rs.getInt("hid"));
 		h.setIssuedDate(rs.getDate("issuedDate"));
 
+		return h;
+	}
+	
+	public static HoldRequest getInstanceByClerk(ResultSet rs)
+			throws SQLException{
+		HoldRequest h = new HoldRequest();
+		h.setHid(rs.getInt("hid"));
+		h.setIssuedDate(rs.getDate("issuedDate"));
+		h.setBid(rs.getInt("bid"));
+		h.setCallNumber(rs.getString("callNumber"));
+		
 		return h;
 	}
 
@@ -53,6 +65,21 @@ public class HoldRequest {
 
 	public void setIssuedDate(Date issuedDate) {
 		this.issuedDate = issuedDate;
+	}
+	
+	public void setBid(int bid) {
+		this.bid = bid;
+	}
+	public int getBid() {
+		return bid;
+	}
+	
+	public void setCallNumber(String callNumber) {
+		this.callNumber = callNumber;
+	}
+	
+	public String getCallNumber() {
+		return callNumber;
 	}
 
 	public String toStringForBorrower() {

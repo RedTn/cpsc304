@@ -301,6 +301,7 @@ public class ClerkUICheckOut extends JPanel implements ActionListener {
 						//BID 4006: Expired
 						//BID 4002: Fine
 						//BID 6969: No borrower
+						//BID 4001: Holdrequest on bible
 						//TEST: Bible (on-hold), Dawkins (new copy), real (legit process)
 						/*
 						BookCopy before = db.selectCopyByCallAndCopyNumber("BIBLE", 1);

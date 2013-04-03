@@ -1787,5 +1787,27 @@ public class Database {
 
 		return hold;
 	}
+	public HoldRequest selectHoldRequestsByBidAndCall(int bid, String callNumber) {
+		ResultSet rs = null;
+		HoldRequest hold = null;
+
+		try {
+			ps = con.prepareStatement("SELECT * FROM HoldRequest WHERE bid = ? AND callNumber = ?");
+			ps.setInt(1, bid);
+			ps.setString(2, callNumber);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				hold = HoldRequest.getInstanceByClerk(rs);
+			}
+			ps.close();
+
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		return hold;
+	}
 
 }

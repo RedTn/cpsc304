@@ -66,8 +66,11 @@ public class ClerkApp {
 		if (currDate.after(aBorrower.getExpiryDate())){
 			return "Borrower is expired.";
 		}
-
+		int limit = aBorrower.getType().getBorrowingLimit();
+		Calendar expirycal = Calendar.getInstance();
+		expirycal.add(Calendar.DATE, limit);
 		Integer[] checkborrows = db.selectAllBorrowingsByBid(bid);
+		
 		for(int j = 0; j<checkborrows.length; j++) {
 			Fine fine = db.selectFineByBorid(checkborrows[j].intValue());
 			if (fine != null) {
@@ -79,52 +82,72 @@ public class ClerkApp {
 		for (int i=0; i<books.size(); i++) {
 			Book book = new Book();
 			book.setCallNumber(books.get(i));
-			HoldRequest[] hr = db.selectHoldRequestsByCall(book);
-			if(hr.length == 0) {
-				//This book is available
-				Book checkbook = db.selectBookByCallNumber(book.getCallNumber());
-				if(checkbook == null) {
-					return "Error, Book: " + book.getCallNumber() + " is not in database, please check spelling.";
+			HoldRequest bidHR = db.selectHoldRequestsByBidAndCall(bid, books.get(i));
+			if(bidHR != null) {
+				BookCopy holdbc = db.selectCopyByCallAndStatus(book.getCallNumber(), CopyStatus.onhold);
+				if(holdbc == null) {
+					return "Error, bid's hold request copy null";
 				}
-				BookCopy bc = db.selectCopyByCallAndStatus(book.getCallNumber(), CopyStatus.in);
+				if(!db.updateCopyStatus(CopyStatus.out, holdbc.getCopyNo(), book.getCallNumber())){
+					return "Error, bookcopy not checked out.";
+				}
 				record.append("COPYNO: ");
-				if(bc == null) {
-					int count = db.getCopyCountByCallNumber(book.getCallNumber());
-					count++;
-					if(!db.insertBookCopy(book.getCallNumber(), count, CopyStatus.out)){
-						return "Error, new bookcopy not inserted.";
-					}
-					if(!db.insertBorrowing(bid, book.getCallNumber(),  count, 
-							currDate, null)){
-						return "Error, borrowing record not created(1).";
-					}
-					record.append(count);
-				}
-				else {
-					if(!db.updateCopyStatus(CopyStatus.out, bc.getCopyNo(), book.getCallNumber())){
-						return "Error, bookcopy not checked out.";
-					}
-
-					if(!db.insertBorrowing(bid, book.getCallNumber(),  bc.getCopyNo(), 
-							currDate, null)){
-						return "Error, borrowing record not created(2).";
-					}
-					record.append(bc.getCopyNo());
-				}
-
+				record.append(holdbc.getCopyNo());
 				record.append("; CALLNUMBER: ");
 				record.append(book.getCallNumber());
 				record.append("; CHECKEDOUT, DUE: ");
-				Date formatedDate = expCal.getTime();
+				Date formatedDate = expirycal.getTime();
 				record.append(formatedDate);
 				record.append("\n");
+
 			}
 			else {
-				record.append("BOOK: ");
-				record.append(book.getCallNumber());
-				record.append(", is currently on-hold.\n");
-			}
+				HoldRequest[] hr = db.selectHoldRequestsByCall(book);
+				if(hr.length == 0) {
+					//This book is available
+					Book checkbook = db.selectBookByCallNumber(book.getCallNumber());
+					if(checkbook == null) {
+						return "Error, Book: " + book.getCallNumber() + " is not in database, please check spelling.";
+					}
+					BookCopy bc = db.selectCopyByCallAndStatus(book.getCallNumber(), CopyStatus.in);
+					record.append("COPYNO: ");
+					if(bc == null) {
+						int count = db.getCopyCountByCallNumber(book.getCallNumber());
+						count++;
+						if(!db.insertBookCopy(book.getCallNumber(), count, CopyStatus.out)){
+							return "Error, new bookcopy not inserted.";
+						}
+						if(!db.insertBorrowing(bid, book.getCallNumber(),  count, 
+								currDate, null)){
+							return "Error, borrowing record not created(1).";
+						}
+						record.append(count);
+					}
+					else {
+						if(!db.updateCopyStatus(CopyStatus.out, bc.getCopyNo(), book.getCallNumber())){
+							return "Error, bookcopy not checked out.";
+						}
 
+						if(!db.insertBorrowing(bid, book.getCallNumber(),  bc.getCopyNo(), 
+								currDate, null)){
+							return "Error, borrowing record not created(2).";
+						}
+						record.append(bc.getCopyNo());
+					}
+
+					record.append("; CALLNUMBER: ");
+					record.append(book.getCallNumber());
+					record.append("; CHECKEDOUT, DUE: ");
+					Date formatedDate = expirycal.getTime();
+					record.append(formatedDate);
+					record.append("\n");
+				}
+				else {
+					record.append("BOOK: ");
+					record.append(book.getCallNumber());
+					record.append(", is currently on-hold.\n");
+				}
+			}
 		}
 		setNote(record.toString());
 		return "Done check-out";
