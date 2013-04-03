@@ -314,7 +314,7 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 							Calendar calendar_dueDate = Calendar.getInstance();
 							Calendar calendar_today = Calendar.getInstance();
 							for (int i = 0; i < bookReport.length; i++) {
-								displayBooks(bookReport[i].getBook().getTitle());
+								displayBooks(bookReport[i].getBook().getTitle() + " " + bookReport[i].getCopy().getCopyNo());
 								displayCheckOutDate((bookReport[i].getOutDate()).toString());
 
 								if(bookReport[i].getBorrower().getType() == BorrowerType.faculty){
@@ -332,7 +332,7 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 									
 
 								displayDueDate(calendar_dueDate.getTime().toString());
-								if (calendar_today.after(calendar_dueDate) && bookReport[i].getCopy().getStatus() == CopyStatus.out && bookReport[i].getInDate() == null) {
+								if (calendar_today.after(calendar_dueDate) ) {
 									displayOverDueFlag(true);
 								} else
 									displayOverDueFlag(false);
@@ -345,7 +345,7 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 							Calendar calendar_dueDate = Calendar.getInstance();
 							Calendar calendar_today = Calendar.getInstance();
 							for (int i = 0; i < bookReport.length; i++) {
-								displayBooks(bookReport[i].getBook().getTitle());
+								displayBooks(bookReport[i].getBook().getTitle() + " " + bookReport[i].getCopy().getCopyNo());
 								displayCheckOutDate((bookReport[i].getOutDate())
 										.toString());
 
@@ -364,7 +364,7 @@ public class LibrarianUIGenerateBook extends JPanel implements ActionListener {
 
 								displayDueDate(calendar_dueDate.getTime()
 										.toString());
-								if (calendar_today.after(calendar_dueDate) && bookReport[i].getCopy().getStatus() == CopyStatus.out && bookReport[i].getInDate() == null) {
+								if (calendar_today.after(calendar_dueDate)) {
 									displayOverDueFlag(true);
 								} else
 									displayOverDueFlag(false);
