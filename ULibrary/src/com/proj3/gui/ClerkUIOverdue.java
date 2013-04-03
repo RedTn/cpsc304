@@ -204,7 +204,7 @@ public class ClerkUIOverdue extends JPanel implements ActionListener {
 						displayBorrowers(borrowers.toString());
 						
 						//TODO GUI: sends emails to everyone who has overdue item
-						System.out.println(emails.toString());
+						displayOutput(emails.toString());
 
 					} catch (Exception e) {
 						mainFrame.displayErrorMessage(e.getMessage());
