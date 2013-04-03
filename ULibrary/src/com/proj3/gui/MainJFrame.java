@@ -68,6 +68,11 @@ public class MainJFrame extends JFrame {
 		return db;
 	}
 
+	private void clearOutput() {
+		errorLog.setText("");
+		outputLog.setText("");
+	}
+
 	public String getCurrentUserBID() {
 		int bid = bApp.getBID();
 		if (bid < 0) {
@@ -131,13 +136,18 @@ public class MainJFrame extends JFrame {
 
 		menu.add(menuItem);
 
-		/*icon = createImageIcon("/helpbook.png");
-		menuItem = new JMenuItem("Manual");
-		menuItem.setIcon(icon);
-		menu.add(menuItem);*/
-
 		return menu;
 
+	}
+
+	private void changeFrame(JPanel panel) {
+		clearOutput();
+		int cnt = getFrame().getContentPane().getComponentCount();
+		for (int i = 1; i < cnt; i++)
+			getFrame().getContentPane().remove(i);
+		getFrame().getContentPane().add(panel, BorderLayout.CENTER);
+		getFrame().validate();
+		getFrame().repaint();
 	}
 
 	/**
@@ -165,14 +175,7 @@ public class MainJFrame extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i = 1; i < cnt; i++)
-					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(
-						new LibrarianUIAddBook(getMainFrame()),
-						BorderLayout.CENTER);
-				getFrame().validate();
-				getFrame().repaint();
+				changeFrame(new LibrarianUIAddBook(getMainFrame()));
 			}
 
 		});
@@ -183,14 +186,7 @@ public class MainJFrame extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i = 1; i < cnt; i++)
-					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(
-						new LibrarianUIAddCopy(getMainFrame()),
-						BorderLayout.CENTER);
-				getFrame().validate();
-				getFrame().repaint();
+				changeFrame(new LibrarianUIAddCopy(getMainFrame()));
 			}
 
 		});
@@ -207,14 +203,7 @@ public class MainJFrame extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i = 1; i < cnt; i++)
-					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(
-						new LibrarianUIGenerateBook(getMainFrame()),
-						BorderLayout.CENTER);
-				getFrame().validate();
-				getFrame().repaint();
+				changeFrame(new LibrarianUIGenerateBook(getMainFrame()));
 			}
 
 		});
@@ -225,14 +214,7 @@ public class MainJFrame extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i = 1; i < cnt; i++)
-					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(
-						new LibrarianUIGenerateItem(getMainFrame()),
-						BorderLayout.CENTER);
-				getFrame().validate();
-				getFrame().repaint();
+				changeFrame(new LibrarianUIGenerateItem(getMainFrame()));
 			}
 
 		});
@@ -263,14 +245,7 @@ public class MainJFrame extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i = 1; i < cnt; i++)
-					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(borrowerUILogin,
-						BorderLayout.CENTER);
-				getFrame().validate();
-				getFrame().repaint();
-				
+				changeFrame(borrowerUILogin);
 			}
 
 		});
@@ -281,14 +256,7 @@ public class MainJFrame extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i = 1; i < cnt; i++)
-					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(
-						new BorrowerUISearch(getMainFrame()),
-						BorderLayout.CENTER);
-				getFrame().validate();
-				getFrame().repaint();
+				changeFrame(new BorrowerUISearch(getMainFrame()));
 			}
 
 		});
@@ -299,16 +267,8 @@ public class MainJFrame extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i = 1; i < cnt; i++)
-					getFrame().getContentPane().remove(i);
 				BorrowerUICheck checkPanel = new BorrowerUICheck(getMainFrame());
-				getFrame().getContentPane().add(
-						checkPanel,
-						BorderLayout.CENTER);
-				getFrame().validate();
-				getFrame().repaint();
-				
+				changeFrame(checkPanel);
 				checkPanel.populateInfo();
 			}
 
@@ -320,14 +280,7 @@ public class MainJFrame extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i = 1; i < cnt; i++)
-					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane()
-						.add(new BorrowerUIHold(getMainFrame()),
-								BorderLayout.CENTER);
-				getFrame().validate();
-				getFrame().repaint();
+				changeFrame(new BorrowerUIHold(getMainFrame()));
 			}
 
 		});
@@ -338,15 +291,8 @@ public class MainJFrame extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i = 1; i < cnt; i++)
-					getFrame().getContentPane().remove(i);
-				
 				BorrowerUIFine finePanel = new BorrowerUIFine(getMainFrame());
-				getFrame().getContentPane().add(finePanel,BorderLayout.CENTER);
-				getFrame().validate();
-				getFrame().repaint();
-
+				changeFrame(finePanel);
 				finePanel.populateInfo();
 			}
 
@@ -379,14 +325,7 @@ public class MainJFrame extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i = 1; i < cnt; i++)
-					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(
-						new ClerkUIAddBorrower(getMainFrame()),
-						BorderLayout.CENTER);
-				getFrame().validate();
-				getFrame().repaint();
+				changeFrame(new ClerkUIAddBorrower(getMainFrame()));
 			}
 
 		});
@@ -397,14 +336,7 @@ public class MainJFrame extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i = 1; i < cnt; i++)
-					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(
-						new ClerkUICheckOut(getMainFrame()),
-						BorderLayout.CENTER);
-				getFrame().validate();
-				getFrame().repaint();
+				changeFrame(new ClerkUICheckOut(getMainFrame()));
 			}
 
 		});
@@ -415,13 +347,7 @@ public class MainJFrame extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i = 1; i < cnt; i++)
-					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane().add(
-						new ClerkUIReturn(getMainFrame()), BorderLayout.CENTER);
-				getFrame().validate();
-				getFrame().repaint();
+				changeFrame(new ClerkUIReturn(getMainFrame()));
 			}
 
 		});
@@ -432,14 +358,7 @@ public class MainJFrame extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				int cnt = getFrame().getContentPane().getComponentCount();
-				for (int i = 1; i < cnt; i++)
-					getFrame().getContentPane().remove(i);
-				getFrame().getContentPane()
-						.add(new ClerkUIOverdue(getMainFrame()),
-								BorderLayout.CENTER);
-				getFrame().validate();
-				getFrame().repaint();
+				changeFrame(new ClerkUIOverdue(getMainFrame()));
 			}
 
 		});
